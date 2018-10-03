@@ -55,10 +55,8 @@ namespace ACBC.Buss
         public string code;
     }
 
-    public class UserRegParam
+    public class MemberRegParam
     {
-        public string checkCode;
-        public string agentCode;
         public string avatarUrl;
         public string city;
         public string country;
@@ -66,24 +64,21 @@ namespace ACBC.Buss
         public string language;
         public string nickName;
         public string province;
-        public string phone;
-        public string userType;
     }
 
     #endregion
 
     #region DaoObjs
 
-    public class User
+    public class Member
     {
-        public string userName;
-        public string userId;
+        public string memberName;
+        public string memberId;
         public string openid;
-        public string userImg;
-        public string phone;
-        public string userType;
+        public string memberImg;
+        public string memberPhone;
+        public string memberSex;
         public string scanCode;
-        public string sex;
     }
 
     #endregion
