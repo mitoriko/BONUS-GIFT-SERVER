@@ -31,18 +31,77 @@ namespace ACBC.Buss
             {
                 AccessTokenContainer.Register(Global.APPID, Global.APPSECRET);
                 var sessionBag = SessionContainer.UpdateSession(null, jsonResult.openid, jsonResult.session_key);
-                
+
+                OpenDao openDao = new OpenDao();
                 SessionUser sessionUser = new SessionUser();
-                sessionUser.userType = "";
-                sessionUser.openid = sessionBag.OpenId;
-                sessionBag.Name = JsonConvert.SerializeObject(sessionUser);
-                SessionContainer.Update(sessionBag.Key, sessionBag);
-                return new { token = sessionBag.Key, isReg = true };
+                
+                Member member = openDao.GetMember(Utils.GetOpenID(sessionBag.Key));
+                if(member == null)
+                {
+                    sessionUser.userType = "GUEST";
+                    sessionBag.Name = JsonConvert.SerializeObject(sessionUser);
+                    SessionContainer.Update(sessionBag.Key, sessionBag);
+                    return new { token = sessionBag.Key, isReg = false };
+                }
+                else
+                {
+                    sessionUser.userType = "MEMBER";
+                    sessionUser.openid = sessionBag.OpenId;
+                    sessionBag.Name = JsonConvert.SerializeObject(sessionUser);
+                    SessionContainer.Update(sessionBag.Key, sessionBag);
+                    return new {
+                        token = sessionBag.Key,
+                        isReg = true,
+                        member.memberId,
+                        member.memberName,
+                        member.memberImg,
+                        member.memberPhone,
+                        member.memberSex,
+                        member.scanCode
+                    };
+                }
             }
             else
             {
                 throw new ApiException(CodeMessage.SenparcCode, jsonResult.errmsg);
             }
+        }
+
+        public object Do_MemberReg(BaseApi baseApi)
+        {
+            MemberRegParam memberRegParam = JsonConvert.DeserializeObject<MemberRegParam>(baseApi.param.ToString());
+            if (memberRegParam == null)
+            {
+                throw new ApiException(CodeMessage.InvalidParam, "InvalidParam");
+            }
+
+            SessionBag sessionBag = SessionContainer.GetSession(baseApi.token);
+            if (sessionBag == null)
+            {
+                throw new ApiException(CodeMessage.InvalidToken, "InvalidToken");
+            }
+
+            OpenDao openDao = new OpenDao();
+            string openID = Utils.GetOpenID(baseApi.token);
+            var member = openDao.GetMember(openID);
+
+            if (member != null)
+            {
+                throw new ApiException(CodeMessage.MemberExist, "MemberExist");
+            }
+
+            if (!openDao.MemberReg(memberRegParam, openID))
+            {
+                throw new ApiException(CodeMessage.MemberRegError, "MemberRegError");
+            }
+
+            SessionUser sessionUser = JsonConvert.DeserializeObject<SessionUser>(sessionBag.Name);
+            sessionUser.openid = sessionBag.OpenId;
+            sessionUser.userType = "MEMBER";
+            sessionBag.Name = JsonConvert.SerializeObject(sessionUser);
+            SessionContainer.Update(sessionBag.Key, sessionBag);
+
+            return "";
         }
     }
 }

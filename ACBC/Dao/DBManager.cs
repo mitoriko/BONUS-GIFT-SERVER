@@ -25,7 +25,7 @@ namespace ACBC.Dao
 #endif
             this.str = "Server=" + url
                      + ";Port=" + port
-                     + ";Database=pg;Uid=" + uid
+                     + ";Database=gift;Uid=" + uid
                      + ";Pwd=" + passd
                      + ";CharSet=utf8mb4; SslMode =none;";
             Console.Write(this.str);
