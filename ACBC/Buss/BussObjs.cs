@@ -81,5 +81,24 @@ namespace ACBC.Buss
         public string scanCode;
     }
 
+    public class Home
+    {
+        public string homeId;
+        public string backgroundImg;
+        public string titleMaster;
+        public string titleSlaver;
+        public string titleTagImg;
+    }
+
+    public class HomeList
+    {
+        public string img;
+        public string title;
+        public string price;
+        public string praise;
+        public string urlType;
+        public string urlValue;
+    }
+
     #endregion
 }

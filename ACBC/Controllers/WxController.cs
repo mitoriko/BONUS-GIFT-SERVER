@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Mvc;
 namespace ACBC.Controllers
 {
     [Produces("application/json")]
-    [Consumes("multipart/form-data", "application/json")]
     [Route(Global.ROUTE_PX + "/[controller]/[action]")]
     [EnableCors("AllowSameDomain")]
     public class WxController : Controller
@@ -20,9 +19,11 @@ namespace ACBC.Controllers
         }
 
         [HttpPost]
-        public ActionResult Upload(IFormCollection param)
+        public ActionResult Mall([FromBody]MallApi mallApi)
         {
-            return Json(Global.BUSS.BussResults(this, new UploadApi { param = param }));
+            if (mallApi == null)
+                return Json(new ResultsJson(new Message(CodeMessage.PostNull, "PostNull"), null));
+            return Json(Global.BUSS.BussResults(this, mallApi));
         }
     }
 }

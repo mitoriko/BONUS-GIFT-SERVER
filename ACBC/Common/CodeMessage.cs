@@ -35,5 +35,7 @@ namespace ACBC.Common
 
         MemberExist = 10001,
         MemberRegError = 10002,
+
+        HomeInitError = 10101,
     }
 }

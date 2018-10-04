@@ -13,6 +13,7 @@ namespace ACBC.Common
     {
         OpenApi,
         UploadApi,
+        MallApi,
     }
 
     public enum CheckType
@@ -93,6 +94,25 @@ namespace ACBC.Common
         public override ApiType GetApiType()
         {
             return ApiType.OpenApi;
+        }
+
+    }
+
+    public class MallApi : BaseApi
+    {
+        public override CheckType GetCheckType()
+        {
+            return CheckType.OpenToken;
+        }
+
+        public override InputType GetInputType()
+        {
+            return InputType.Body;
+        }
+
+        public override ApiType GetApiType()
+        {
+            return ApiType.MallApi;
         }
 
     }
