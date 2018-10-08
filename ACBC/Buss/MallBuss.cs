@@ -27,5 +27,17 @@ namespace ACBC.Buss
 
             return new { home, list };
         }
+
+        public object Do_GetShowDay(BaseApi baseApi)
+        {
+            var list = Utils.GetCache<ShowDayList>(Global.ROUTE_PX + "/ShowDayList");
+            if(list == null)
+            {
+                MallDao mallDao = new MallDao();
+                list = mallDao.GetShowDay();
+                Utils.SetCache(Global.ROUTE_PX + "/ShowDayList", list, 1, 0, 0);
+            }
+            return list;
+        }
     }
 }

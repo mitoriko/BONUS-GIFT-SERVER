@@ -100,5 +100,18 @@ namespace ACBC.Buss
         public string urlValue;
     }
 
+    public class ShowDayList
+    {
+        public List<int> monthList;
+        public Dictionary<int, List<ShowDay>> dayList;
+    }
+
+    public class ShowDay
+    {
+        public string showId;
+        public string showImg;
+        public string showTitle;
+    }
+
     #endregion
 }

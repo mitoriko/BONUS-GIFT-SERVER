@@ -25,5 +25,13 @@ namespace ACBC.Controllers
                 return Json(new ResultsJson(new Message(CodeMessage.PostNull, "PostNull"), null));
             return Json(Global.BUSS.BussResults(this, mallApi));
         }
+
+        //Todo 品类列表
+        //Todo 单品类商品列表
+        //Todo 个人中心
+        //Todo 商品详情
+        //Todo 购物车
+
+
     }
 }

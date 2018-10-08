@@ -1,12 +1,9 @@
 ﻿using ACBC.Buss;
 using Com.ACBC.Framework.Database;
 using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace ACBC.Dao
 {
@@ -60,18 +57,17 @@ namespace ACBC.Dao
             return DatabaseOperationWeb.ExecuteDML(sqlInsert);
         }
 
-    }
-
-    public class OpenSqls
-    {
-        public const string SELECT_MEMBER_BY_OPENID = ""
-            + "SELECT * "
-            + "FROM T_BASE_MEMBER "
-            + "WHERE OPENID = '{0}'";
-        public const string INSERT_MEMBER = ""
-            + "INSERT INTO T_BASE_MEMBER "
-            + "(MEMBER_NAME,MEMBER_IMG,MEMBER_SEX,OPENID,SCAN_CODE)"
-            + "VALUES( "
-            + "'{0}','{1}','{2}','{3}','{4}')";
+        private class OpenSqls
+        {
+            public const string SELECT_MEMBER_BY_OPENID = ""
+                + "SELECT * "
+                + "FROM T_BASE_MEMBER "
+                + "WHERE OPENID = '{0}'";
+            public const string INSERT_MEMBER = ""
+                + "INSERT INTO T_BASE_MEMBER "
+                + "(MEMBER_NAME,MEMBER_IMG,MEMBER_SEX,OPENID,SCAN_CODE)"
+                + "VALUES( "
+                + "'{0}','{1}','{2}','{3}','{4}')";
+        }
     }
 }
