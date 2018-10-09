@@ -33,14 +33,22 @@ namespace ACBC.Common
 
         public static bool SetCache(string key, object value, int hours, int minutes, int seconds)
         {
+            key = Global.NAMESPACE + "." + key;
             var db = RedisManager.Manager.GetDatabase(Global.REDIS_NO);
             var expiry = new TimeSpan(hours, minutes, seconds);
             string valueStr = JsonConvert.SerializeObject(value);
             return db.StringSet(key, valueStr, expiry);
         }
 
+        public static bool SetCache(BussCache value, int hours, int minutes, int seconds)
+        {
+            string key = value.GetType().FullName + value.Unique;
+            return SetCache(key, value, hours, minutes, seconds);
+        }
+
         public static dynamic GetCache<T>(string key)
         {
+            key = Global.NAMESPACE + "." + key;
             var db = RedisManager.Manager.GetDatabase(Global.REDIS_NO);
             if(db.StringGet(key).HasValue)
             {
@@ -49,14 +57,54 @@ namespace ACBC.Common
             return null;
         }
 
+        public static dynamic GetCache<T>()
+        {
+            string key = typeof(T).FullName;
+            return GetCache<T>(key);
+        }
+
+        public static dynamic GetCache<T>(BussParam bussParam)
+        {
+            string key = typeof(T).FullName + bussParam.GetUnique();
+            return GetCache<T>(key);
+        }
+
         public static bool DeleteCache(string key)
         {
+            key = Global.NAMESPACE + "." + key;
             var db = RedisManager.Manager.GetDatabase(Global.REDIS_NO);
             if (db.StringGet(key).HasValue)
             {
                 return db.KeyDelete(key);
             }
             return true;
+        }
+
+        public static bool DeleteCache<T>()
+        {
+            string key = typeof(T).FullName;
+            return DeleteCache(key);
+        }
+
+        public static bool DeleteCache<T>(BussParam bussParam)
+        {
+            string key = typeof(T).FullName + bussParam.GetUnique();
+            return DeleteCache(key);
+        }
+
+        public static void ClearCache()
+        {
+            var types = AppDomain.CurrentDomain.GetAssemblies()
+                  .SelectMany(a => a.GetTypes()
+                  .Where(t => t.GetInterfaces().Contains(typeof(BussCache))))
+                  .ToArray();
+            foreach (var v in types)
+            {
+                if (v.IsClass)
+                {
+                    DeleteCache(v.FullName);
+                }
+            }
         }
 
         public static string PostHttp(string url, string body, string contentType)

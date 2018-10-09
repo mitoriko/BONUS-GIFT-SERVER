@@ -1,11 +1,51 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
+using System.Security.Cryptography;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace ACBC.Buss
 {
     #region Sys
+
+    public class BussCache
+    {
+        private string unique = "";
+        public string Unique
+        {
+            get
+            {
+                return unique;
+            }
+            set
+            {
+                unique = value;
+            }
+        }
+    }
+
+    public class BussParam
+    {
+        public string GetUnique()
+        {
+            string needMd5 = "";
+            string md5S = "";
+            foreach (FieldInfo f in this.GetType().GetFields())
+            {
+                needMd5 += f.Name;
+                needMd5 += f.GetValue(this).ToString();
+            }
+            using (var md5 = MD5.Create())
+            {
+                var result = md5.ComputeHash(Encoding.UTF8.GetBytes(needMd5));
+                var strResult = BitConverter.ToString(result);
+                md5S = strResult.Replace("-", "");
+            }
+            return md5S;
+        }
+    }
 
     public class SessionUser
     {
@@ -66,6 +106,12 @@ namespace ACBC.Buss
         public string province;
     }
 
+    public class GetShowDayGoodsListParam : BussParam
+    {
+        public string showId;
+
+    }
+
     #endregion
 
     #region DaoObjs
@@ -81,7 +127,13 @@ namespace ACBC.Buss
         public string scanCode;
     }
 
-    public class Home
+    public class Home : BussCache
+    {
+        public HomeInfo homeInfo;
+        public List<HomeList> list;
+    }
+
+    public class HomeInfo
     {
         public string homeId;
         public string backgroundImg;
@@ -100,7 +152,7 @@ namespace ACBC.Buss
         public string urlValue;
     }
 
-    public class ShowDayList
+    public class ShowDayList : BussCache
     {
         public List<int> monthList;
         public Dictionary<int, List<ShowDay>> dayList;
@@ -111,6 +163,18 @@ namespace ACBC.Buss
         public string showId;
         public string showImg;
         public string showTitle;
+    }
+
+    public class ShowDayGoods
+    {
+        public string goodsId;
+        public string goodsImg;
+        public string goodsTitle;
+    }
+
+    public class ShowDayGoodsList : BussCache
+    {
+        public List<ShowDayGoods> list;
     }
 
     #endregion

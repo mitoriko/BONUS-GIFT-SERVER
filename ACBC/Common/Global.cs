@@ -6,12 +6,14 @@ using StackExchange.Redis;
 using Senparc.Weixin.Cache.Redis;
 using Senparc.Weixin.Cache;
 using Senparc.Weixin.WxOpen.Containers;
+using System.Collections.Generic;
 
 namespace ACBC.Common
 {
     public class Global
     {
         public const string ROUTE_PX = "/api/gift";
+        public const string NAMESPACE = "com.a-cubic.gift";
         public const int REDIS_NO = 1;
         public const int REDIS_EXPIRY = 7200;
 

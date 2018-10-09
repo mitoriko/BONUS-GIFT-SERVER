@@ -9,16 +9,16 @@ namespace ACBC.Dao
 {
     public class MallDao
     {
-        public Home GetHome()
+        public HomeInfo GetHome()
         {
-            Home home = null;
+            HomeInfo homeInfo = null;
             StringBuilder builder = new StringBuilder();
             builder.AppendFormat(MallSqls.SELECT_HOME_BY_USE_THEME);
             string sql = builder.ToString();
             DataTable dt = DatabaseOperationWeb.ExecuteSelectDS(sql, "T").Tables[0];
             if (dt != null && dt.Rows.Count == 1)
             {
-                home = new Home
+                homeInfo = new HomeInfo
                 {
                     homeId = dt.Rows[0]["HOME_ID"].ToString(),
                     backgroundImg = dt.Rows[0]["BACKGROUND_IMG"].ToString(),
@@ -28,7 +28,7 @@ namespace ACBC.Dao
                 };
             }
 
-            return home;
+            return homeInfo;
         }
 
         public List<HomeList> GetHomeList(string homeId)
@@ -95,6 +95,31 @@ namespace ACBC.Dao
             return new ShowDayList { monthList = monthList, dayList = dayList };
         }
 
+        public ShowDayGoodsList GetShowDayGoodsList(string showId)
+        {
+            ShowDayGoodsList showDayGoodsList = new ShowDayGoodsList();
+            StringBuilder builder = new StringBuilder();
+            builder.AppendFormat(MallSqls.SELECT_SHOW_DAY_GOODS_BY_SHOW_ID, showId);
+            string sql = builder.ToString();
+            DataTable dt = DatabaseOperationWeb.ExecuteSelectDS(sql, "T").Tables[0];
+            if (dt != null)
+            {
+                showDayGoodsList.list = new List<ShowDayGoods>();
+                foreach (DataRow dr in dt.Rows)
+                {
+                    ShowDayGoods showDayGoods = new ShowDayGoods
+                    {
+                        goodsId = dr["GOODS_ID"].ToString(),
+                        goodsImg = dr["GOODS_IMG"].ToString(),
+                        goodsTitle = dr["GOODS_TITLE"].ToString(),
+                    };
+                    showDayGoodsList.list.Add(showDayGoods);
+                }
+            }
+
+            return showDayGoodsList;
+        }
+
         private class MallSqls
         {
             public const string SELECT_HOME_BY_USE_THEME = ""
@@ -114,6 +139,10 @@ namespace ACBC.Dao
                 + "AND NOW() > T.SHOW_DATE "
                 + "AND T.IF_USE = 1 "
                 + "ORDER BY T.SHOW_YEAR DESC, T.SHOW_MONTH DESC, T.SHOW_DAY DESC";
+            public const string SELECT_SHOW_DAY_GOODS_BY_SHOW_ID = ""
+                + "SELECT * "
+                + "FROM T_BUSS_SHOW_DAY_GOODS "
+                + "WHERE SHOW_ID = {0}";
         }
     }
 }
