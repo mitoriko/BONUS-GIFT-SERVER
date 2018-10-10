@@ -31,7 +31,7 @@ namespace ACBC.Buss
                 home.homeInfo = homeInfo;
                 home.list = list;
 
-                Utils.SetCache(home, 1, 0, 0);
+                Utils.SetCache(home);
             }
             
             return home;
@@ -44,7 +44,7 @@ namespace ACBC.Buss
             {
                 MallDao mallDao = new MallDao();
                 list = mallDao.GetShowDay();
-                Utils.SetCache(list, 1, 0, 0);
+                Utils.SetCache(list);
             }
             return list;
         }
@@ -62,7 +62,7 @@ namespace ACBC.Buss
                 MallDao mallDao = new MallDao();
                 list = mallDao.GetShowDayGoodsList(getShowDayGoodsListParam.showId);
                 list.Unique = getShowDayGoodsListParam.GetUnique();
-                Utils.SetCache(list, 1, 0, 0);
+                Utils.SetCache(list);
             }
             return list;
         }
