@@ -26,6 +26,14 @@ namespace ACBC.Controllers
             return Json(Global.BUSS.BussResults(this, mallApi));
         }
 
+        [HttpPost]
+        public ActionResult Order([FromBody]OrderApi orderApi)
+        {
+            if (orderApi == null)
+                return Json(new ResultsJson(new Message(CodeMessage.PostNull, "PostNull"), null));
+            return Json(Global.BUSS.BussResults(this, orderApi));
+        }
+
         //Todo 品类列表
         //Todo 单品类商品列表
         //Todo 个人中心
