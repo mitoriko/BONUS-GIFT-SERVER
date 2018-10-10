@@ -73,6 +73,7 @@ namespace ACBC.Buss
         public ExchangeResult result;
         public int error_code;
     }
+
     public class ExchangeResult
     {
         public string update;
@@ -175,6 +176,33 @@ namespace ACBC.Buss
     public class ShowDayGoodsList : BussCache
     {
         public List<ShowDayGoods> list;
+    }
+
+    public class OrderList
+    {
+        public List<Order> unPayList = new List<Order>();
+        public List<Order> payList = new List<Order>();
+        public List<Order> inShopList = new List<Order>();
+        public List<Order> doneList = new List<Order>();
+    }
+
+    public class Order
+    {
+        public string orderId;
+        public string orderCode;
+        public string total;
+        public string state;
+        public string orderTime;
+        public List<OrderGoods> list = new List<OrderGoods>();
+    }
+
+    public class OrderGoods
+    {
+        public string goodsId;
+        public string goodsImg;
+        public string goodsName;
+        public string price;
+        public string num;
     }
 
     #endregion
