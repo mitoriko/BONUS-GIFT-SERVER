@@ -37,5 +37,9 @@ namespace ACBC.Common
         MemberRegError = 10002,
 
         HomeInitError = 10101,
+        InvalidGoods = 10102,
+        NotEnoughGoods = 10103,
+        UpdateCartError = 10104,
+        DeleteCartError = 10105,
     }
 }

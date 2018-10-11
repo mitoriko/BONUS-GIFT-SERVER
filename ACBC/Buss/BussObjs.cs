@@ -120,6 +120,23 @@ namespace ACBC.Buss
 
     }
 
+    public class InputCartParam
+    {
+        public string goodsId;
+        public int goodsNum;
+    }
+
+    public class UpdateCartParam
+    {
+        public string cartId;
+        public int goodsNum;
+    }
+
+    public class DeleteCartParam
+    {
+        public string cartId;
+    }
+
     #endregion
 
     #region DaoObjs
@@ -239,6 +256,7 @@ namespace ACBC.Buss
         public string goodsImg;
         public int goodsPrice;
         public int goodsNum;
+        public int goodsStock;
         public bool cartChecked;
     }
 

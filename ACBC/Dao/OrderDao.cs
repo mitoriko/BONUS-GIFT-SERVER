@@ -159,12 +159,80 @@ namespace ACBC.Dao
                         goodsNum = Convert.ToInt32(dr["GOODS_NUM"]),
                         goodsPrice = Convert.ToInt32(dr["GOODS_PRICE"]),
                         cartId = dr["CART_ID"].ToString(),
+                        goodsStock = Convert.ToInt32(dr["GOODS_STOCK"]),
                     };
                     list.Add(cartGoods);
                 }
             }
 
             return list;
+        }
+
+        public Goods GetGoodsByCartId(string cartId)
+        {
+            Goods goods = null;
+            StringBuilder builder = new StringBuilder();
+            builder.AppendFormat(OrderSqls.SELECT_GOODS_BY_CART_ID, cartId);
+            string sql = builder.ToString();
+            DataTable dt = DatabaseOperationWeb.ExecuteSelectDS(sql, "T").Tables[0];
+            if (dt != null && dt.Rows.Count == 1)
+            {
+                goods = new Goods
+                {
+                    goodsDesc = dt.Rows[0]["GOODS_DESC"].ToString(),
+                    goodsId = dt.Rows[0]["GOODS_ID"].ToString(),
+                    goodsName = dt.Rows[0]["GOODS_NAME"].ToString(),
+                    goodsImg = dt.Rows[0]["GOODS_IMG"].ToString(),
+                    goodsPrice = Convert.ToInt32(dt.Rows[0]["GOODS_PRICE"]),
+                    goodsStock = Convert.ToInt32(dt.Rows[0]["GOODS_STOCK"]),
+                    sales = 0,
+                };
+            }
+            return goods;
+        }
+
+        public CartGoods GetCartGoodsByGoodsId(string memberId, string goodsId)
+        {
+            CartGoods cartGoods = null;
+            StringBuilder builder = new StringBuilder();
+            builder.AppendFormat(OrderSqls.SELECT_CART_BY_MEMBER_ID_AND_GOODS_ID, memberId, goodsId);
+            string sql = builder.ToString();
+            DataTable dt = DatabaseOperationWeb.ExecuteSelectDS(sql, "T").Tables[0];
+            if(dt != null && dt.Rows.Count == 1)
+            {
+                cartGoods = new CartGoods
+                {
+                    cartChecked = dt.Rows[0]["CART_CHECKED"].ToString() == "0" ? false : true,
+                    goodsId = dt.Rows[0]["GOODS_ID"].ToString(),
+                    goodsNum = Convert.ToInt32(dt.Rows[0]["GOODS_NUM"]),
+                    cartId = dt.Rows[0]["CART_ID"].ToString(),
+                };
+            }
+            return cartGoods;
+        }
+
+        public bool InsertCart(string memberId, string goodsId, int goodsNum)
+        {
+            StringBuilder builder = new StringBuilder();
+            builder.AppendFormat(OrderSqls.INSERT_CART, memberId, goodsId, goodsNum);
+            string sql = builder.ToString();
+            return DatabaseOperationWeb.ExecuteDML(sql);
+        }
+
+        public bool UpdateCart(string cartId, int goodsNum)
+        {
+            StringBuilder builder = new StringBuilder();
+            builder.AppendFormat(OrderSqls.UPDATE_CART_BY_CART_ID, goodsNum, cartId);
+            string sql = builder.ToString();
+            return DatabaseOperationWeb.ExecuteDML(sql);
+        }
+
+        public bool DeleteCart(string cartId)
+        {
+            StringBuilder builder = new StringBuilder();
+            builder.AppendFormat(OrderSqls.DELETE_CART_BY_CART_ID, cartId);
+            string sql = builder.ToString();
+            return DatabaseOperationWeb.ExecuteDML(sql);
         }
 
         private class OrderSqls
@@ -181,6 +249,28 @@ namespace ACBC.Dao
                 + "AND MEMBER_ID = {0} "
                 + "AND B.IF_USE = 1 "
                 + "ORDER BY CART_TIME DESC";
+            public const string SELECT_CART_BY_MEMBER_ID_AND_GOODS_ID = ""
+                + "SELECT * "
+                + "FROM T_BUSS_CART T "
+                + "WHERE MEMBER_ID = {0} "
+                + "AND GOODS_ID = {1}";
+            public const string SELECT_GOODS_BY_CART_ID = ""
+                + "SELECT * "
+                + "FROM T_BUSS_CART T,T_BUSS_GOODS A "
+                + "WHERE T.GOODS_ID = A.GOODS_ID "
+                + "AND CART_ID = {0} ";
+            public const string INSERT_CART = ""
+                + "INSERT INTO T_BUSS_CART("
+                + "MEMBER_ID,GOODS_ID,GOODS_NUM,CART_TIME) "
+                + "VALUES({0},{1},{2},NOW())";
+            public const string UPDATE_CART_BY_CART_ID = ""
+                + "UPDATE T_BUSS_CART "
+                + "SET GOODS_NUM = {0}, "
+                + "CART_TIME = NOW() "
+                + "WHERE CART_ID = {1}";
+            public const string DELETE_CART_BY_CART_ID = ""
+                + "DELETE FROM T_BUSS_CART "
+                + "WHERE CART_ID = {0}";
         }
     }
 }
