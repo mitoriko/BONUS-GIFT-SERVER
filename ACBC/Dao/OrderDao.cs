@@ -138,7 +138,34 @@ namespace ACBC.Dao
 
             return orderList;
         }
-        
+
+        public List<CartGoods> GetCartList(string memberId)
+        {
+            List<CartGoods> list = new List<CartGoods>();
+            StringBuilder builder = new StringBuilder();
+            builder.AppendFormat(OrderSqls.SELECT_CART_LIST_BY_MEMBER_ID, memberId);
+            string sql = builder.ToString();
+            DataTable dt = DatabaseOperationWeb.ExecuteSelectDS(sql, "T").Tables[0];
+            if (dt != null && dt.Rows.Count > 0)
+            {
+                foreach(DataRow dr in dt.Rows)
+                {
+                    CartGoods cartGoods = new CartGoods
+                    {
+                        cartChecked = dr["CART_CHECKED"].ToString() == "0" ? false : true,
+                        goodsId = dr["GOODS_ID"].ToString(),
+                        goodsImg = dr["GOODS_IMG"].ToString(),
+                        goodsName = dr["GOODS_NAME"].ToString(),
+                        goodsNum = Convert.ToInt32(dr["GOODS_NUM"]),
+                        goodsPrice = Convert.ToInt32(dr["GOODS_PRICE"]),
+                    };
+                    list.Add(cartGoods);
+                }
+            }
+
+            return list;
+        }
+
         private class OrderSqls
         {
             public const string SELECT_ORDER_GOODS_LIST_BY_OPEN_ID = ""
@@ -146,6 +173,13 @@ namespace ACBC.Dao
                 + "FROM T_BUSS_ORDER_GOODS A, T_BUSS_ORDER B "
                 + "WHERE A.ORDER_ID = B.ORDER_ID "
                 + "AND B.OPENID = '{0}' ";
+            public const string SELECT_CART_LIST_BY_MEMBER_ID = ""
+                + "SELECT * "
+                + "FROM T_BUSS_CART A,T_BUSS_GOODS B "
+                + "WHERE A.GOODS_ID = B.GOODS_ID "
+                + "AND MEMBER_ID = {0} "
+                + "AND B.IF_USE = 1 "
+                + "ORDER BY CART_TIME DESC";
         }
     }
 }

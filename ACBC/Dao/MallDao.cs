@@ -134,6 +134,7 @@ namespace ACBC.Dao
                     goodsDesc = dt.Rows[0]["GOODS_DESC"].ToString(),
                     goodsId = dt.Rows[0]["GOODS_ID"].ToString(),
                     goodsName = dt.Rows[0]["GOODS_NAME"].ToString(),
+                    goodsImg = dt.Rows[0]["GOODS_IMG"].ToString(),
                     goodsPrice = Convert.ToInt32(dt.Rows[0]["GOODS_PRICE"]),
                     goodsStock = Convert.ToInt32(dt.Rows[0]["GOODS_STOCK"]),
                     sales = 0,

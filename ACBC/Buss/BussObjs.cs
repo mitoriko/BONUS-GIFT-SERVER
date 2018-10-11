@@ -53,6 +53,7 @@ namespace ACBC.Buss
         public string checkPhone;
         public string checkCode;
         public string userType;
+        public string memberId;
     }
 
     public class SmsCodeRes
@@ -215,6 +216,7 @@ namespace ACBC.Buss
     {
         public string goodsId;
         public string goodsName;
+        public string goodsImg;
         public string goodsDesc;
         public int goodsPrice;
         public int goodsStock;
@@ -227,6 +229,16 @@ namespace ACBC.Buss
     {
         public string img;
         public int imgSort;
+    }
+
+    public class CartGoods
+    {
+        public string goodsId;
+        public string goodsName;
+        public string goodsImg;
+        public int goodsPrice;
+        public int goodsNum;
+        public bool cartChecked;
     }
 
     #endregion

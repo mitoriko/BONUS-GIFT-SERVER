@@ -31,6 +31,21 @@ namespace ACBC.Common
             return sessionBag.OpenId;
         }
 
+        public static string GetMemberID(string token)
+        {
+            SessionBag sessionBag = SessionContainer.GetSession(token);
+            if (sessionBag == null)
+            {
+                return null;
+            }
+            SessionUser sessionUser = JsonConvert.DeserializeObject<SessionUser>(sessionBag.Name);
+            if(sessionUser == null)
+            {
+                return null;
+            }
+            return sessionUser.memberId;
+        }
+
         public static bool SetCache(string key, object value, int hours, int minutes, int seconds)
         {
             key = Global.NAMESPACE + "." + key;

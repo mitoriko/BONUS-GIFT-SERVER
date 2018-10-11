@@ -47,6 +47,7 @@ namespace ACBC.Buss
                 {
                     sessionUser.userType = "MEMBER";
                     sessionUser.openid = sessionBag.OpenId;
+                    sessionUser.memberId = member.memberId;
                     sessionBag.Name = JsonConvert.SerializeObject(sessionUser);
                     SessionContainer.Update(sessionBag.Key, sessionBag);
                     return new {
@@ -94,9 +95,10 @@ namespace ACBC.Buss
             {
                 throw new ApiException(CodeMessage.MemberRegError, "MemberRegError");
             }
-
+            member = openDao.GetMember(openID);
             SessionUser sessionUser = JsonConvert.DeserializeObject<SessionUser>(sessionBag.Name);
             sessionUser.openid = sessionBag.OpenId;
+            sessionUser.memberId = member.memberId;
             sessionUser.userType = "MEMBER";
             sessionBag.Name = JsonConvert.SerializeObject(sessionUser);
             SessionContainer.Update(sessionBag.Key, sessionBag);
