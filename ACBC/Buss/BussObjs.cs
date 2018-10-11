@@ -233,6 +233,7 @@ namespace ACBC.Buss
 
     public class CartGoods
     {
+        public string cartId;
         public string goodsId;
         public string goodsName;
         public string goodsImg;

@@ -158,6 +158,7 @@ namespace ACBC.Dao
                         goodsName = dr["GOODS_NAME"].ToString(),
                         goodsNum = Convert.ToInt32(dr["GOODS_NUM"]),
                         goodsPrice = Convert.ToInt32(dr["GOODS_PRICE"]),
+                        cartId = dr["CART_ID"].ToString(),
                     };
                     list.Add(cartGoods);
                 }
