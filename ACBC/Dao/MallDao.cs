@@ -120,6 +120,57 @@ namespace ACBC.Dao
             return showDayGoodsList;
         }
 
+        public Goods GetGoodsByGoodsId(string goodsId)
+        {
+            Goods goods = null;
+            StringBuilder builder = new StringBuilder();
+            builder.AppendFormat(MallSqls.SELECT_GOODS_BY_GOODS_ID, goodsId);
+            string sql = builder.ToString();
+            DataTable dt = DatabaseOperationWeb.ExecuteSelectDS(sql, "T").Tables[0];
+            if (dt != null && dt.Rows.Count > 0)
+            {
+                goods = new Goods
+                {
+                    goodsDesc = dt.Rows[0]["GOODS_DESC"].ToString(),
+                    goodsId = dt.Rows[0]["GOODS_ID"].ToString(),
+                    goodsName = dt.Rows[0]["GOODS_NAME"].ToString(),
+                    goodsPrice = Convert.ToInt32(dt.Rows[0]["GOODS_PRICE"]),
+                    goodsStock = Convert.ToInt32(dt.Rows[0]["GOODS_STOCK"]),
+                    sales = 0,
+                };
+
+                builder.Clear();
+                builder.AppendFormat(MallSqls.SELECT_GOODS_SELL_SUM_BY_GOODS_ID, goodsId);
+                sql = builder.ToString();
+                DataTable dtSum = DatabaseOperationWeb.ExecuteSelectDS(sql, "T").Tables[0];
+                if (dt != null && dt.Rows.Count == 1)
+                {
+                    goods.sales = Convert.ToInt32(dtSum.Rows[0][0]);
+                }
+
+                DataRow[] drMain = dt.Select("IMG_TYPE = 0", "IMG_SORT");
+                DataRow[] drInfo = dt.Select("IMG_TYPE = 1", "IMG_SORT");
+
+                foreach(DataRow dr in drMain)
+                {
+                    goods.mainImgs.Add(new GoodsImg
+                    {
+                        img = dr["IMG"].ToString(),
+                        imgSort = Convert.ToInt32(dr["IMG_SORT"]),
+                    });
+                }
+                foreach (DataRow dr in drInfo)
+                {
+                    goods.infoImgs.Add(new GoodsImg
+                    {
+                        img = dr["IMG"].ToString(),
+                        imgSort = Convert.ToInt32(dr["IMG_SORT"]),
+                    });
+                }
+            }
+            return goods;
+        }
+
         private class MallSqls
         {
             public const string SELECT_HOME_BY_USE_THEME = ""
@@ -143,6 +194,15 @@ namespace ACBC.Dao
                 + "SELECT * "
                 + "FROM T_BUSS_SHOW_DAY_GOODS "
                 + "WHERE SHOW_ID = {0}";
+            public const string SELECT_GOODS_BY_GOODS_ID = ""
+                + "SELECT * "
+                + "FROM T_BUSS_GOODS A,T_BUSS_GOODS_IMGS B "
+                + "WHERE A.GOODS_ID = B.GOODS_ID "
+                + "AND A.GOODS_ID = {0}";
+            public const string SELECT_GOODS_SELL_SUM_BY_GOODS_ID = ""
+                + "SELECT SUM(NUM) "
+                + "FROM T_BUSS_ORDER_GOODS A "
+                + "WHERE A.GOODS_ID = {0}";
         }
     }
 }

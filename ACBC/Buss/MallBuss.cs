@@ -66,5 +66,25 @@ namespace ACBC.Buss
             }
             return list;
         }
+
+        public object Do_GetGoods(BaseApi baseApi)
+        {
+            GetGoodsParam getGoodsParam = JsonConvert.DeserializeObject<GetGoodsParam>(baseApi.param.ToString());
+            if (getGoodsParam == null)
+            {
+                throw new ApiException(CodeMessage.InvalidParam, "InvalidParam");
+            }
+
+            Goods goods = Utils.GetCache<Goods>(getGoodsParam);
+            if (goods == null)
+            {
+                MallDao mallDao = new MallDao();
+                goods = mallDao.GetGoodsByGoodsId(getGoodsParam.goodsId);
+                goods.Unique = getGoodsParam.GetUnique();
+                Utils.SetCache(goods);
+            }
+
+            return goods;
+        }
     }
 }

@@ -113,6 +113,12 @@ namespace ACBC.Buss
 
     }
 
+    public class GetGoodsParam : BussParam
+    {
+        public string goodsId;
+
+    }
+
     #endregion
 
     #region DaoObjs
@@ -203,6 +209,24 @@ namespace ACBC.Buss
         public string goodsName;
         public string price;
         public string num;
+    }
+
+    public class Goods : BussCache
+    {
+        public string goodsId;
+        public string goodsName;
+        public string goodsDesc;
+        public int goodsPrice;
+        public int goodsStock;
+        public int sales;
+        public List<GoodsImg> mainImgs = new List<GoodsImg>();
+        public List<GoodsImg> infoImgs = new List<GoodsImg>();
+    }
+
+    public class GoodsImg
+    {
+        public string img;
+        public int imgSort;
     }
 
     #endregion
