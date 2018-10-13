@@ -34,11 +34,11 @@ namespace ACBC.Controllers
             return Json(Global.BUSS.BussResults(this, orderApi));
         }
 
-        //Todo 品类列表
-        //Todo 单品类商品列表
-        //Todo 个人中心
-        //Todo 商品详情
-        //Todo 购物车
+        //Todo 个人中心（心值；订单状态合计）
+        //Todo 预生成订单（立即兑换、购物车结算；其中购物车结算带cartId；返回PreOrderId）
+        //Todo 生成订单（PreOrderId；返回orderCode；返回后小程序发起“待支付订单支付”）
+        //Todo 待支付订单支付（check订单状态）
+        //Todo 获取单订单明细
 
 
     }

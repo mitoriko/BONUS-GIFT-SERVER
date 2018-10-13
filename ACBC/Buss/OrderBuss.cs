@@ -4,6 +4,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 
 namespace ACBC.Buss
@@ -31,7 +32,7 @@ namespace ACBC.Buss
             int totalPrice = 0;
             foreach (CartGoods cartGoods in list)
             {
-                if(cartGoods.cartChecked)
+                if (cartGoods.cartChecked)
                 {
                     totalPrice += cartGoods.goodsPrice * cartGoods.goodsNum;
                     totalNum += cartGoods.goodsNum;
@@ -65,7 +66,7 @@ namespace ACBC.Buss
 
             CartGoods cartGoods = orderDao.GetCartGoodsByGoodsId(memberId, inputCartParam.goodsId);
 
-            if(cartGoods == null)
+            if (cartGoods == null)
             {
                 if (!orderDao.InsertCart(memberId, inputCartParam.goodsId, inputCartParam.goodsNum))
                 {
@@ -94,17 +95,17 @@ namespace ACBC.Buss
 
             Goods goods = orderDao.GetGoodsByCartId(updateCartParam.cartId);
 
-            if(goods == null)
+            if (goods == null)
             {
                 throw new ApiException(CodeMessage.InvalidGoods, "InvalidGoods");
             }
 
-            if(goods.goodsStock <= updateCartParam.goodsNum)
+            if (goods.goodsStock <= updateCartParam.goodsNum)
             {
                 throw new ApiException(CodeMessage.NotEnoughGoods, "NotEnoughGoods");
             }
 
-            if(!orderDao.UpdateCart(updateCartParam.cartId, updateCartParam.goodsNum))
+            if (!orderDao.UpdateCart(updateCartParam.cartId, updateCartParam.goodsNum))
             {
                 throw new ApiException(CodeMessage.UpdateCartError, "UpdateCartError");
             }
@@ -124,6 +125,86 @@ namespace ACBC.Buss
             {
                 throw new ApiException(CodeMessage.UpdateCartError, "UpdateCartError");
             }
+            return "";
+        }
+
+        public object Do_PreOrder(BaseApi baseApi)
+        {
+            List<PreOrderParam> preOrderParamList = JsonConvert.DeserializeObject<List<PreOrderParam>>(baseApi.param.ToString());
+            if (preOrderParamList == null || preOrderParamList.Count == 0)
+            {
+                throw new ApiException(CodeMessage.InvalidParam, "InvalidParam");
+            }
+
+            PreOrder preOrder = new PreOrder();
+            OrderDao orderDao = new OrderDao();
+
+            string memberId = Utils.GetMemberID(baseApi.token);
+            Store store = orderDao.GetStoreByMemberId(memberId);
+            if (store == null)
+            {
+                throw new ApiException(CodeMessage.BindStoreFirst, "BindStoreFirst");
+            }
+            preOrder.addr = store.storeAddr;
+
+            string[] goodsIds = new string[preOrderParamList.Count];
+            for (int i = 0; i < preOrderParamList.Count; i++)
+            {
+                goodsIds[i] = preOrderParamList[i].goodsId;
+            }
+            List<Goods> goodsList = orderDao.GetGoodsByGoodsIds(goodsIds);
+
+            int total = 0;
+            List<PreOrderGoods> list = new List<PreOrderGoods>();
+            foreach (Goods goods in goodsList)
+            {
+                var preOrderParam = preOrderParamList.Find
+                    (
+                        item => item.goodsId.Equals(goods.goodsId)
+                    );
+                if (preOrderParam.num <= goods.goodsStock)
+                {
+                    total += goods.goodsPrice;
+                    PreOrderGoods preOrderGoods = new PreOrderGoods
+                    {
+                        cartId = preOrderParam.cartId,
+                        num = preOrderParam.num,
+                        goodsId = goods.goodsId,
+                        goodsImg = goods.goodsImg,
+                        goodsName = goods.goodsName,
+                        goodsPrice = goods.goodsPrice,
+                    };
+                    list.Add(preOrderGoods);
+                }
+            }
+            preOrder.list = list;
+            preOrder.total = total;
+            preOrder.storeCode = store.storeCode;
+            preOrder.preOrderId = Guid.NewGuid().ToString();
+
+            Utils.SetCache(preOrder.preOrderId, preOrder, 0, 5, 0);
+            return preOrder;
+        }
+
+        public object Do_PayOrder(BaseApi baseApi)
+        {
+            PayOrderParam payOrderParam = JsonConvert.DeserializeObject<PayOrderParam>(baseApi.param.ToString());
+            if (payOrderParam == null)
+            {
+                throw new ApiException(CodeMessage.InvalidParam, "InvalidParam");
+            }
+
+            PreOrder preOrder = Utils.GetCache<PreOrder>(payOrderParam.preOrderId);
+            if (preOrder == null)
+            {
+                throw new ApiException(CodeMessage.InvalidPreOrderId, "InvalidPreOrderId");
+            }
+            string memberId = Utils.GetMemberID(baseApi.token);
+            string orderCode = preOrder.storeCode + memberId.PadLeft(6, '0') + DateTime.Now.ToString("yyyyMMddHHmmss");
+
+            //insert order
+            //delete cart by cartId 
+            //update stock
             return "";
         }
     }

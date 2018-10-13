@@ -137,6 +137,18 @@ namespace ACBC.Buss
         public string cartId;
     }
 
+    public class PreOrderParam
+    {
+        public string goodsId;
+        public string cartId;
+        public int num;
+    }
+
+    public class PayOrderParam
+    {
+        public string preOrderId;
+    }
+
     #endregion
 
     #region DaoObjs
@@ -258,6 +270,48 @@ namespace ACBC.Buss
         public int goodsNum;
         public int goodsStock;
         public bool cartChecked;
+    }
+
+    public class PreOrder
+    {
+        public string preOrderId;
+        public string storeCode;
+        public string addr;
+        public int total;
+        public List<PreOrderGoods> list = new List<PreOrderGoods>();
+    }
+
+    public class PreOrderGoods
+    {
+        public string goodsId;
+        public string goodsImg;
+        public string goodsName;
+        public int goodsPrice;
+        public string cartId;
+        public int num;
+
+    }
+
+    public class Store
+    {
+        public string storeId;
+        public string storeImg;
+        public string storeName;
+        public string storeCode;
+        public string storeDesc;
+        public string storeAddr;
+        public int storeRate;
+    }
+
+    public class MemberStore
+    {
+        public string memberStoreId;
+        public string storeId;
+        public string memberId;
+        public string regPhone;
+        public string cardCode;
+        public bool isDefault;
+        public string bindDate;
     }
 
     #endregion

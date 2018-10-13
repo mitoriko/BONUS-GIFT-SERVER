@@ -235,6 +235,57 @@ namespace ACBC.Dao
             return DatabaseOperationWeb.ExecuteDML(sql);
         }
 
+        public List<Goods> GetGoodsByGoodsIds(string[] goodsIds)
+        {
+            List<Goods> list = new List<Goods>();
+            StringBuilder builder = new StringBuilder();
+            builder.AppendFormat(OrderSqls.SELECT_GOODS_LIST_BY_GOODS_IDS, String.Join(",", goodsIds));
+            string sql = builder.ToString();
+            DataTable dt = DatabaseOperationWeb.ExecuteSelectDS(sql, "T").Tables[0];
+            if (dt != null)
+            {
+                foreach(DataRow dr in dt.Rows)
+                {
+                    Goods goods = new Goods
+                    {
+                        goodsDesc = dr["GOODS_DESC"].ToString(),
+                        goodsId = dr["GOODS_ID"].ToString(),
+                        goodsName = dr["GOODS_NAME"].ToString(),
+                        goodsImg = dr["GOODS_IMG"].ToString(),
+                        goodsPrice = Convert.ToInt32(dr["GOODS_PRICE"]),
+                        goodsStock = Convert.ToInt32(dr["GOODS_STOCK"]),
+                    };
+
+                    list.Add(goods);
+                }
+                
+            }
+            return list;
+        }
+
+        public Store GetStoreByMemberId(string memberId)
+        {
+            Store store = null;
+            StringBuilder builder = new StringBuilder();
+            builder.AppendFormat(OrderSqls.SELECT_STORE_BY_MEMBER_ID, memberId);
+            string sql = builder.ToString();
+            DataTable dt = DatabaseOperationWeb.ExecuteSelectDS(sql, "T").Tables[0];
+            if (dt != null && dt.Rows.Count == 1)
+            {
+                store = new Store
+                {
+                    storeAddr = dt.Rows[0]["STORE_ADDR"].ToString(),
+                    storeCode = dt.Rows[0]["STORE_CODE"].ToString(),
+                    storeDesc = dt.Rows[0]["STORE_DESC"].ToString(),
+                    storeId = dt.Rows[0]["STORE_ID"].ToString(),
+                    storeImg = dt.Rows[0]["STORE_IMG"].ToString(),
+                    storeName = dt.Rows[0]["STORE_NAME"].ToString(),
+                    storeRate = Convert.ToInt32(dt.Rows[0]["STORE_RATE"]),
+                };
+            }
+            return store;
+        }
+
         private class OrderSqls
         {
             public const string SELECT_ORDER_GOODS_LIST_BY_OPEN_ID = ""
@@ -271,6 +322,16 @@ namespace ACBC.Dao
             public const string DELETE_CART_BY_CART_ID = ""
                 + "DELETE FROM T_BUSS_CART "
                 + "WHERE CART_ID = {0}";
+            public const string SELECT_GOODS_LIST_BY_GOODS_IDS = ""
+                + "SELECT * "
+                + "FROM T_BUSS_GOODS T "
+                + "WHERE T.GOODS_ID IN({0}) ";
+            public const string SELECT_STORE_BY_MEMBER_ID = ""
+                + "SELECT * "
+                + "FROM T_BASE_STORE T, T_BUSS_MEMBER_STORE A "
+                + "WHERE T.STORE_ID = A.STORE_ID " 
+                + "AND A.MEMBER_ID = {0} "
+                + "AND A.IS_DEFAULT = 1";
         }
     }
 }

@@ -41,5 +41,7 @@ namespace ACBC.Common
         NotEnoughGoods = 10103,
         UpdateCartError = 10104,
         DeleteCartError = 10105,
+        BindStoreFirst = 10106,
+        InvalidPreOrderId = 10107,
     }
 }
