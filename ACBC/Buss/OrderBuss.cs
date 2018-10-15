@@ -19,8 +19,8 @@ namespace ACBC.Buss
         public object Do_GetOrderList(BaseApi baseApi)
         {
             OrderDao orderDao = new OrderDao();
-            string openId = Utils.GetOpenID(baseApi.token);
-            return orderDao.GetOrderList(openId);
+            string memberId = Utils.GetMemberID(baseApi.token);
+            return orderDao.GetOrderList(memberId);
         }
 
         public object Do_GetCart(BaseApi baseApi)
@@ -202,10 +202,28 @@ namespace ACBC.Buss
             string memberId = Utils.GetMemberID(baseApi.token);
             string orderCode = preOrder.storeCode + memberId.PadLeft(6, '0') + DateTime.Now.ToString("yyyyMMddHHmmss");
 
-            //insert order
-            //delete cart by cartId 
-            //update stock
+            OrderDao orderDao = new OrderDao();
+            if(orderDao.InsertOrder(memberId, orderCode, preOrder))
+            {
+                Utils.DeleteCache(payOrderParam.preOrderId);
+            }
+            else
+            {
+                throw new ApiException(CodeMessage.CreateOrderError, "CreateOrderError");
+            }
+
             return "";
+        }
+
+        public object Do_GetOrderInfo(BaseApi baseApi)
+        {
+            GetOrderInfoParam getOrderInfoParam = JsonConvert.DeserializeObject<GetOrderInfoParam>(baseApi.param.ToString());
+            if (getOrderInfoParam == null)
+            {
+                throw new ApiException(CodeMessage.InvalidParam, "InvalidParam");
+            }
+            OrderDao orderDao = new OrderDao();
+            return orderDao.GetOrderInfo(getOrderInfoParam.orderId);
         }
     }
 }

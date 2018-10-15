@@ -1,6 +1,7 @@
 ﻿using ACBC.Buss;
 using Com.ACBC.Framework.Database;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -11,28 +12,28 @@ namespace ACBC.Dao
 {
     public class OrderDao
     {
-        public OrderList GetOrderList(string openId)
+        public OrderList GetOrderList(string memberId)
         {
             OrderList orderList = new OrderList();
             StringBuilder builder = new StringBuilder();
-            builder.AppendFormat(OrderSqls.SELECT_ORDER_GOODS_LIST_BY_OPEN_ID, openId);
+            builder.AppendFormat(OrderSqls.SELECT_ORDER_GOODS_LIST_BY_MEMBER_ID, memberId);
             string sql = builder.ToString();
             DataTable dt = DatabaseOperationWeb.ExecuteSelectDS(sql, "T").Tables[0];
             if (dt != null)
             {
                 DataRow[] unPayListRows = dt.Select("STATE = 0", "ORDER_ID, ORDER_TIME DESC");
                 DataRow[] payListRows = dt.Select("STATE = 1", "ORDER_ID, ORDER_TIME DESC");
-                DataRow[] inShopListRows = dt.Select("STATE = 2", "ORDER_ID, ORDER_TIME DESC");
+                DataRow[] inStoreListRows = dt.Select("STATE = 2", "ORDER_ID, ORDER_TIME DESC");
                 DataRow[] doneListRows = dt.Select("STATE = 3", "ORDER_ID, ORDER_TIME DESC");
 
                 string unPayListOrderId = "";
                 string payListOrderId = "";
-                string inShopListOrderId = "";
+                string inStoreListOrderId = "";
                 string doneListOrderId = "";
 
                 Order unPayOrder = new Order();
                 Order payOrder = new Order();
-                Order inShopOrder = new Order();
+                Order inStoreOrder = new Order();
                 Order doneOrder = new Order();
 
                 foreach (DataRow dr in unPayListRows)
@@ -85,21 +86,21 @@ namespace ACBC.Dao
                 }
                 orderList.payList.Add(payOrder);
 
-                foreach (DataRow dr in inShopListRows)
+                foreach (DataRow dr in inStoreListRows)
                 {
                     string orderId = dr["ORDER_ID"].ToString();
-                    if (orderId != inShopListOrderId && inShopListOrderId != "")
+                    if (orderId != inStoreListOrderId && inStoreListOrderId != "")
                     {
-                        orderList.inShopList.Add(inShopOrder);
-                        inShopOrder = new Order();
+                        orderList.inStoreList.Add(inStoreOrder);
+                        inStoreOrder = new Order();
                     }
-                    inShopListOrderId = orderId;
-                    inShopOrder.orderId = orderId;
-                    inShopOrder.orderCode = dr["ORDER_CODE"].ToString();
-                    inShopOrder.orderTime = dr["ORDER_TIME"].ToString();
-                    inShopOrder.state = dr["STATE"].ToString();
-                    inShopOrder.total = dr["TOTAL"].ToString();
-                    inShopOrder.list.Add(new OrderGoods
+                    inStoreListOrderId = orderId;
+                    inStoreOrder.orderId = orderId;
+                    inStoreOrder.orderCode = dr["ORDER_CODE"].ToString();
+                    inStoreOrder.orderTime = dr["ORDER_TIME"].ToString();
+                    inStoreOrder.state = dr["STATE"].ToString();
+                    inStoreOrder.total = dr["TOTAL"].ToString();
+                    inStoreOrder.list.Add(new OrderGoods
                     {
                         goodsId = dr["GOODS_ID"].ToString(),
                         goodsImg = dr["GOODS_IMG"].ToString(),
@@ -108,7 +109,7 @@ namespace ACBC.Dao
                         price = dr["PRICE"].ToString(),
                     });
                 }
-                orderList.inShopList.Add(inShopOrder);
+                orderList.inStoreList.Add(inStoreOrder);
 
                 foreach (DataRow dr in doneListRows)
                 {
@@ -286,13 +287,76 @@ namespace ACBC.Dao
             return store;
         }
 
+        public bool InsertOrder(string memberId, string orderCode, PreOrder preOrder)
+        {
+            ArrayList list = new ArrayList();
+            StringBuilder builder = new StringBuilder();
+            builder.AppendFormat(OrderSqls.INSERT_ORDER, memberId, orderCode, preOrder.total, preOrder.storeCode);
+            string orderSql = builder.ToString();
+            list.Add(orderSql);
+            foreach(PreOrderGoods preOrderGoods in preOrder.list)
+            {
+                builder.Clear();
+                builder.AppendFormat(
+                    OrderSqls.INSERT_ORDER_GOODS,
+                    orderCode,
+                    preOrderGoods.goodsId,
+                    preOrderGoods.goodsImg,
+                    preOrderGoods.goodsName,
+                    preOrderGoods.goodsPrice,
+                    preOrderGoods.num
+                    );
+                string orderGoodsSql = builder.ToString();
+                list.Add(orderGoodsSql);
+
+                if(preOrderGoods.cartId != null && preOrderGoods.cartId.Length > 0)
+                {
+                    builder.Clear();
+                    builder.AppendFormat(OrderSqls.DELETE_CART_BY_CART_ID, preOrderGoods.cartId);
+                    string deleteCartSql = builder.ToString();
+                    list.Add(deleteCartSql);
+                }
+            }
+            return DatabaseOperationWeb.ExecuteDML(list);
+        }
+
+        public Order GetOrderInfo(string orderId)
+        {
+            Order order = new Order();
+            StringBuilder builder = new StringBuilder();
+            builder.AppendFormat(OrderSqls.SELECT_ORDER_GOODS_LIST_BY_ORDER_ID, orderId);
+            string sql = builder.ToString();
+            DataTable dt = DatabaseOperationWeb.ExecuteSelectDS(sql, "T").Tables[0];
+            if (dt != null)
+            {
+                foreach (DataRow dr in dt.Rows)
+                {
+                    order.orderId = orderId;
+                    order.orderCode = dr["ORDER_CODE"].ToString();
+                    order.orderTime = dr["ORDER_TIME"].ToString();
+                    order.state = dr["STATE"].ToString();
+                    order.total = dr["TOTAL"].ToString();
+                    order.list.Add(new OrderGoods
+                    {
+                        goodsId = dr["GOODS_ID"].ToString(),
+                        goodsImg = dr["GOODS_IMG"].ToString(),
+                        goodsName = dr["GOODS_NAME"].ToString(),
+                        num = dr["NUM"].ToString(),
+                        price = dr["PRICE"].ToString(),
+                    });
+                }
+            }
+
+            return order;
+        }
+
         private class OrderSqls
         {
-            public const string SELECT_ORDER_GOODS_LIST_BY_OPEN_ID = ""
+            public const string SELECT_ORDER_GOODS_LIST_BY_MEMBER_ID = ""
                 + "SELECT * "
                 + "FROM T_BUSS_ORDER_GOODS A, T_BUSS_ORDER B "
-                + "WHERE A.ORDER_ID = B.ORDER_ID "
-                + "AND B.OPENID = '{0}' ";
+                + "WHERE A.ORDER_CODE = B.ORDER_CODE "
+                + "AND B.MEMBER_ID = '{0}' ";
             public const string SELECT_CART_LIST_BY_MEMBER_ID = ""
                 + "SELECT * "
                 + "FROM T_BUSS_CART A,T_BUSS_GOODS B "
@@ -332,6 +396,20 @@ namespace ACBC.Dao
                 + "WHERE T.STORE_ID = A.STORE_ID " 
                 + "AND A.MEMBER_ID = {0} "
                 + "AND A.IS_DEFAULT = 1";
+            public const string INSERT_ORDER = ""
+                + "INSERT INTO T_BUSS_ORDER "
+                + "(ORDER_CODE,TOTAL,STORE_CODE,MEMBER_ID) "
+                + "VALUES('{1}',{2},'{3}',{0})";
+            public const string INSERT_ORDER_GOODS = ""
+                + "INSERT INTO T_BUSS_ORDER_GOODS "
+                + "(GOODS_ID,GOODS_IMG,GOODS_NAME,PRICE,NUM,ORDER_CODE) "
+                + "VALUES({1},'{2}','{3}',{4},{5},'{0}')";
+            public const string SELECT_ORDER_GOODS_LIST_BY_ORDER_ID = ""
+                + "SELECT * "
+                + "FROM T_BUSS_ORDER_GOODS A, T_BUSS_ORDER B "
+                + "WHERE A.ORDER_CODE = B.ORDER_CODE "
+                + "AND B.ORDER_ID = {0} ";
+            
         }
     }
 }

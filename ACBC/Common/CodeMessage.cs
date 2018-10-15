@@ -43,5 +43,6 @@ namespace ACBC.Common
         DeleteCartError = 10105,
         BindStoreFirst = 10106,
         InvalidPreOrderId = 10107,
+        CreateOrderError = 10108,
     }
 }

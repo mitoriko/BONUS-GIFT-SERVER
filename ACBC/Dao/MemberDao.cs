@@ -37,6 +37,33 @@ namespace ACBC.Dao
             return list;
         }
 
+        public MemberInfo GetMemberInfo(string memberId)
+        {
+            MemberInfo memberInfo = new MemberInfo();
+            StringBuilder builder = new StringBuilder();
+            builder.AppendFormat(MemberSqls.SELECT_ORDER_LIST_BY_MEMBER_ID, memberId);
+            string sql = builder.ToString();
+            DataTable dt = DatabaseOperationWeb.ExecuteSelectDS(sql, "T").Tables[0];
+            if (dt != null)
+            {
+                memberInfo.unPay = dt.Select("STATE = 0", "ORDER_ID, ORDER_TIME DESC").Length;
+                memberInfo.pay = dt.Select("STATE = 1", "ORDER_ID, ORDER_TIME DESC").Length;
+                memberInfo.inStore = dt.Select("STATE = 2", "ORDER_ID, ORDER_TIME DESC").Length;
+                memberInfo.done = dt.Select("STATE = 3", "ORDER_ID, ORDER_TIME DESC").Length;
+            }
+
+            builder.Clear();
+            builder.AppendFormat(MemberSqls.SELECT_MEMBER_BY_MEMBER_ID, memberId);
+            sql = builder.ToString();
+            dt = DatabaseOperationWeb.ExecuteSelectDS(sql, "T").Tables[0];
+            if (dt != null && dt.Rows.Count == 1)
+            {
+                memberInfo.heart = Convert.ToInt32(dt.Rows[0]["HEART"]);
+            }
+
+            return memberInfo;
+        }
+
 
         private class MemberSqls
         {
@@ -45,6 +72,14 @@ namespace ACBC.Dao
                 + "FROM T_BUSS_MEMBER_STORE T "
                 + "WHERE T.MEMBER_ID = {0} "
                 + "AND IS_DEFAULT = 1";
+            public const string SELECT_ORDER_LIST_BY_MEMBER_ID = ""
+                + "SELECT * "
+                + "FROM T_BUSS_ORDER "
+                + "WHERE MEMBER_ID = {0} ";
+            public const string SELECT_MEMBER_BY_MEMBER_ID = ""
+                + "SELECT * "
+                + "FROM T_BASE_MEMBER "
+                + "WHERE MEMBER_ID = {0}";
         }
     }
 }

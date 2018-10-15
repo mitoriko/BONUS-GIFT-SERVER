@@ -149,6 +149,11 @@ namespace ACBC.Buss
         public string preOrderId;
     }
 
+    public class GetOrderInfoParam
+    {
+        public string orderId;
+    }
+
     #endregion
 
     #region DaoObjs
@@ -218,7 +223,7 @@ namespace ACBC.Buss
     {
         public List<Order> unPayList = new List<Order>();
         public List<Order> payList = new List<Order>();
-        public List<Order> inShopList = new List<Order>();
+        public List<Order> inStoreList = new List<Order>();
         public List<Order> doneList = new List<Order>();
     }
 
@@ -312,6 +317,15 @@ namespace ACBC.Buss
         public string cardCode;
         public bool isDefault;
         public string bindDate;
+    }
+
+    public class MemberInfo
+    {
+        public int unPay = 0;
+        public int pay = 0;
+        public int inStore = 0;
+        public int done = 0;
+        public int heart = 0;
     }
 
     #endregion
