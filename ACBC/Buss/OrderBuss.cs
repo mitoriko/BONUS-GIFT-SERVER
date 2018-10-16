@@ -225,5 +225,52 @@ namespace ACBC.Buss
             OrderDao orderDao = new OrderDao();
             return orderDao.GetOrderInfo(getOrderInfoParam.orderId);
         }
+
+        public object Do_PayForOrder(BaseApi baseApi)
+        {
+            PayForOrderParam payForOrderParam = JsonConvert.DeserializeObject<PayForOrderParam>(baseApi.param.ToString());
+            if (payForOrderParam == null)
+            {
+                throw new ApiException(CodeMessage.InvalidParam, "InvalidParam");
+            }
+            OrderDao orderDao = new OrderDao();
+            MemberDao memberDao = new MemberDao();
+            string memberId = Utils.GetMemberID(baseApi.token);
+            Order order = orderDao.GetOrderInfo(payForOrderParam.orderId);
+            if (order.state != "0")
+            {
+                throw new ApiException(CodeMessage.InvalidOrderState, "InvalidOrderState");
+            }
+            int goodsNum = order.list.Count;
+            string[] goodsIds = new string[goodsNum];
+            for(int i = 0; i < goodsNum; i++)
+            {
+                goodsIds[i] = order.list[i].goodsId;
+            }
+            List<Goods> goodsList = orderDao.GetGoodsByGoodsIds(goodsIds);
+            foreach(Goods goods in goodsList)
+            {
+                var orderGoods = order.list.Find
+                    (
+                        item => item.goodsId.Equals(goods.goodsId)
+                    );
+                if(Convert.ToInt32(orderGoods.num) > goods.goodsStock)
+                {
+                    throw new ApiException(CodeMessage.NotEnoughGoods, "NotEnoughGoods");
+                }
+            }
+            MemberInfo memberInfo = memberDao.GetMemberInfo(memberId);
+            if(memberInfo.heart < Convert.ToInt32(order.total))
+            {
+                throw new ApiException(CodeMessage.NotEnoughHearts, "NotEnoughHearts");
+            }
+
+            if(!orderDao.PayForOrder(memberId, order))
+            {
+                throw new ApiException(CodeMessage.PayForOrderError, "PayForOrderError");
+            }
+
+            return "";
+        }
     }
 }

@@ -154,6 +154,11 @@ namespace ACBC.Buss
         public string orderId;
     }
 
+    public class PayForOrderParam
+    {
+        public string orderId;
+    }
+
     #endregion
 
     #region DaoObjs

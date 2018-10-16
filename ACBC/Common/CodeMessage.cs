@@ -44,5 +44,8 @@ namespace ACBC.Common
         BindStoreFirst = 10106,
         InvalidPreOrderId = 10107,
         CreateOrderError = 10108,
+        InvalidOrderState = 10109,
+        NotEnoughHearts = 10110,
+        PayForOrderError = 10111,
     }
 }

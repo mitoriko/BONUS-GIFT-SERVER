@@ -350,6 +350,26 @@ namespace ACBC.Dao
             return order;
         }
 
+        public bool PayForOrder(string memberId, Order order)
+        {
+            ArrayList list = new ArrayList();
+            StringBuilder builder = new StringBuilder();
+            foreach(OrderGoods orderGoods in order.list)
+            {
+                builder.Clear();
+                builder.AppendFormat(OrderSqls.UPDATE_GOODS_STOCK_BY_GOODS_ID, orderGoods.goodsId, orderGoods.num);
+                list.Add(builder.ToString());
+            }
+            builder.Clear();
+            builder.AppendFormat(OrderSqls.UPDATE_ORDER_STATE_BY_ORDER_ID, order.orderId);
+            list.Add(builder.ToString());
+            builder.Clear();
+            builder.AppendFormat(OrderSqls.UPDATE_MEMBER_HEART_BY_MEMBER_ID, memberId, order.total);
+            list.Add(builder.ToString());
+
+            return DatabaseOperationWeb.ExecuteDML(list);
+        }
+
         private class OrderSqls
         {
             public const string SELECT_ORDER_GOODS_LIST_BY_MEMBER_ID = ""
@@ -409,7 +429,18 @@ namespace ACBC.Dao
                 + "FROM T_BUSS_ORDER_GOODS A, T_BUSS_ORDER B "
                 + "WHERE A.ORDER_CODE = B.ORDER_CODE "
                 + "AND B.ORDER_ID = {0} ";
-            
+            public const string UPDATE_GOODS_STOCK_BY_GOODS_ID = ""
+                + "UPDATE T_BUSS_GOODS "
+                + "SET GOODS_STOCK = GOODS_STOCK - {1} "
+                + "WHERE GOODS_ID = {0} ";
+            public const string UPDATE_ORDER_STATE_BY_ORDER_ID = ""
+                + "UPDATE T_BUSS_ORDER "
+                + "SET STATE = 1, PAY_TIME = NOW() "
+                + "WHERE ORDER_ID = {0} ";
+            public const string UPDATE_MEMBER_HEART_BY_MEMBER_ID = ""
+                + "UPDATE T_BASE_MEMBER "
+                + "SET HEART = HEART - {1} "
+                + "WHERE MEMBER_ID = {0} ";
         }
     }
 }
