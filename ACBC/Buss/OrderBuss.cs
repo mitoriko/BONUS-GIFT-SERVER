@@ -203,7 +203,7 @@ namespace ACBC.Buss
             string orderCode = preOrder.storeCode + memberId.PadLeft(6, '0') + DateTime.Now.ToString("yyyyMMddHHmmss");
 
             OrderDao orderDao = new OrderDao();
-            if(orderDao.InsertOrder(memberId, orderCode, preOrder))
+            if(orderDao.InsertOrder(memberId, orderCode, preOrder, payOrderParam.remark))
             {
                 Utils.DeleteCache(payOrderParam.preOrderId);
             }

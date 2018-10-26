@@ -147,6 +147,7 @@ namespace ACBC.Buss
     public class PayOrderParam
     {
         public string preOrderId;
+        public string remark;
     }
 
     public class GetOrderInfoParam
@@ -280,6 +281,7 @@ namespace ACBC.Buss
         public int goodsNum;
         public int goodsStock;
         public bool cartChecked;
+        public bool edit;
     }
 
     public class PreOrder

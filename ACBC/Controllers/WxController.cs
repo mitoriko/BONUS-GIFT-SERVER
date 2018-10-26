@@ -43,6 +43,12 @@ namespace ACBC.Controllers
             return Json(Global.BUSS.BussResults(this, memberApi));
         }
 
-        //Todo 待支付订单支付（check订单状态；获取余额并验证；处理库存；变更状态）
+        //会员卡列表
+        //添加会员卡
+        //获取店铺列表菜单（ID、Name）
+
+
+
+        //积分兑换
     }
 }

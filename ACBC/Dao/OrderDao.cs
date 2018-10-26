@@ -154,6 +154,7 @@ namespace ACBC.Dao
                     CartGoods cartGoods = new CartGoods
                     {
                         cartChecked = dr["CART_CHECKED"].ToString() == "0" ? false : true,
+                        edit = false,
                         goodsId = dr["GOODS_ID"].ToString(),
                         goodsImg = dr["GOODS_IMG"].ToString(),
                         goodsName = dr["GOODS_NAME"].ToString(),
@@ -287,11 +288,11 @@ namespace ACBC.Dao
             return store;
         }
 
-        public bool InsertOrder(string memberId, string orderCode, PreOrder preOrder)
+        public bool InsertOrder(string memberId, string orderCode, PreOrder preOrder, string remark)
         {
             ArrayList list = new ArrayList();
             StringBuilder builder = new StringBuilder();
-            builder.AppendFormat(OrderSqls.INSERT_ORDER, memberId, orderCode, preOrder.total, preOrder.storeCode);
+            builder.AppendFormat(OrderSqls.INSERT_ORDER, memberId, orderCode, preOrder.total, preOrder.storeCode, remark);
             string orderSql = builder.ToString();
             list.Add(orderSql);
             foreach(PreOrderGoods preOrderGoods in preOrder.list)
@@ -418,8 +419,8 @@ namespace ACBC.Dao
                 + "AND A.IS_DEFAULT = 1";
             public const string INSERT_ORDER = ""
                 + "INSERT INTO T_BUSS_ORDER "
-                + "(ORDER_CODE,TOTAL,STORE_CODE,MEMBER_ID) "
-                + "VALUES('{1}',{2},'{3}',{0})";
+                + "(ORDER_CODE,TOTAL,STORE_CODE,MEMBER_ID,REMARK) "
+                + "VALUES('{1}',{2},'{3}',{0},'{4}')";
             public const string INSERT_ORDER_GOODS = ""
                 + "INSERT INTO T_BUSS_ORDER_GOODS "
                 + "(GOODS_ID,GOODS_IMG,GOODS_NAME,PRICE,NUM,ORDER_CODE) "
