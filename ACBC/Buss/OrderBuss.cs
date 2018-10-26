@@ -164,7 +164,7 @@ namespace ACBC.Buss
                     );
                 if (preOrderParam.num <= goods.goodsStock)
                 {
-                    total += goods.goodsPrice;
+                    total += goods.goodsPrice * preOrderParam.num;
                     PreOrderGoods preOrderGoods = new PreOrderGoods
                     {
                         cartId = preOrderParam.cartId,
