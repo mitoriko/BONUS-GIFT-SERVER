@@ -315,6 +315,7 @@ namespace ACBC.Buss
         public string storeCode;
         public string storeDesc;
         public string storeAddr;
+        public string storeCardImg;
         public int storeRate;
     }
 
@@ -327,6 +328,8 @@ namespace ACBC.Buss
         public string cardCode;
         public bool isDefault;
         public string bindDate;
+        public string storeCardImg;
+        public string storeAddr;
     }
 
     public class MemberInfo

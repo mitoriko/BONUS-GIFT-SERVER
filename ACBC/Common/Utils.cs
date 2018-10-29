@@ -66,7 +66,7 @@ namespace ACBC.Common
             return SetCache(value, Global.REDIS_EXPIRY_H, Global.REDIS_EXPIRY_M, Global.REDIS_EXPIRY_S);
         }
 
-        public static dynamic GetCache<T>(string key)
+        public static dynamic GetCache<T>(string key) 
         {
             key = Global.NAMESPACE + "." + key;
             var db = RedisManager.Manager.GetDatabase(Global.REDIS_NO);
@@ -77,13 +77,13 @@ namespace ACBC.Common
             return null;
         }
 
-        public static dynamic GetCache<T>()
+        public static dynamic GetCache<T>() where T : BussCache
         {
             string key = typeof(T).FullName;
             return GetCache<T>(key);
         }
 
-        public static dynamic GetCache<T>(BussParam bussParam)
+        public static dynamic GetCache<T>(BussParam bussParam) where T : BussCache
         {
             string key = typeof(T).FullName + bussParam.GetUnique();
             return GetCache<T>(key);
@@ -108,7 +108,7 @@ namespace ACBC.Common
             db.KeyDelete(keys.ToArray());
         }
 
-        public static void DeleteCache<T>(bool delChild = false)
+        public static void DeleteCache<T>(bool delChild = false) where T : BussCache
         {
             string key = typeof(T).FullName;
             if(delChild)
