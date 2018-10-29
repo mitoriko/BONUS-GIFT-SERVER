@@ -162,13 +162,13 @@ namespace ACBC.Buss
                     (
                         item => item.goodsId.Equals(goods.goodsId)
                     );
-                if (preOrderParam.num <= goods.goodsStock)
+                if (preOrderParam.goodsNum <= goods.goodsStock)
                 {
-                    total += goods.goodsPrice * preOrderParam.num;
+                    total += goods.goodsPrice * preOrderParam.goodsNum;
                     PreOrderGoods preOrderGoods = new PreOrderGoods
                     {
                         cartId = preOrderParam.cartId,
-                        num = preOrderParam.num,
+                        goodsNum = preOrderParam.goodsNum,
                         goodsId = goods.goodsId,
                         goodsImg = goods.goodsImg,
                         goodsName = goods.goodsName,
@@ -206,13 +206,19 @@ namespace ACBC.Buss
             if(orderDao.InsertOrder(memberId, orderCode, preOrder, payOrderParam.remark))
             {
                 Utils.DeleteCache(payOrderParam.preOrderId);
+                Order order = orderDao.GetOrderInfoByCode(orderCode);
+                if(order == null)
+                {
+                    throw new ApiException(CodeMessage.CreateOrderError, "CreateOrderError");
+                }
+                return order;
             }
             else
             {
                 throw new ApiException(CodeMessage.CreateOrderError, "CreateOrderError");
             }
 
-            return "";
+            
         }
 
         public object Do_GetOrderInfo(BaseApi baseApi)
@@ -254,7 +260,7 @@ namespace ACBC.Buss
                     (
                         item => item.goodsId.Equals(goods.goodsId)
                     );
-                if(Convert.ToInt32(orderGoods.num) > goods.goodsStock)
+                if(Convert.ToInt32(orderGoods.goodsNum) > goods.goodsStock)
                 {
                     throw new ApiException(CodeMessage.NotEnoughGoods, "NotEnoughGoods");
                 }

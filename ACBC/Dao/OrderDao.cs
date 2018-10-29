@@ -46,6 +46,7 @@ namespace ACBC.Dao
                     }
                     unPayListOrderId = orderId;
                     unPayOrder.orderId = orderId;
+                    unPayOrder.addr = dr["ADDR"].ToString();
                     unPayOrder.orderCode = dr["ORDER_CODE"].ToString();
                     unPayOrder.orderTime = dr["ORDER_TIME"].ToString();
                     unPayOrder.state = dr["STATE"].ToString();
@@ -55,11 +56,13 @@ namespace ACBC.Dao
                         goodsId = dr["GOODS_ID"].ToString(),
                         goodsImg = dr["GOODS_IMG"].ToString(),
                         goodsName = dr["GOODS_NAME"].ToString(),
-                        num = dr["NUM"].ToString(),
+                        goodsNum = dr["NUM"].ToString(),
                         price = dr["PRICE"].ToString(),
                     });
                 }
-                orderList.unPayList.Add(unPayOrder);
+                if (unPayOrder.orderId != null)
+                    orderList.unPayList.Add(unPayOrder);
+                
 
                 foreach (DataRow dr in payListRows)
                 {
@@ -71,6 +74,7 @@ namespace ACBC.Dao
                     }
                     payListOrderId = orderId;
                     payOrder.orderId = orderId;
+                    payOrder.addr = dr["ADDR"].ToString();
                     payOrder.orderCode = dr["ORDER_CODE"].ToString();
                     payOrder.orderTime = dr["ORDER_TIME"].ToString();
                     payOrder.state = dr["STATE"].ToString();
@@ -80,11 +84,12 @@ namespace ACBC.Dao
                         goodsId = dr["GOODS_ID"].ToString(),
                         goodsImg = dr["GOODS_IMG"].ToString(),
                         goodsName = dr["GOODS_NAME"].ToString(),
-                        num = dr["NUM"].ToString(),
+                        goodsNum = dr["NUM"].ToString(),
                         price = dr["PRICE"].ToString(),
                     });
                 }
-                orderList.payList.Add(payOrder);
+                if (payOrder.orderId != null)
+                    orderList.payList.Add(payOrder);
 
                 foreach (DataRow dr in inStoreListRows)
                 {
@@ -95,6 +100,7 @@ namespace ACBC.Dao
                         inStoreOrder = new Order();
                     }
                     inStoreListOrderId = orderId;
+                    inStoreOrder.addr = dr["ADDR"].ToString();
                     inStoreOrder.orderId = orderId;
                     inStoreOrder.orderCode = dr["ORDER_CODE"].ToString();
                     inStoreOrder.orderTime = dr["ORDER_TIME"].ToString();
@@ -105,11 +111,12 @@ namespace ACBC.Dao
                         goodsId = dr["GOODS_ID"].ToString(),
                         goodsImg = dr["GOODS_IMG"].ToString(),
                         goodsName = dr["GOODS_NAME"].ToString(),
-                        num = dr["NUM"].ToString(),
+                        goodsNum = dr["NUM"].ToString(),
                         price = dr["PRICE"].ToString(),
                     });
                 }
-                orderList.inStoreList.Add(inStoreOrder);
+                if (inStoreOrder.orderId != null)
+                    orderList.inStoreList.Add(inStoreOrder);
 
                 foreach (DataRow dr in doneListRows)
                 {
@@ -121,6 +128,7 @@ namespace ACBC.Dao
                     }
                     doneListOrderId = orderId;
                     doneOrder.orderId = orderId;
+                    doneOrder.addr = dr["ADDR"].ToString();
                     doneOrder.orderCode = dr["ORDER_CODE"].ToString();
                     doneOrder.orderTime = dr["ORDER_TIME"].ToString();
                     doneOrder.state = dr["STATE"].ToString();
@@ -130,11 +138,12 @@ namespace ACBC.Dao
                         goodsId = dr["GOODS_ID"].ToString(),
                         goodsImg = dr["GOODS_IMG"].ToString(),
                         goodsName = dr["GOODS_NAME"].ToString(),
-                        num = dr["NUM"].ToString(),
+                        goodsNum = dr["NUM"].ToString(),
                         price = dr["PRICE"].ToString(),
                     });
                 }
-                orderList.doneList.Add(doneOrder);
+                if (doneOrder.orderId != null)
+                    orderList.doneList.Add(doneOrder);
             }
 
             return orderList;
@@ -292,7 +301,7 @@ namespace ACBC.Dao
         {
             ArrayList list = new ArrayList();
             StringBuilder builder = new StringBuilder();
-            builder.AppendFormat(OrderSqls.INSERT_ORDER, memberId, orderCode, preOrder.total, preOrder.storeCode, remark);
+            builder.AppendFormat(OrderSqls.INSERT_ORDER, memberId, orderCode, preOrder.total, preOrder.storeCode, remark, preOrder.addr);
             string orderSql = builder.ToString();
             list.Add(orderSql);
             foreach(PreOrderGoods preOrderGoods in preOrder.list)
@@ -305,7 +314,7 @@ namespace ACBC.Dao
                     preOrderGoods.goodsImg,
                     preOrderGoods.goodsName,
                     preOrderGoods.goodsPrice,
-                    preOrderGoods.num
+                    preOrderGoods.goodsNum
                     );
                 string orderGoodsSql = builder.ToString();
                 list.Add(orderGoodsSql);
@@ -321,6 +330,37 @@ namespace ACBC.Dao
             return DatabaseOperationWeb.ExecuteDML(list);
         }
 
+        public Order GetOrderInfoByCode(string orderCode)
+        {
+            Order order = new Order();
+            StringBuilder builder = new StringBuilder();
+            builder.AppendFormat(OrderSqls.SELECT_ORDER_GOODS_LIST_BY_ORDER_CODE, orderCode);
+            string sql = builder.ToString();
+            DataTable dt = DatabaseOperationWeb.ExecuteSelectDS(sql, "T").Tables[0];
+            if (dt != null)
+            {
+                foreach (DataRow dr in dt.Rows)
+                {
+                    order.addr = dr["ADDR"].ToString();
+                    order.orderId = dr["ORDER_ID"].ToString();
+                    order.orderCode = dr["ORDER_CODE"].ToString();
+                    order.orderTime = dr["ORDER_TIME"].ToString();
+                    order.state = dr["STATE"].ToString();
+                    order.total = dr["TOTAL"].ToString();
+                    order.list.Add(new OrderGoods
+                    {
+                        goodsId = dr["GOODS_ID"].ToString(),
+                        goodsImg = dr["GOODS_IMG"].ToString(),
+                        goodsName = dr["GOODS_NAME"].ToString(),
+                        goodsNum = dr["NUM"].ToString(),
+                        price = dr["PRICE"].ToString(),
+                    });
+                }
+            }
+
+            return order;
+        }
+
         public Order GetOrderInfo(string orderId)
         {
             Order order = new Order();
@@ -332,6 +372,7 @@ namespace ACBC.Dao
             {
                 foreach (DataRow dr in dt.Rows)
                 {
+                    order.addr = dr["ADDR"].ToString();
                     order.orderId = orderId;
                     order.orderCode = dr["ORDER_CODE"].ToString();
                     order.orderTime = dr["ORDER_TIME"].ToString();
@@ -342,7 +383,7 @@ namespace ACBC.Dao
                         goodsId = dr["GOODS_ID"].ToString(),
                         goodsImg = dr["GOODS_IMG"].ToString(),
                         goodsName = dr["GOODS_NAME"].ToString(),
-                        num = dr["NUM"].ToString(),
+                        goodsNum = dr["NUM"].ToString(),
                         price = dr["PRICE"].ToString(),
                     });
                 }
@@ -358,7 +399,7 @@ namespace ACBC.Dao
             foreach(OrderGoods orderGoods in order.list)
             {
                 builder.Clear();
-                builder.AppendFormat(OrderSqls.UPDATE_GOODS_STOCK_BY_GOODS_ID, orderGoods.goodsId, orderGoods.num);
+                builder.AppendFormat(OrderSqls.UPDATE_GOODS_STOCK_BY_GOODS_ID, orderGoods.goodsId, orderGoods.goodsNum);
                 list.Add(builder.ToString());
             }
             builder.Clear();
@@ -419,8 +460,8 @@ namespace ACBC.Dao
                 + "AND A.IS_DEFAULT = 1";
             public const string INSERT_ORDER = ""
                 + "INSERT INTO T_BUSS_ORDER "
-                + "(ORDER_CODE,TOTAL,STORE_CODE,MEMBER_ID,REMARK) "
-                + "VALUES('{1}',{2},'{3}',{0},'{4}')";
+                + "(ORDER_CODE,TOTAL,STORE_CODE,MEMBER_ID,REMARK,ADDR) "
+                + "VALUES('{1}',{2},'{3}',{0},'{4}','{5}')";
             public const string INSERT_ORDER_GOODS = ""
                 + "INSERT INTO T_BUSS_ORDER_GOODS "
                 + "(GOODS_ID,GOODS_IMG,GOODS_NAME,PRICE,NUM,ORDER_CODE) "
@@ -442,6 +483,11 @@ namespace ACBC.Dao
                 + "UPDATE T_BASE_MEMBER "
                 + "SET HEART = HEART - {1} "
                 + "WHERE MEMBER_ID = {0} ";
+            public const string SELECT_ORDER_GOODS_LIST_BY_ORDER_CODE = ""
+                + "SELECT * "
+                + "FROM T_BUSS_ORDER_GOODS A, T_BUSS_ORDER B "
+                + "WHERE A.ORDER_CODE = B.ORDER_CODE "
+                + "AND B.ORDER_CODE = '{0}' ";
         }
     }
 }

@@ -81,11 +81,18 @@ namespace ACBC.Dao
                         lastMonth = curMonth;
                         monthList.Add(lastMonth);
                     }
+                    DateTime dtm = new DateTime(
+                        Convert.ToInt32(dr["SHOW_YEAR"]),
+                        Convert.ToInt32(dr["SHOW_MONTH"]),
+                        Convert.ToInt32(dr["SHOW_DAY"])
+                        );
                     ShowDay showDay = new ShowDay
                     {
                         showId = dr["SHOW_ID"].ToString(),
                         showImg = dr["SHOW_IMG"].ToString(),
                         showTitle = dr["SHOW_TITLE"].ToString(),
+                        showDay = dr["SHOW_DAY"].ToString(),
+                        showMonth = dtm.ToString("MMMM", new System.Globalization.CultureInfo("en-us")).Substring(0, 3) + "." + dtm.Year,
                     };
                     curDayList.Add(showDay);
                 }

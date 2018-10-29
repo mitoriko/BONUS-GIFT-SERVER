@@ -141,7 +141,7 @@ namespace ACBC.Buss
     {
         public string goodsId;
         public string cartId;
-        public int num;
+        public int goodsNum;
     }
 
     public class PayOrderParam
@@ -211,6 +211,8 @@ namespace ACBC.Buss
         public string showId;
         public string showImg;
         public string showTitle;
+        public string showDay;
+        public string showMonth;
     }
 
     public class ShowDayGoods
@@ -235,6 +237,7 @@ namespace ACBC.Buss
 
     public class Order
     {
+        public string addr;
         public string orderId;
         public string orderCode;
         public string total;
@@ -249,7 +252,7 @@ namespace ACBC.Buss
         public string goodsImg;
         public string goodsName;
         public string price;
-        public string num;
+        public string goodsNum;
     }
 
     public class Goods : BussCache
@@ -300,7 +303,7 @@ namespace ACBC.Buss
         public string goodsName;
         public int goodsPrice;
         public string cartId;
-        public int num;
+        public int goodsNum;
 
     }
 
