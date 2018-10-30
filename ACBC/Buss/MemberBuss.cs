@@ -21,5 +21,16 @@ namespace ACBC.Buss
             return memberDao.GetMemberInfo(memberId);
 
         }
+
+        public object Do_GetStoreMemberList(BaseApi baseApi)
+        {
+            MemberDao memberDao = new MemberDao();
+            string memberId = Utils.GetMemberID(baseApi.token);
+            List<MemberStore> list = memberDao.GetMemberStoreListByMemberId(memberId);
+            return list;
+
+        }
+
+        
     }
 }

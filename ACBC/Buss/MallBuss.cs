@@ -86,5 +86,44 @@ namespace ACBC.Buss
 
             return goods;
         }
+
+        public object Do_GetStoreList(BaseApi baseApi)
+        {
+            StoreList storeList = Utils.GetCache<StoreList>();
+            if(storeList == null)
+            {
+                MallDao mallDao = new MallDao();
+                string memberId = Utils.GetMemberID(baseApi.token);
+                storeList = new StoreList();
+                storeList.storeList = mallDao.GetStoreList();
+                Utils.SetCache(storeList);
+            }
+            return storeList;
+
+        }
+
+        public object Do_GetStoreInfo(BaseApi baseApi)
+        {
+            GetStoreInfoParam getStoreInfoParam = JsonConvert.DeserializeObject<GetStoreInfoParam>(baseApi.param.ToString());
+            if (getStoreInfoParam == null)
+            {
+                throw new ApiException(CodeMessage.InvalidParam, "InvalidParam");
+            }
+
+            StoreInfo storeInfo = Utils.GetCache<StoreInfo>(getStoreInfoParam);
+            if(storeInfo == null)
+            {
+                MallDao mallDao = new MallDao();
+                storeInfo = mallDao.GetStoreInfo(getStoreInfoParam.storeId);
+                if (storeInfo == null)
+                {
+                    throw new ApiException(CodeMessage.InvalidStore, "InvalidStore");
+                }
+                storeInfo.Unique = getStoreInfoParam.GetUnique();
+                Utils.SetCache(storeInfo);
+            }
+            return storeInfo;
+
+        }
     }
 }

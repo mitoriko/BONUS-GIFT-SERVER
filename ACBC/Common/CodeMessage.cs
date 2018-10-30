@@ -47,5 +47,7 @@ namespace ACBC.Common
         InvalidOrderState = 10109,
         NotEnoughHearts = 10110,
         PayForOrderError = 10111,
+        InvalidStore = 10112,
+
     }
 }

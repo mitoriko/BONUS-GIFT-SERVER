@@ -160,6 +160,11 @@ namespace ACBC.Buss
         public string orderId;
     }
 
+    public class GetStoreInfoParam : BussParam
+    {
+        public string storeId;
+    }
+
     #endregion
 
     #region DaoObjs
@@ -315,8 +320,45 @@ namespace ACBC.Buss
         public string storeCode;
         public string storeDesc;
         public string storeAddr;
+        public string storeTel;
         public string storeCardImg;
         public int storeRate;
+    }
+
+    public class StoreList : BussCache
+    {
+        public List<Store> storeList = new List<Store>();
+    }
+
+    public class StoreInfo : BussCache
+    {
+        public string storeId;
+        public string storeImg;
+        public string storeName;
+        public string storeCode;
+        public string storeDesc;
+        public string storeAddr;
+        public string storeTel;
+        public string storeCardImg;
+        public int storeRate;
+        public List<StoreImg> storeImgs = new List<StoreImg>();
+        public List<StoreGoods> storeGoods = new List<StoreGoods>();
+    }
+
+    public class StoreImg
+    {
+        public string storeId;
+        public string storeImgId;
+        public string storeImg;
+    }
+
+    public class StoreGoods
+    {
+        public string storeGoodsId;
+        public string storeId;
+        public string storeGoodsImg;
+        public string storeGoodsName;
+        public string storeGoodsDesc;
     }
 
     public class MemberStore

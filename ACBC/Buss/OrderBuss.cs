@@ -100,7 +100,7 @@ namespace ACBC.Buss
                 throw new ApiException(CodeMessage.InvalidGoods, "InvalidGoods");
             }
 
-            if (goods.goodsStock <= updateCartParam.goodsNum)
+            if (goods.goodsStock < updateCartParam.goodsNum)
             {
                 throw new ApiException(CodeMessage.NotEnoughGoods, "NotEnoughGoods");
             }
