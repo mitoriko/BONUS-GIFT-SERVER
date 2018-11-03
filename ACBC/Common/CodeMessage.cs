@@ -36,6 +36,9 @@ namespace ACBC.Common
         MemberExist = 10001,
         MemberRegError = 10002,
 
+        SetDefaultMemberStoreError = 10003,
+        SmsCodeError = 10004,
+
         HomeInitError = 10101,
         InvalidGoods = 10102,
         NotEnoughGoods = 10103,

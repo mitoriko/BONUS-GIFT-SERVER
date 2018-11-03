@@ -1,6 +1,7 @@
 ﻿using ACBC.Buss;
 using Com.ACBC.Framework.Database;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -33,6 +34,7 @@ namespace ACBC.Dao
                         storeAddr = dr["STORE_ADDR"].ToString(),
                         storeCardImg = dr["STORE_CARD_IMG"].ToString(),
                         storeId = dr["STORE_ID"].ToString(),
+                        storeName = dr["STORE_NAME"].ToString(),
                     };
                     list.Add(memberStore);
                 }
@@ -68,7 +70,19 @@ namespace ACBC.Dao
             return memberInfo;
         }
 
-        
+        public bool SetDefaultMemberStore(string memberId, string storeId)
+        {
+            ArrayList list = new ArrayList();
+            StringBuilder builder = new StringBuilder();
+            builder.AppendFormat(MemberSqls.UPDATE_DEFAULT_MEMBER_STORE_1, memberId);
+            string sql = builder.ToString();
+            list.Add(sql);
+            builder.Clear();
+            builder.AppendFormat(MemberSqls.UPDATE_DEFAULT_MEMBER_STORE_2, memberId, storeId);
+            sql = builder.ToString();
+            list.Add(sql);
+            return DatabaseOperationWeb.ExecuteDML(list);
+        }
 
         private class MemberSqls
         {
@@ -85,6 +99,15 @@ namespace ACBC.Dao
                 + "FROM T_BASE_STORE A,T_BUSS_MEMBER_STORE B "
                 + "WHERE A.STORE_ID = B.STORE_ID " 
                 + "AND B.MEMBER_ID = {0}";
+            public const string UPDATE_DEFAULT_MEMBER_STORE_1 = ""
+                + "UPDATE T_BUSS_MEMBER_STORE "
+                + "SET IS_DEFAULT = 0 "
+                + "WHERE MEMBER_ID = {0}";
+            public const string UPDATE_DEFAULT_MEMBER_STORE_2 = ""
+                + "UPDATE T_BUSS_MEMBER_STORE "
+                + "SET IS_DEFAULT = 1 "
+                + "WHERE MEMBER_ID = {0} "
+                + "AND STORE_ID = {1}";
         }
     }
 }

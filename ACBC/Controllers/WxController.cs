@@ -47,9 +47,6 @@ namespace ACBC.Controllers
         //添加会员卡(手机验证、设置主店铺)
         //设置主店铺
 
-        //获取店铺列表菜单（ID、Name、Img）
-        //店铺详情
-
         //积分兑换
     }
 }

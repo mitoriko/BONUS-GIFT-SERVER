@@ -165,6 +165,15 @@ namespace ACBC.Buss
         public string storeId;
     }
 
+    public class SetDefaultMemberStoreParam
+    {
+        public string storeId;
+    }
+
+    public class CheckCodeParam
+    {
+        public string phone;
+    }
     #endregion
 
     #region DaoObjs
@@ -372,6 +381,7 @@ namespace ACBC.Buss
         public string bindDate;
         public string storeCardImg;
         public string storeAddr;
+        public string storeName;
     }
 
     public class MemberInfo
