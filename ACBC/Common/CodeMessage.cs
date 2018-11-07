@@ -35,6 +35,10 @@ namespace ACBC.Common
 
         MemberExist = 10001,
         MemberRegError = 10002,
+        StoreMemberExist = 10003,
+        RemoteStoreMemberNotExist = 10004,
+        BindStoreMemberError = 10005,
+        InvalidCheckCode = 10006,
 
         SetDefaultMemberStoreError = 10003,
         SmsCodeError = 10004,
@@ -51,6 +55,8 @@ namespace ACBC.Common
         NotEnoughHearts = 10110,
         PayForOrderError = 10111,
         InvalidStore = 10112,
+
+
 
     }
 }

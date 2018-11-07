@@ -71,7 +71,7 @@ namespace ACBC.Buss
             sessionBag.Name = JsonConvert.SerializeObject(sessionUser);
             SessionContainer.Update(sessionBag.Key, sessionBag);
             StringBuilder builder = new StringBuilder();
-            builder.AppendFormat(Global.SMS_CODE_URL, checkCodeParam.phone, code);
+            builder.AppendFormat(Global.SMS_CODE_URL, Global.SMS_CODE, Global.SMS_TPL, checkCodeParam.phone, code);
             string url = builder.ToString();
             string res = Utils.GetHttp(url);
 
@@ -84,9 +84,57 @@ namespace ACBC.Buss
             return "";
         }
 
-        //public object Do_BindMemberStore(BaseApi baseApi)
-        //{
+        public object Do_BindMemberStore(BaseApi baseApi)
+        {
+            BindStoreParam bindStoreParam = JsonConvert.DeserializeObject<BindStoreParam>(baseApi.param.ToString());
+            if (bindStoreParam == null)
+            {
+                throw new ApiException(CodeMessage.InvalidParam, "InvalidParam");
+            }
 
-        //}
+            MemberDao memberDao = new MemberDao();
+            string memberId = Utils.GetMemberID(baseApi.token);
+
+            //check phone code
+            SessionBag sessionBag = SessionContainer.GetSession(baseApi.token);
+            SessionUser sessionUser = JsonConvert.DeserializeObject<SessionUser>(sessionBag.Name);
+            if (sessionUser == null)
+            {
+                throw new ApiException(CodeMessage.InvalidToken, "InvalidToken");
+            }
+            if(sessionUser.checkCode != bindStoreParam.checkCode ||
+                sessionUser.checkPhone != bindStoreParam.phone)
+            {
+                throw new ApiException(CodeMessage.InvalidCheckCode, "InvalidCheckCode");
+            }
+            sessionUser.checkCode = "";
+            sessionUser.checkPhone = "";
+            sessionBag.Name = JsonConvert.SerializeObject(sessionUser);
+            SessionContainer.Update(sessionBag.Key, sessionBag);
+            //check exist store member
+            List<MemberStore> memberStoreList = memberDao.GetMemberStoreListByMemberId(memberId);
+            MemberStore memberStore = memberStoreList.Find
+                    (
+                        item => item.storeId.Equals(bindStoreParam.storeId)
+                    );
+            if(memberStore != null)
+            {
+                throw new ApiException(CodeMessage.StoreMemberExist, "StoreMemberExist");
+            }
+            //get remote member
+            RemoteStoreMember remoteStoreMember = memberDao.GetRemoteStoreMember(bindStoreParam.storeId, bindStoreParam.phone);
+            if (remoteStoreMember == null)
+            {
+                throw new ApiException(CodeMessage.RemoteStoreMemberNotExist, "RemoteStoreMemberNotExist");
+            }
+            //get need default
+            bool setDefault = memberStoreList.Count == 0;
+            //bind remote member
+            if (!memberDao.BindBindMemberStore(memberId, remoteStoreMember, setDefault))
+            {
+                throw new ApiException(CodeMessage.BindStoreMemberError, "BindStoreMemberError");
+            }
+            return "";
+        }
     }
 }

@@ -174,6 +174,14 @@ namespace ACBC.Buss
     {
         public string phone;
     }
+
+    public class BindStoreParam
+    {
+        public string phone;
+        public string checkCode;
+        public string storeId;
+        public string cardCode;
+    }
     #endregion
 
     #region DaoObjs
@@ -391,6 +399,27 @@ namespace ACBC.Buss
         public int inStore = 0;
         public int done = 0;
         public int heart = 0;
+    }
+
+    public class RemoteStoreMember
+    {
+        public string storeMemberId;
+        public string storeId;
+        public string phone;
+        public string regTime;
+        public string cardCode;
+        public int point;
+    }
+
+    public class RemotePointCommit
+    {
+        public string pointCommitId;
+        public string storeId;
+        public string phone;
+        public string memberId;
+        public string state;
+        public string type;
+        public int point;
     }
 
     #endregion

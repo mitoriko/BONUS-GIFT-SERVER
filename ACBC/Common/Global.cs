@@ -19,7 +19,7 @@ namespace ACBC.Common
         public const int REDIS_EXPIRY_M = 0;
         public const int REDIS_EXPIRY_S = 0;
 
-        public const string SMS_CODE_URL = "http://v.juhe.cn/sms/send?mobile={0}&tpl_id=68600&tpl_value=%23code%23%3D{1}&dtype=&key=7c21d791256af1ffdd85375c64846358";
+        public const string SMS_CODE_URL = "http://v.juhe.cn/sms/send?mobile={3}&tpl_id={1}&tpl_value=%23code%23%3D{2}&dtype=&key={0}";
         public const string EXCHANGE_URL = "http://op.juhe.cn/onebox/exchange/query?key=08940f90d07501ace3f535e32968cf94";
 
         /// <summary>
@@ -48,7 +48,24 @@ namespace ACBC.Common
             }
         }
 
-        
+        public static string SMS_CODE
+        {
+            get
+            {
+                var redis = System.Environment.GetEnvironmentVariable("SmsCode");
+                return redis;
+            }
+        }
+
+        public static string SMS_TPL
+        {
+            get
+            {
+                var redis = System.Environment.GetEnvironmentVariable("SmsTpl");
+                return redis;
+            }
+        }
+
         public static string REDIS
         {
             get

@@ -42,7 +42,6 @@ namespace ACBC.Dao
             return list;
         }
 
-        
         public MemberInfo GetMemberInfo(string memberId)
         {
             MemberInfo memberInfo = new MemberInfo();
@@ -84,6 +83,38 @@ namespace ACBC.Dao
             return DatabaseOperationWeb.ExecuteDML(list);
         }
 
+        public RemoteStoreMember GetRemoteStoreMember(string storeId, string phone)
+        {
+            //MemberSqls.SELECT_REMOTE_STORE_MEMBER
+            return null;
+        }
+
+        public List<RemotePointCommit> GetRemotePointCommitList(string memberId)
+        {
+            //MemberSqls.SELECT_REMOTE_POINT_COMMIT
+            return null;
+        }
+
+        public bool BindBindMemberStore(string memberId, RemoteStoreMember remoteStoreMember, bool setDefault)
+        {
+            //MemberSqls.INSERT_MEMBER_STORE
+            return false;
+        }
+
+        public bool HandleCommitPoint(List<RemotePointCommit> list, RemoteStoreMember remoteStoreMember)
+        {
+            //MemberSqls.UPDATE_REMOTE_STORE_MEMBER_POINT_ADD
+            //MemberSqls.UPDATE_REMOTE_POINT_COMMIT_STATE
+            return false;
+        }
+
+        public bool AddCommitPoint()
+        {
+            //MemberSqls.INSERT_REMOTE_POINT_COMMIT
+            //MemberSqls.UPDATE_REMOTE_STORE_MEMBER_POINT_MINUS
+            return false;
+        }
+
         private class MemberSqls
         {
             public const string SELECT_ORDER_LIST_BY_MEMBER_ID = ""
@@ -108,6 +139,20 @@ namespace ACBC.Dao
                 + "SET IS_DEFAULT = 1 "
                 + "WHERE MEMBER_ID = {0} "
                 + "AND STORE_ID = {1}";
+            public const string SELECT_REMOTE_STORE_MEMBER = ""
+                + "";
+            public const string INSERT_MEMBER_STORE = ""
+                + "";
+            public const string SELECT_REMOTE_POINT_COMMIT = ""
+                + "";
+            public const string UPDATE_REMOTE_STORE_MEMBER_POINT_ADD = ""
+                + "";
+            public const string UPDATE_REMOTE_POINT_COMMIT_STATE = ""
+                + "";
+            public const string INSERT_REMOTE_POINT_COMMIT = ""
+                + "";
+            public const string UPDATE_REMOTE_STORE_MEMBER_POINT_MINUS = ""
+                + "";
         }
     }
 }
