@@ -39,6 +39,8 @@ namespace ACBC.Common
         RemoteStoreMemberNotExist = 10004,
         BindStoreMemberError = 10005,
         InvalidCheckCode = 10006,
+        HandleCommitPointError = 10007,
+        ExchangeHeartError = 10008,
 
         SetDefaultMemberStoreError = 10003,
         SmsCodeError = 10004,

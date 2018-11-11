@@ -271,7 +271,7 @@ namespace ACBC.Buss
                 throw new ApiException(CodeMessage.NotEnoughHearts, "NotEnoughHearts");
             }
 
-            if(!orderDao.PayForOrder(memberId, order))
+            if(!orderDao.PayForOrder(memberId, order, memberInfo.heart))
             {
                 throw new ApiException(CodeMessage.PayForOrderError, "PayForOrderError");
             }

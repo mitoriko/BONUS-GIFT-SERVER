@@ -182,6 +182,17 @@ namespace ACBC.Buss
         public string storeId;
         public string cardCode;
     }
+
+    public class GetRemoteStoreInfoParam
+    {
+        public string storeMemberId;
+    }
+
+    public class ExchangeHeartParam
+    {
+        public string storeMemberId;
+        public int point;
+    }
     #endregion
 
     #region DaoObjs
@@ -409,6 +420,7 @@ namespace ACBC.Buss
         public string regTime;
         public string cardCode;
         public int point;
+        public int storeRate;
     }
 
     public class RemotePointCommit

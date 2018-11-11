@@ -392,7 +392,7 @@ namespace ACBC.Dao
             return order;
         }
 
-        public bool PayForOrder(string memberId, Order order)
+        public bool PayForOrder(string memberId, Order order, int heart)
         {
             ArrayList list = new ArrayList();
             StringBuilder builder = new StringBuilder();
@@ -408,6 +408,16 @@ namespace ACBC.Dao
             builder.Clear();
             builder.AppendFormat(OrderSqls.UPDATE_MEMBER_HEART_BY_MEMBER_ID, memberId, order.total);
             list.Add(builder.ToString());
+            builder.Clear();
+            builder.AppendFormat(
+                OrderSqls.INSERT_HEART_CHANGE,
+                order.total,
+                order.orderId,
+                memberId,
+                heart
+                );
+            list.Add(builder.ToString());
+            
 
             return DatabaseOperationWeb.ExecuteDML(list);
         }
@@ -488,6 +498,10 @@ namespace ACBC.Dao
                 + "FROM T_BUSS_ORDER_GOODS A, T_BUSS_ORDER B "
                 + "WHERE A.ORDER_CODE = B.ORDER_CODE "
                 + "AND B.ORDER_CODE = '{0}' ";
+            public const string INSERT_HEART_CHANGE = ""
+                + "INSERT INTO T_BUSS_HEART_CHANGE "
+                + "(CHANGE_TYPE,NUM,ORDER_ID,MEMBER_ID,BEFORE_MOD) "
+                + "VALUES(1,{0},{1},{2},{3}) ";
         }
     }
 }

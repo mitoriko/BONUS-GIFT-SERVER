@@ -95,7 +95,6 @@ namespace ACBC.Buss
             MemberDao memberDao = new MemberDao();
             string memberId = Utils.GetMemberID(baseApi.token);
 
-            //check phone code
             SessionBag sessionBag = SessionContainer.GetSession(baseApi.token);
             SessionUser sessionUser = JsonConvert.DeserializeObject<SessionUser>(sessionBag.Name);
             if (sessionUser == null)
@@ -111,7 +110,7 @@ namespace ACBC.Buss
             sessionUser.checkPhone = "";
             sessionBag.Name = JsonConvert.SerializeObject(sessionUser);
             SessionContainer.Update(sessionBag.Key, sessionBag);
-            //check exist store member
+
             List<MemberStore> memberStoreList = memberDao.GetMemberStoreListByMemberId(memberId);
             MemberStore memberStore = memberStoreList.Find
                     (
@@ -121,18 +120,84 @@ namespace ACBC.Buss
             {
                 throw new ApiException(CodeMessage.StoreMemberExist, "StoreMemberExist");
             }
-            //get remote member
+            
             RemoteStoreMember remoteStoreMember = memberDao.GetRemoteStoreMember(bindStoreParam.storeId, bindStoreParam.phone);
             if (remoteStoreMember == null)
             {
                 throw new ApiException(CodeMessage.RemoteStoreMemberNotExist, "RemoteStoreMemberNotExist");
             }
-            //get need default
+            
             bool setDefault = memberStoreList.Count == 0;
-            //bind remote member
-            if (!memberDao.BindBindMemberStore(memberId, remoteStoreMember, setDefault))
+            
+            if (!memberDao.BindMemberStore(memberId, remoteStoreMember, setDefault))
             {
                 throw new ApiException(CodeMessage.BindStoreMemberError, "BindStoreMemberError");
+            }
+            return "";
+        }
+
+        public object Do_GetRemoteStore(BaseApi baseApi)
+        {
+            MemberDao memberDao = new MemberDao();
+            string memberId = Utils.GetMemberID(baseApi.token);
+            List<RemoteStoreMember> list = memberDao.GetRemoteStoreMemberList(memberId);
+            return list;
+
+        }
+
+        public object Do_GetRemoteStoreInfo(BaseApi baseApi)
+        {
+            GetRemoteStoreInfoParam getRemoteStoreInfoParam = JsonConvert.DeserializeObject<GetRemoteStoreInfoParam>(baseApi.param.ToString());
+            if (getRemoteStoreInfoParam == null)
+            {
+                throw new ApiException(CodeMessage.InvalidParam, "InvalidParam");
+            }
+
+            MemberDao memberDao = new MemberDao();
+            string memberId = Utils.GetMemberID(baseApi.token);
+            RemoteStoreMember remoteStoreMember = memberDao.GetRemoteStoreMember(getRemoteStoreInfoParam.storeMemberId);
+            if (remoteStoreMember == null)
+            {
+                throw new ApiException(CodeMessage.RemoteStoreMemberNotExist, "RemoteStoreMemberNotExist");
+            }
+            List<RemotePointCommit> remotePointCommitList = memberDao.GetRemotePointCommitList(memberId, remoteStoreMember.storeId);
+            if(remotePointCommitList.Count > 0)
+            {
+                if (memberDao.HandleCommitPoint(memberId, remoteStoreMember.storeId, remotePointCommitList))
+                {
+                    throw new ApiException(CodeMessage.HandleCommitPointError, "HandleCommitPointError");
+                }
+            }
+            remoteStoreMember = memberDao.GetRemoteStoreMember(getRemoteStoreInfoParam.storeMemberId);
+            if (remoteStoreMember == null)
+            {
+                throw new ApiException(CodeMessage.RemoteStoreMemberNotExist, "RemoteStoreMemberNotExist");
+            }
+            return remoteStoreMember;
+        }
+
+        public object Do_ExchangeHeart(BaseApi baseApi)
+        {
+            ExchangeHeartParam exchangeHeartParam = JsonConvert.DeserializeObject<ExchangeHeartParam>(baseApi.param.ToString());
+            if (exchangeHeartParam == null)
+            {
+                throw new ApiException(CodeMessage.InvalidParam, "InvalidParam");
+            }
+
+            MemberDao memberDao = new MemberDao();
+            string memberId = Utils.GetMemberID(baseApi.token);
+            RemoteStoreMember remoteStoreMember = memberDao.GetRemoteStoreMember(exchangeHeartParam.storeMemberId);
+            if (remoteStoreMember == null)
+            {
+                throw new ApiException(CodeMessage.RemoteStoreMemberNotExist, "RemoteStoreMemberNotExist");
+            }
+            MemberInfo memberInfo = memberDao.GetMemberInfo(memberId);
+
+            int heart = exchangeHeartParam.point / remoteStoreMember.storeRate;
+            exchangeHeartParam.point = exchangeHeartParam.point - (exchangeHeartParam.point % remoteStoreMember.storeRate);
+            if(memberDao.AddCommitPoint(memberId, remoteStoreMember.storeId, remoteStoreMember.phone, exchangeHeartParam.point, heart, memberInfo.heart))
+            {
+                throw new ApiException(CodeMessage.ExchangeHeartError, "ExchangeHeartError");
             }
             return "";
         }

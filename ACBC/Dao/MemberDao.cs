@@ -83,36 +83,201 @@ namespace ACBC.Dao
             return DatabaseOperationWeb.ExecuteDML(list);
         }
 
+        public List<RemoteStoreMember> GetRemoteStoreMemberList(string memberId)
+        {
+            List<RemoteStoreMember> list = new List<RemoteStoreMember>();
+            StringBuilder builder = new StringBuilder();
+            builder.AppendFormat(MemberSqls.SELECT_REMOTE_STORE_MEMBER_LIST, memberId);
+            string sql = builder.ToString();
+            DataTable dt = DatabaseOperationWeb.ExecuteSelectDS(sql, "T").Tables[0];
+            if (dt != null)
+            {
+                foreach(DataRow dr in dt.Rows)
+                {
+                    RemoteStoreMember remoteStoreMember = new RemoteStoreMember
+                    {
+                        cardCode = dr["CARD_CODE"].ToString(),
+                        phone = dr["PHONE"].ToString(),
+                        point = Convert.ToInt32(dr["POINT"]),
+                        regTime = dr["REG_TIME"].ToString(),
+                        storeId = dr["STORE_ID"].ToString(),
+                        storeMemberId = dr["STORE_MEMBER_ID"].ToString(),
+                        storeRate = Convert.ToInt32(dr["STORE_RATE"]),
+                    };
+                    list.Add(remoteStoreMember);
+                }
+                
+            }
+
+            return list;
+        }
+
         public RemoteStoreMember GetRemoteStoreMember(string storeId, string phone)
         {
-            //MemberSqls.SELECT_REMOTE_STORE_MEMBER
-            return null;
+            RemoteStoreMember remoteStoreMember = null;
+            StringBuilder builder = new StringBuilder();
+            builder.AppendFormat(MemberSqls.SELECT_REMOTE_STORE_MEMBER, storeId, phone);
+            string sql = builder.ToString();
+            DataTable dt = DatabaseOperationWeb.ExecuteSelectDS(sql, "T").Tables[0];
+            if (dt != null && dt.Rows.Count == 1)
+            {
+                remoteStoreMember = new RemoteStoreMember
+                {
+                    cardCode = dt.Rows[0]["CARD_CODE"].ToString(),
+                    phone = dt.Rows[0]["PHONE"].ToString(),
+                    point = Convert.ToInt32(dt.Rows[0]["POINT"]),
+                    regTime = dt.Rows[0]["REG_TIME"].ToString(),
+                    storeId = dt.Rows[0]["STORE_ID"].ToString(),
+                    storeMemberId = dt.Rows[0]["STORE_MEMBER_ID"].ToString(),
+                };
+            }
+
+            return remoteStoreMember;
         }
 
-        public List<RemotePointCommit> GetRemotePointCommitList(string memberId)
+        public RemoteStoreMember GetRemoteStoreMember(string storeMemberId)
         {
-            //MemberSqls.SELECT_REMOTE_POINT_COMMIT
-            return null;
+            RemoteStoreMember remoteStoreMember = null;
+            StringBuilder builder = new StringBuilder();
+            builder.AppendFormat(MemberSqls.SELECT_REMOTE_STORE_MEMBER_BY_ID, storeMemberId);
+            string sql = builder.ToString();
+            DataTable dt = DatabaseOperationWeb.ExecuteSelectDS(sql, "T").Tables[0];
+            if (dt != null && dt.Rows.Count == 1)
+            {
+                remoteStoreMember = new RemoteStoreMember
+                {
+                    cardCode = dt.Rows[0]["CARD_CODE"].ToString(),
+                    phone = dt.Rows[0]["PHONE"].ToString(),
+                    point = Convert.ToInt32(dt.Rows[0]["POINT"]),
+                    regTime = dt.Rows[0]["REG_TIME"].ToString(),
+                    storeId = dt.Rows[0]["STORE_ID"].ToString(),
+                    storeMemberId = dt.Rows[0]["STORE_MEMBER_ID"].ToString(),
+                    storeRate = Convert.ToInt32(dt.Rows[0]["STORE_RATE"]),
+                };
+            }
+
+            return remoteStoreMember;
         }
 
-        public bool BindBindMemberStore(string memberId, RemoteStoreMember remoteStoreMember, bool setDefault)
+        public List<RemotePointCommit> GetRemotePointCommitList(string memberId, string storeId)
         {
-            //MemberSqls.INSERT_MEMBER_STORE
-            return false;
+            List<RemotePointCommit> list = new List<RemotePointCommit>();
+            StringBuilder builder = new StringBuilder();
+            builder.AppendFormat(MemberSqls.SELECT_REMOTE_POINT_COMMIT, storeId, memberId);
+            string sql = builder.ToString();
+            DataTable dt = DatabaseOperationWeb.ExecuteSelectDS(sql, "T").Tables[0];
+            if (dt != null)
+            {
+                foreach (DataRow dr in dt.Rows)
+                {
+                    RemotePointCommit remotePointCommit = new RemotePointCommit
+                    {
+                        phone = dr["PHONE"].ToString(),
+                        point = Convert.ToInt32(dt.Rows[0]["POINT"]),
+                        memberId = dr["MEMBER_ID"].ToString(),
+                        storeId = dr["STORE_ID"].ToString(),
+                        pointCommitId = dr["POINT_COMMIT_ID"].ToString(),
+                        state = dr["STATE"].ToString(),
+                        type = dr["TYPE"].ToString(),
+                    };
+                    list.Add(remotePointCommit);
+                }
+            }
+            return list;
         }
 
-        public bool HandleCommitPoint(List<RemotePointCommit> list, RemoteStoreMember remoteStoreMember)
+        public bool BindMemberStore(string memberId, RemoteStoreMember remoteStoreMember, bool setDefault)
         {
-            //MemberSqls.UPDATE_REMOTE_STORE_MEMBER_POINT_ADD
-            //MemberSqls.UPDATE_REMOTE_POINT_COMMIT_STATE
-            return false;
+            StringBuilder builder = new StringBuilder();
+            builder.AppendFormat(
+                MemberSqls.INSERT_MEMBER_STORE,
+                remoteStoreMember.storeId,
+                memberId,
+                remoteStoreMember.phone,
+                remoteStoreMember.cardCode,
+                setDefault
+                );
+            string sql = builder.ToString();
+            return DatabaseOperationWeb.ExecuteDML(sql);
         }
 
-        public bool AddCommitPoint()
+        public bool HandleCommitPoint(string memberId, string storeId, List<RemotePointCommit> remotePointCommitlist)
         {
-            //MemberSqls.INSERT_REMOTE_POINT_COMMIT
-            //MemberSqls.UPDATE_REMOTE_STORE_MEMBER_POINT_MINUS
-            return false;
+            int totalCommit = 0;
+            string remotePointCommitIds = "";
+            foreach (RemotePointCommit remotePointCommit in remotePointCommitlist)
+            {
+                totalCommit += remotePointCommit.point;
+                remotePointCommitIds += remotePointCommit.pointCommitId + ",";
+            }
+            if (remotePointCommitIds.Length > 0)
+            {
+                remotePointCommitIds = remotePointCommitIds.Substring(0, remotePointCommitIds.Length - 1);
+            }
+            ArrayList list = new ArrayList();
+            StringBuilder builder = new StringBuilder();
+            builder.AppendFormat(
+                MemberSqls.UPDATE_REMOTE_POINT_COMMIT_STATE,
+                remotePointCommitIds
+                );
+            string sql = builder.ToString();
+            list.Add(sql);
+            builder.Clear();
+            builder.AppendFormat(
+                MemberSqls.UPDATE_REMOTE_STORE_MEMBER_POINT_ADD,
+                memberId,
+                storeId,
+                totalCommit
+                );
+            sql = builder.ToString();
+            list.Add(sql);
+            return DatabaseOperationWeb.ExecuteDML(list);
+        }
+
+        public bool AddCommitPoint(string memberId, string storeId, string phone, int point, int heart, int oriHeart)
+        {
+            ArrayList list = new ArrayList();
+            StringBuilder builder = new StringBuilder();
+            builder.AppendFormat(
+                MemberSqls.INSERT_REMOTE_POINT_COMMIT,
+                storeId,
+                phone,
+                memberId,
+                0,
+                1,
+                point
+                );
+            string sql = builder.ToString();
+            list.Add(sql);
+            builder.Clear();
+            builder.AppendFormat(
+                MemberSqls.UPDATE_REMOTE_STORE_MEMBER_POINT_MINUS, 
+                memberId, 
+                storeId,
+                point
+                );
+            sql = builder.ToString();
+            list.Add(sql);
+            builder.Clear();
+            builder.AppendFormat(
+                MemberSqls.UPDATE_MEMBER_HEART_BY_MEMBER_ID,
+                memberId,
+                heart
+                );
+            sql = builder.ToString();
+            list.Add(sql);
+            builder.Clear();
+            builder.AppendFormat(
+                MemberSqls.INSERT_HEART_CHANGE,
+                heart,
+                point,
+                memberId,
+                oriHeart,
+                storeId
+                );
+            sql = builder.ToString();
+            list.Add(sql);
+            return DatabaseOperationWeb.ExecuteDML(list);
         }
 
         private class MemberSqls
@@ -139,9 +304,22 @@ namespace ACBC.Dao
                 + "SET IS_DEFAULT = 1 "
                 + "WHERE MEMBER_ID = {0} "
                 + "AND STORE_ID = {1}";
+            public const string SELECT_REMOTE_STORE_MEMBER_LIST = ""
+                + "SELECT * "
+                + "FROM T_REMOTE_STORE_MEMBER A,T_BUSS_MEMBER_STORE B,T_BASE_STORE C "
+                + "WHERE A.STORE_ID = B.STORE_ID "
+                + "AND C.STORE_ID = B.STORE_ID "
+                + "AND B.MEMBER_ID = {0}";
             public const string SELECT_REMOTE_STORE_MEMBER = ""
                 + "SELECT * "
-                + "FROM T_REMOTE_STORE_MEMBER ";
+                + "FROM T_REMOTE_STORE_MEMBER "
+                + "WHERE STORE_ID = {0} "
+                + "AND PHONE = '{1}'";
+            public const string SELECT_REMOTE_STORE_MEMBER_BY_ID = ""
+                + "SELECT * "
+                + "FROM T_REMOTE_STORE_MEMBER A, T_BASE_STORE B "
+                + "WHERE A.STORE_ID = B.STORE_ID "
+                + "AND STORE_MEMBER_ID = {0} ";
             public const string INSERT_MEMBER_STORE = ""
                 + "INSERT INTO T_BUSS_MEMBER_STORE "
                 + "(STORE_ID,MEMBER_ID,REG_PHONE,CARD_CODE,IS_DEFAULT) "
@@ -150,7 +328,9 @@ namespace ACBC.Dao
                 + "SELECT * "
                 + "FROM T_REMOTE_POINT_COMMIT "
                 + "WHERE STORE_ID = {0} "
-                + "AND MEMBER_ID = {1}";
+                + "AND MEMBER_ID = {1} "
+                + "AND STATE = 0 "
+                + "AND TYPE = 0";
             public const string UPDATE_REMOTE_STORE_MEMBER_POINT_ADD = ""
                 + "UPDATE T_REMOTE_STORE_MEMBER "
                 + "SET POINT = POINT + {2} "
@@ -158,7 +338,7 @@ namespace ACBC.Dao
                 + "AND STORE_ID = {1}";
             public const string UPDATE_REMOTE_POINT_COMMIT_STATE = ""
                 + "UPDATE T_REMOTE_POINT_COMMIT "
-                + "SET STATE = {1} "
+                + "SET STATE = 1 "
                 + "WHERE POINT_COMMIT_ID IN({0}) ";
             public const string INSERT_REMOTE_POINT_COMMIT = ""
                 + "INSERT INTO T_REMOTE_POINT_COMMIT "
@@ -169,6 +349,14 @@ namespace ACBC.Dao
                 + "SET POINT = POINT - {2} "
                 + "WHERE MEMBER_ID = {0} "
                 + "AND STORE_ID = {1}";
+            public const string INSERT_HEART_CHANGE = ""
+                + "INSERT INTO T_BUSS_HEART_CHANGE "
+                + "(CHANGE_TYPE,NUM,POINTS,MEMBER_ID,BEFORE_MOD,STORE_ID) "
+                + "VALUES(0,{0},{1},{2},{3},{4}) ";
+            public const string UPDATE_MEMBER_HEART_BY_MEMBER_ID = ""
+                + "UPDATE T_BASE_MEMBER "
+                + "SET HEART = HEART + {1} "
+                + "WHERE MEMBER_ID = {0} ";
         }
     }
 }
