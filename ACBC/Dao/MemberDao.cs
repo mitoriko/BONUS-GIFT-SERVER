@@ -140,19 +140,35 @@ namespace ACBC.Dao
                 + "WHERE MEMBER_ID = {0} "
                 + "AND STORE_ID = {1}";
             public const string SELECT_REMOTE_STORE_MEMBER = ""
-                + "";
+                + "SELECT * "
+                + "FROM T_REMOTE_STORE_MEMBER ";
             public const string INSERT_MEMBER_STORE = ""
-                + "";
+                + "INSERT INTO T_BUSS_MEMBER_STORE "
+                + "(STORE_ID,MEMBER_ID,REG_PHONE,CARD_CODE,IS_DEFAULT) "
+                + "VALUES({0},{1},'{2}','{3}',{4})";
             public const string SELECT_REMOTE_POINT_COMMIT = ""
-                + "";
+                + "SELECT * "
+                + "FROM T_REMOTE_POINT_COMMIT "
+                + "WHERE STORE_ID = {0} "
+                + "AND MEMBER_ID = {1}";
             public const string UPDATE_REMOTE_STORE_MEMBER_POINT_ADD = ""
-                + "";
+                + "UPDATE T_REMOTE_STORE_MEMBER "
+                + "SET POINT = POINT + {2} "
+                + "WHERE MEMBER_ID = {0} "
+                + "AND STORE_ID = {1}";
             public const string UPDATE_REMOTE_POINT_COMMIT_STATE = ""
-                + "";
+                + "UPDATE T_REMOTE_POINT_COMMIT "
+                + "SET STATE = {1} "
+                + "WHERE POINT_COMMIT_ID IN({0}) ";
             public const string INSERT_REMOTE_POINT_COMMIT = ""
-                + "";
+                + "INSERT INTO T_REMOTE_POINT_COMMIT "
+                + "(STORE_ID,PHONE,MEMBER_ID,STATE,TYPE,POINT) "
+                + "VALUES({0},'{1}',{2},{3},{4},{5})";
             public const string UPDATE_REMOTE_STORE_MEMBER_POINT_MINUS = ""
-                + "";
+                + "UPDATE T_REMOTE_STORE_MEMBER "
+                + "SET POINT = POINT - {2} "
+                + "WHERE MEMBER_ID = {0} "
+                + "AND STORE_ID = {1}";
         }
     }
 }
