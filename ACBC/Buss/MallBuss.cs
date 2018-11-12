@@ -81,7 +81,7 @@ namespace ACBC.Buss
                 MallDao mallDao = new MallDao();
                 goods = mallDao.GetGoodsByGoodsId(getGoodsParam.goodsId);
                 goods.Unique = getGoodsParam.GetUnique();
-                Utils.SetCache(goods);
+                Utils.SetCache(goods, 0, 1, 0);
             }
 
             return goods;

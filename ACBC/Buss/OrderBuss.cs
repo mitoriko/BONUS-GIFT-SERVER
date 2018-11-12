@@ -176,6 +176,10 @@ namespace ACBC.Buss
                     };
                     list.Add(preOrderGoods);
                 }
+                else
+                {
+                    throw new ApiException(CodeMessage.NotEnoughGoods, "NotEnoughGoods");
+                }
             }
             preOrder.list = list;
             preOrder.total = total;
