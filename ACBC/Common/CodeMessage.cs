@@ -41,9 +41,8 @@ namespace ACBC.Common
         InvalidCheckCode = 10006,
         HandleCommitPointError = 10007,
         ExchangeHeartError = 10008,
-
-        SetDefaultMemberStoreError = 10003,
-        SmsCodeError = 10004,
+        SetDefaultMemberStoreError = 10009,
+        SmsCodeError = 10010,
 
         HomeInitError = 10101,
         InvalidGoods = 10102,
