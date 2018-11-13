@@ -140,8 +140,9 @@ namespace ACBC.Buss
         {
             MemberDao memberDao = new MemberDao();
             string memberId = Utils.GetMemberID(baseApi.token);
+            MemberInfo memberInfo = memberDao.GetMemberInfo(memberId);
             List<RemoteStoreMember> list = memberDao.GetRemoteStoreMemberList(memberId);
-            return list;
+            return new { memberInfo.heart, list };
 
         }
 
@@ -160,10 +161,10 @@ namespace ACBC.Buss
             {
                 throw new ApiException(CodeMessage.RemoteStoreMemberNotExist, "RemoteStoreMemberNotExist");
             }
-            List<RemotePointCommit> remotePointCommitList = memberDao.GetRemotePointCommitList(memberId, remoteStoreMember.storeId);
+            List<RemotePointCommit> remotePointCommitList = memberDao.GetRemotePointCommitList(remoteStoreMember);
             if(remotePointCommitList.Count > 0)
             {
-                if (memberDao.HandleCommitPoint(memberId, remoteStoreMember.storeId, remotePointCommitList))
+                if (!memberDao.HandleCommitPoint(remoteStoreMember, remotePointCommitList))
                 {
                     throw new ApiException(CodeMessage.HandleCommitPointError, "HandleCommitPointError");
                 }
@@ -195,7 +196,7 @@ namespace ACBC.Buss
 
             int heart = exchangeHeartParam.point / remoteStoreMember.storeRate;
             exchangeHeartParam.point = exchangeHeartParam.point - (exchangeHeartParam.point % remoteStoreMember.storeRate);
-            if(memberDao.AddCommitPoint(memberId, remoteStoreMember.storeId, remoteStoreMember.phone, exchangeHeartParam.point, heart, memberInfo.heart))
+            if(!memberDao.AddCommitPoint(memberId, remoteStoreMember, exchangeHeartParam.point, heart, memberInfo.heart))
             {
                 throw new ApiException(CodeMessage.ExchangeHeartError, "ExchangeHeartError");
             }

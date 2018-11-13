@@ -159,11 +159,11 @@ namespace ACBC.Dao
             return remoteStoreMember;
         }
 
-        public List<RemotePointCommit> GetRemotePointCommitList(string memberId, string storeId)
+        public List<RemotePointCommit> GetRemotePointCommitList(RemoteStoreMember remoteStoreMember)
         {
             List<RemotePointCommit> list = new List<RemotePointCommit>();
             StringBuilder builder = new StringBuilder();
-            builder.AppendFormat(MemberSqls.SELECT_REMOTE_POINT_COMMIT, storeId, memberId);
+            builder.AppendFormat(MemberSqls.SELECT_REMOTE_POINT_COMMIT, remoteStoreMember.storeId, remoteStoreMember.phone);
             string sql = builder.ToString();
             DataTable dt = DatabaseOperationWeb.ExecuteSelectDS(sql, "T").Tables[0];
             if (dt != null)
@@ -173,7 +173,7 @@ namespace ACBC.Dao
                     RemotePointCommit remotePointCommit = new RemotePointCommit
                     {
                         phone = dr["PHONE"].ToString(),
-                        point = Convert.ToInt32(dt.Rows[0]["POINT"]),
+                        point = Convert.ToInt32(dr["POINT"]),
                         memberId = dr["MEMBER_ID"].ToString(),
                         storeId = dr["STORE_ID"].ToString(),
                         pointCommitId = dr["POINT_COMMIT_ID"].ToString(),
@@ -201,7 +201,7 @@ namespace ACBC.Dao
             return DatabaseOperationWeb.ExecuteDML(sql);
         }
 
-        public bool HandleCommitPoint(string memberId, string storeId, List<RemotePointCommit> remotePointCommitlist)
+        public bool HandleCommitPoint(RemoteStoreMember remoteStoreMember, List<RemotePointCommit> remotePointCommitlist)
         {
             int totalCommit = 0;
             string remotePointCommitIds = "";
@@ -225,8 +225,7 @@ namespace ACBC.Dao
             builder.Clear();
             builder.AppendFormat(
                 MemberSqls.UPDATE_REMOTE_STORE_MEMBER_POINT_ADD,
-                memberId,
-                storeId,
+                remoteStoreMember.storeMemberId,
                 totalCommit
                 );
             sql = builder.ToString();
@@ -234,14 +233,14 @@ namespace ACBC.Dao
             return DatabaseOperationWeb.ExecuteDML(list);
         }
 
-        public bool AddCommitPoint(string memberId, string storeId, string phone, int point, int heart, int oriHeart)
+        public bool AddCommitPoint(string memberId, RemoteStoreMember remoteStoreMember, int point, int heart, int oriHeart)
         {
             ArrayList list = new ArrayList();
             StringBuilder builder = new StringBuilder();
             builder.AppendFormat(
                 MemberSqls.INSERT_REMOTE_POINT_COMMIT,
-                storeId,
-                phone,
+                remoteStoreMember.storeId,
+                remoteStoreMember.phone,
                 memberId,
                 0,
                 1,
@@ -251,9 +250,8 @@ namespace ACBC.Dao
             list.Add(sql);
             builder.Clear();
             builder.AppendFormat(
-                MemberSqls.UPDATE_REMOTE_STORE_MEMBER_POINT_MINUS, 
-                memberId, 
-                storeId,
+                MemberSqls.UPDATE_REMOTE_STORE_MEMBER_POINT_MINUS,
+                remoteStoreMember.storeMemberId,
                 point
                 );
             sql = builder.ToString();
@@ -273,7 +271,7 @@ namespace ACBC.Dao
                 point,
                 memberId,
                 oriHeart,
-                storeId
+                remoteStoreMember.storeId
                 );
             sql = builder.ToString();
             list.Add(sql);
@@ -328,14 +326,13 @@ namespace ACBC.Dao
                 + "SELECT * "
                 + "FROM T_REMOTE_POINT_COMMIT "
                 + "WHERE STORE_ID = {0} "
-                + "AND MEMBER_ID = {1} "
+                + "AND PHONE = {1} "
                 + "AND STATE = 0 "
                 + "AND TYPE = 0";
             public const string UPDATE_REMOTE_STORE_MEMBER_POINT_ADD = ""
                 + "UPDATE T_REMOTE_STORE_MEMBER "
-                + "SET POINT = POINT + {2} "
-                + "WHERE MEMBER_ID = {0} "
-                + "AND STORE_ID = {1}";
+                + "SET POINT = POINT + {1} "
+                + "WHERE STORE_MEMBER_ID = {0}";
             public const string UPDATE_REMOTE_POINT_COMMIT_STATE = ""
                 + "UPDATE T_REMOTE_POINT_COMMIT "
                 + "SET STATE = 1 "
@@ -346,9 +343,8 @@ namespace ACBC.Dao
                 + "VALUES({0},'{1}',{2},{3},{4},{5})";
             public const string UPDATE_REMOTE_STORE_MEMBER_POINT_MINUS = ""
                 + "UPDATE T_REMOTE_STORE_MEMBER "
-                + "SET POINT = POINT - {2} "
-                + "WHERE MEMBER_ID = {0} "
-                + "AND STORE_ID = {1}";
+                + "SET POINT = POINT - {1} "
+                 + "WHERE STORE_MEMBER_ID = {0}";
             public const string INSERT_HEART_CHANGE = ""
                 + "INSERT INTO T_BUSS_HEART_CHANGE "
                 + "(CHANGE_TYPE,NUM,POINTS,MEMBER_ID,BEFORE_MOD,STORE_ID) "
