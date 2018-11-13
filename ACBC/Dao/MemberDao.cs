@@ -103,6 +103,8 @@ namespace ACBC.Dao
                         storeId = dr["STORE_ID"].ToString(),
                         storeMemberId = dr["STORE_MEMBER_ID"].ToString(),
                         storeRate = Convert.ToInt32(dr["STORE_RATE"]),
+                        storeImg = dr["STORE_IMG"].ToString(),
+                        storeName = dr["STORE_NAME"].ToString(),
                     };
                     list.Add(remoteStoreMember);
                 }

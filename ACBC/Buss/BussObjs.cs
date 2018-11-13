@@ -421,6 +421,8 @@ namespace ACBC.Buss
         public string cardCode;
         public int point;
         public int storeRate;
+        public string storeName;
+        public string storeImg;
     }
 
     public class RemotePointCommit
