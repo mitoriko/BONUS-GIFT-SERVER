@@ -75,7 +75,7 @@ namespace ACBC.Buss
             }
             else
             {
-                if (!orderDao.UpdateCart(cartGoods.cartId, inputCartParam.goodsNum))
+                if (!orderDao.UpdateAddCart(cartGoods.cartId, inputCartParam.goodsNum))
                 {
                     throw new ApiException(CodeMessage.UpdateCartError, "UpdateCartError");
                 }

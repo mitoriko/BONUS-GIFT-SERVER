@@ -238,6 +238,14 @@ namespace ACBC.Dao
             return DatabaseOperationWeb.ExecuteDML(sql);
         }
 
+        public bool UpdateAddCart(string cartId, int goodsNum)
+        {
+            StringBuilder builder = new StringBuilder();
+            builder.AppendFormat(OrderSqls.UPDATE_ADD_CART_BY_CART_ID, goodsNum, cartId);
+            string sql = builder.ToString();
+            return DatabaseOperationWeb.ExecuteDML(sql);
+        }
+
         public bool DeleteCart(string cartId)
         {
             StringBuilder builder = new StringBuilder();
@@ -453,6 +461,11 @@ namespace ACBC.Dao
             public const string UPDATE_CART_BY_CART_ID = ""
                 + "UPDATE T_BUSS_CART "
                 + "SET GOODS_NUM = {0}, "
+                + "CART_TIME = NOW() "
+                + "WHERE CART_ID = {1}";
+            public const string UPDATE_ADD_CART_BY_CART_ID = ""
+                + "UPDATE T_BUSS_CART "
+                + "SET GOODS_NUM = GOODS_NUM + {0}, "
                 + "CART_TIME = NOW() "
                 + "WHERE CART_ID = {1}";
             public const string DELETE_CART_BY_CART_ID = ""
