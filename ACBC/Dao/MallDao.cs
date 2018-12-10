@@ -151,7 +151,7 @@ namespace ACBC.Dao
                 builder.AppendFormat(MallSqls.SELECT_GOODS_SELL_SUM_BY_GOODS_ID, goodsId);
                 sql = builder.ToString();
                 DataTable dtSum = DatabaseOperationWeb.ExecuteSelectDS(sql, "T").Tables[0];
-                if (dt != null && dt.Rows.Count == 1)
+                if (dtSum != null && dtSum.Rows.Count == 1)
                 {
                     goods.sales = Convert.ToInt32(dtSum.Rows[0][0]);
                 }
