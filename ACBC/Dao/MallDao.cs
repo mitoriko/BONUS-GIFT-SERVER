@@ -294,7 +294,7 @@ namespace ACBC.Dao
                 + "WHERE A.GOODS_ID = B.GOODS_ID "
                 + "AND A.GOODS_ID = {0}";
             public const string SELECT_GOODS_SELL_SUM_BY_GOODS_ID = ""
-                + "SELECT SUM(NUM) "
+                + "SELECT IFNULL(SUM(NUM),0) "
                 + "FROM T_BUSS_ORDER_GOODS A "
                 + "WHERE A.GOODS_ID = {0}";
             public const string SELECT_STORE = ""
