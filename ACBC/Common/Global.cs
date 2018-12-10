@@ -46,8 +46,6 @@ namespace ACBC.Common
             {
                 Console.WriteLine("Redis Error, Change Local");
             }
-
-            Utils.ClearCache();
         }
 
         public static string SMS_CODE
