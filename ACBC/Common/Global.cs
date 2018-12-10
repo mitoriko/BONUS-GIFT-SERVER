@@ -15,8 +15,8 @@ namespace ACBC.Common
         public const string ROUTE_PX = "/api/gift";
         public const string NAMESPACE = "com.a-cubic.gift";
         public const int REDIS_NO = 1;
-        public const int REDIS_EXPIRY_H = 1;
-        public const int REDIS_EXPIRY_M = 0;
+        public const int REDIS_EXPIRY_H = 0;
+        public const int REDIS_EXPIRY_M = 1;
         public const int REDIS_EXPIRY_S = 0;
 
         public const string SMS_CODE_URL = "http://v.juhe.cn/sms/send?mobile={3}&tpl_id={1}&tpl_value=%23code%23%3D{2}&dtype=&key={0}";
