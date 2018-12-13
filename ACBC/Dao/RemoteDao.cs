@@ -16,12 +16,22 @@ namespace ACBC.Dao
         {
             ArrayList list = new ArrayList();
             StringBuilder builder = new StringBuilder();
-            builder.AppendFormat(RemoteSqls.INSERT_STORE_MEMBER, code, phone, cardCode, point);
+            builder.AppendFormat(RemoteSqls.INSERT_STORE_MEMBER, code, phone, cardCode);
             string sql = builder.ToString();
             list.Add(sql);
             builder.Clear();
             builder.AppendFormat(RemoteSqls.INSERT_POINT_COMMIT, code, phone, point);
             sql = builder.ToString();
+            list.Add(sql);
+            return DatabaseOperationWeb.ExecuteDML(list);
+        }
+
+        public bool AddPointCommit(string code, string phone, string point)
+        {
+            ArrayList list = new ArrayList();
+            StringBuilder builder = new StringBuilder();
+            builder.AppendFormat(RemoteSqls.INSERT_POINT_COMMIT, code, phone, point);
+            string sql = builder.ToString();
             list.Add(sql);
             return DatabaseOperationWeb.ExecuteDML(list);
         }
@@ -49,10 +59,10 @@ namespace ACBC.Dao
                 + "AND A.PHONE = '{1}' ";
             public const string INSERT_STORE_MEMBER = ""
                 + "INSERT INTO T_REMOTE_STORE_MEMBER(STORE_ID,PHONE,REG_TIME,CARD_CODE,POINT) "
-                + "VALUES((SELECT STORE_ID FROM T_BASE_STORE WHERE STORE_CODE = '{0}'),'{1}',NOW(),'{2}',{3}) ";
+                + "VALUES((SELECT STORE_ID FROM T_BASE_STORE WHERE STORE_CODE = '{0}'),'{1}',NOW(),'{2}', 0) ";
             public const string INSERT_POINT_COMMIT = ""
                 + "INSERT INTO T_REMOTE_POINT_COMMIT(STORE_ID,PHONE,STATE,TYPE,POINT) "
-                + "VALUES((SELECT STORE_ID FROM T_BASE_STORE WHERE STORE_CODE = '{0}'),'{1}', 1, 0, {2}) ";
+                + "VALUES((SELECT STORE_ID FROM T_BASE_STORE WHERE STORE_CODE = '{0}'),'{1}', 0, 0, {2}) ";
         }
     }
 }

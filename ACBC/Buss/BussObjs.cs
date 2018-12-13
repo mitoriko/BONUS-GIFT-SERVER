@@ -200,6 +200,12 @@ namespace ACBC.Buss
         public string point;
         public string cardCode;
     }
+
+    public class AddPointRecordParam
+    {
+        public string phone;
+        public string point;
+    }
     #endregion
 
     #region DaoObjs

@@ -36,5 +36,22 @@ namespace ACBC.Buss
 
             return "";
         }
+
+        public object Do_AddPointRecord(BaseApi baseApi)
+        {
+            AddPointRecordParam addPointRecordParam = JsonConvert.DeserializeObject<AddPointRecordParam>(baseApi.param.ToString());
+            if (addPointRecordParam == null)
+            {
+                throw new ApiException(CodeMessage.InvalidParam, "InvalidParam");
+            }
+
+            RemoteDao remoteDao = new RemoteDao();
+            if (!remoteDao.AddPointCommit(baseApi.code, addPointRecordParam.phone, addPointRecordParam.point))
+            {
+                throw new ApiException(CodeMessage.AddPointCommitError, "AddPointCommitError");
+            }
+
+            return "";
+        }
     }
 }

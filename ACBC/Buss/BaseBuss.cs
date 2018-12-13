@@ -336,7 +336,7 @@ namespace ACBC.Buss
             
             if (msg != null)
             {
-                return new ResultsJson(new Message(CodeMessage.InvalidToken, "InvalidToken"), null);
+                return new ResultsJson(msg, null);
             }
             var obj = bussList[baseApi.GetApiType()];
             MethodInfo methodInfo = obj.GetType().GetMethod("Do_" + baseApi.method);
