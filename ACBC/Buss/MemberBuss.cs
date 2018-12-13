@@ -71,7 +71,7 @@ namespace ACBC.Buss
             sessionBag.Name = JsonConvert.SerializeObject(sessionUser);
             SessionContainer.Update(sessionBag.Key, sessionBag);
             StringBuilder builder = new StringBuilder();
-            builder.AppendFormat(Global.SMS_CODE_URL, Global.SMS_CODE, Global.SMS_TPL, checkCodeParam.phone, code);
+            builder.AppendFormat(Global.SMS_CODE_URL, Global.SMS_CODE, Global.SMS_TPL, code, checkCodeParam.phone);
             string url = builder.ToString();
             string res = Utils.GetHttp(url);
 
