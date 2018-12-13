@@ -43,10 +43,12 @@ namespace ACBC.Controllers
             return Json(Global.BUSS.BussResults(this, memberApi));
         }
 
-        //会员卡列表
-        //添加会员卡(手机验证、设置主店铺)
-        //设置主店铺
-
-        //积分兑换
+        [HttpPost]
+        public ActionResult Remote([FromBody]RemoteApi remoteApi)
+        {
+            if (remoteApi == null)
+                return Json(new ResultsJson(new Message(CodeMessage.PostNull, "PostNull"), null));
+            return Json(Global.BUSS.BussResults(this, remoteApi));
+        }
     }
 }

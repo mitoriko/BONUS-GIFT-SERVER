@@ -16,6 +16,7 @@ namespace ACBC.Common
         MallApi,
         MemberApi,
         OrderApi,
+        RemoteApi,
     }
 
     public enum CheckType
@@ -153,6 +154,25 @@ namespace ACBC.Common
         public override ApiType GetApiType()
         {
             return ApiType.OrderApi;
+        }
+
+    }
+
+    public class RemoteApi : BaseApi
+    {
+        public override CheckType GetCheckType()
+        {
+            return CheckType.Sign;
+        }
+
+        public override InputType GetInputType()
+        {
+            return InputType.Body;
+        }
+
+        public override ApiType GetApiType()
+        {
+            return ApiType.RemoteApi;
         }
 
     }
