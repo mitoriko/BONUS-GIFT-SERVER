@@ -16,11 +16,6 @@ namespace ACBC.Common
 {
     public class Utils
     {
-        /// <summary>
-        /// 获取系统已登录用户OPENID
-        /// </summary>
-        /// <param name="token"></param>
-        /// <returns></returns>
         public static string GetOpenID(string token)
         {
             SessionBag sessionBag = SessionContainer.GetSession(token);

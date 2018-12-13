@@ -193,6 +193,13 @@ namespace ACBC.Buss
         public string storeMemberId;
         public int point;
     }
+
+    public class AddMemberInfoParam
+    {
+        public string phone;
+        public string point;
+        public string cardCode;
+    }
     #endregion
 
     #region DaoObjs
@@ -435,6 +442,5 @@ namespace ACBC.Buss
         public string type;
         public int point;
     }
-
     #endregion
 }

@@ -32,6 +32,7 @@ namespace ACBC.Common
         InterfaceValueError = 4004,
         InterfaceDBError = 4005,
         NeedLogin = 4006,
+        InvalidCode = 4007,
 
         MemberExist = 10001,
         MemberRegError = 10002,
@@ -57,7 +58,7 @@ namespace ACBC.Common
         PayForOrderError = 10111,
         InvalidStore = 10112,
 
-
-
+        RemoteStoreMemberExist = 10201,
+        AddRemoteStoreMemberError = 10202,
     }
 }

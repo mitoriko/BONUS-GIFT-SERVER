@@ -180,7 +180,7 @@ namespace ACBC.Buss
             }
             else
             {
-                msg = new Message(CodeMessage.InvalidToken, "InvalidToken");
+                msg = new Message(CodeMessage.InvalidCode, "InvalidCode");
             }
             return msg;
         }

@@ -309,6 +309,7 @@ namespace ACBC.Dao
                 + "FROM T_REMOTE_STORE_MEMBER A,T_BUSS_MEMBER_STORE B,T_BASE_STORE C "
                 + "WHERE A.STORE_ID = B.STORE_ID "
                 + "AND C.STORE_ID = B.STORE_ID "
+                + "AND B.REG_PHONE = A.PHONE "
                 + "AND B.MEMBER_ID = {0}";
             public const string SELECT_REMOTE_STORE_MEMBER = ""
                 + "SELECT * "
