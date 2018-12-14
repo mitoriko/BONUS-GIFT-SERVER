@@ -53,7 +53,7 @@ namespace ACBC.Dao
         {
             List<RemotePointCommit> list = new List<RemotePointCommit>();
             StringBuilder builder = new StringBuilder();
-            builder.AppendFormat(RemoteSqls.SELECT_STORE_MEMBER_BY_CODE_AND_PHONE, code);
+            builder.AppendFormat(RemoteSqls.SELECT_POINT_COMMIT, code);
             string sql = builder.ToString();
             DataTable dt = DatabaseOperationWeb.ExecuteSelectDS(sql, "T").Tables[0];
             if(dt != null)
@@ -65,6 +65,8 @@ namespace ACBC.Dao
                         pointCommitId = dr["POINT_COMMIT_ID"].ToString(),
                         storeId = dr["STORE_ID"].ToString(),
                         phone = dr["PHONE"].ToString(),
+                        state = dr["STATE"].ToString(),
+                        type = dr["TYPE"].ToString(),
                         point = Convert.ToInt32(dr["POINT"]),
                     };
                     list.Add(remotePointCommit);
