@@ -206,6 +206,11 @@ namespace ACBC.Buss
         public string phone;
         public string point;
     }
+
+    public class UpdatePointCommitParam
+    {
+        public string pointCommitId;
+    }
     #endregion
 
     #region DaoObjs

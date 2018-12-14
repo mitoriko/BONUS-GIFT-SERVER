@@ -61,5 +61,6 @@ namespace ACBC.Common
         RemoteStoreMemberExist = 10201,
         AddRemoteStoreMemberError = 10202,
         AddPointCommitError = 10203,
+        UpdatePointCommitError = 10204,
     }
 }

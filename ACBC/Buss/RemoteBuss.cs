@@ -53,5 +53,28 @@ namespace ACBC.Buss
 
             return "";
         }
+
+        public object Do_GetPointCommitList(BaseApi baseApi)
+        {
+            RemoteDao remoteDao = new RemoteDao();
+            return remoteDao.GetPointCommitList(baseApi.code);
+        }
+
+        public object Do_UpdatePointCommit(BaseApi baseApi)
+        {
+            UpdatePointCommitParam updatePointCommitParam = JsonConvert.DeserializeObject<UpdatePointCommitParam>(baseApi.param.ToString());
+            if (updatePointCommitParam == null)
+            {
+                throw new ApiException(CodeMessage.InvalidParam, "InvalidParam");
+            }
+
+            RemoteDao remoteDao = new RemoteDao();
+            if (!remoteDao.UpdatePointCommit(updatePointCommitParam.pointCommitId))
+            {
+                throw new ApiException(CodeMessage.UpdatePointCommitError, "UpdatePointCommitError");
+            }
+
+            return "";
+        }
     }
 }
