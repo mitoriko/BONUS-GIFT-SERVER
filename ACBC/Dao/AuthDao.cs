@@ -49,7 +49,7 @@ namespace ACBC.Dao
                 + "SELECT * "
                 + "FROM T_BASE_STORE "
                 + "WHERE APP_ID = '{0}' "
-                + "AND STORE_CODE = '{1}' ";
+                + "AND STORE_ID = '{1}' ";
         }
     }
 
