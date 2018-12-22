@@ -287,7 +287,8 @@ namespace ACBC.Dao
             public const string SELECT_SHOW_DAY_GOODS_BY_SHOW_ID = ""
                 + "SELECT * "
                 + "FROM T_BUSS_SHOW_DAY_GOODS "
-                + "WHERE SHOW_ID = {0}";
+                + "WHERE SHOW_ID = {0} "
+                + "AND IF_USE = 1";
             public const string SELECT_GOODS_BY_GOODS_ID = ""
                 + "SELECT * "
                 + "FROM T_BUSS_GOODS A,T_BUSS_GOODS_IMGS B "
