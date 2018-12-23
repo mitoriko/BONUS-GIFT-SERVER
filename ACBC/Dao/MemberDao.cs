@@ -155,6 +155,7 @@ namespace ACBC.Dao
                     storeId = dt.Rows[0]["STORE_ID"].ToString(),
                     storeMemberId = dt.Rows[0]["STORE_MEMBER_ID"].ToString(),
                     storeRate = Convert.ToInt32(dt.Rows[0]["STORE_RATE"]),
+                    exchangeLimit = Convert.ToInt32(dt.Rows[0]["EXCHANGE_LIMIT"]),
                 };
             }
 
@@ -280,6 +281,21 @@ namespace ACBC.Dao
             return DatabaseOperationWeb.ExecuteDML(list);
         }
 
+        public int GetTodayChangeHeart(string memberId, string storeId)
+        {
+            int todayChangeHeart = 9999;
+            StringBuilder builder = new StringBuilder();
+            builder.AppendFormat(MemberSqls.SELECT_MEMBER_CHANGE_BY_STORE, memberId, storeId);
+            string sql = builder.ToString();
+            DataTable dt = DatabaseOperationWeb.ExecuteSelectDS(sql, "T").Tables[0];
+            if (dt != null && dt.Rows.Count == 1)
+            {
+                todayChangeHeart = Convert.ToInt32(dt.Rows[0][0]);
+            }
+
+            return todayChangeHeart;
+        }
+
         private class MemberSqls
         {
             public const string SELECT_ORDER_LIST_BY_MEMBER_ID = ""
@@ -356,6 +372,12 @@ namespace ACBC.Dao
                 + "UPDATE T_BASE_MEMBER "
                 + "SET HEART = HEART + {1} "
                 + "WHERE MEMBER_ID = {0} ";
+            public const string SELECT_MEMBER_CHANGE_BY_STORE = ""
+                + "SELECT IFNULL(SUM(NUM),0) "
+                + "FROM T_BUSS_HEART_CHANGE "
+                + "WHERE MEMBER_ID = {0} "
+                + "AND STORE_ID = {1} "
+                + "AND CURDATE() = DATE(CHANGE_TIME)";
         }
     }
 }

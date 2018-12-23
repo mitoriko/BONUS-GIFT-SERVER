@@ -441,6 +441,8 @@ namespace ACBC.Buss
         public int storeRate;
         public string storeName;
         public string storeImg;
+        public int exchangeLimit;
+        public int todayExchange;
     }
 
     public class RemotePointCommit

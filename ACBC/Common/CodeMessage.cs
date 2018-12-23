@@ -44,6 +44,7 @@ namespace ACBC.Common
         ExchangeHeartError = 10008,
         SetDefaultMemberStoreError = 10009,
         SmsCodeError = 10010,
+        OverTheStoreLimit = 10011,
 
         HomeInitError = 10101,
         InvalidGoods = 10102,

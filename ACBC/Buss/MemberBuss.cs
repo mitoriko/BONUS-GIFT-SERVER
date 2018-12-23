@@ -174,6 +174,8 @@ namespace ACBC.Buss
             {
                 throw new ApiException(CodeMessage.RemoteStoreMemberNotExist, "RemoteStoreMemberNotExist");
             }
+            int todayChangeHeart = memberDao.GetTodayChangeHeart(memberId, remoteStoreMember.storeId);
+            remoteStoreMember.todayExchange = todayChangeHeart;
             return remoteStoreMember;
         }
 
@@ -196,7 +198,13 @@ namespace ACBC.Buss
 
             int heart = exchangeHeartParam.point / remoteStoreMember.storeRate;
             exchangeHeartParam.point = exchangeHeartParam.point - (exchangeHeartParam.point % remoteStoreMember.storeRate);
-            if(!memberDao.AddCommitPoint(memberId, remoteStoreMember, exchangeHeartParam.point, heart, memberInfo.heart))
+
+            int todayChangeHeart = memberDao.GetTodayChangeHeart(memberId, remoteStoreMember.storeId);
+            if(todayChangeHeart + heart > remoteStoreMember.exchangeLimit)
+            {
+                throw new ApiException(CodeMessage.OverTheStoreLimit, "OverTheStoreLimit");
+            }
+            if (!memberDao.AddCommitPoint(memberId, remoteStoreMember, exchangeHeartParam.point, heart, memberInfo.heart))
             {
                 throw new ApiException(CodeMessage.ExchangeHeartError, "ExchangeHeartError");
             }
