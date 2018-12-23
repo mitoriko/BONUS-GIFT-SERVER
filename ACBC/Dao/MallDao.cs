@@ -257,6 +257,7 @@ namespace ACBC.Dao
                         storeGoodsId = dr["STORE_GOODS_ID"].ToString(),
                         storeGoodsImg = dr["STORE_GOODS_IMG"].ToString(),
                         storeGoodsName = dr["STORE_GOODS_NAME"].ToString(),
+                        storeGoodsImgOpen = dr["STORE_GOODS_IMG_OPEN"].ToString(),
                     };
 
                     storeInfo.storeGoods.Add(storeGoods);

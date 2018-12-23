@@ -405,6 +405,7 @@ namespace ACBC.Buss
         public string storeGoodsImg;
         public string storeGoodsName;
         public string storeGoodsDesc;
+        public string storeGoodsImgOpen;
     }
 
     public class MemberStore
