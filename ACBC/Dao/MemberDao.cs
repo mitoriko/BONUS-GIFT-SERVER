@@ -310,6 +310,18 @@ namespace ACBC.Dao
             return todayChangeHeart;
         }
 
+        public bool UpdateScanCode(string memberId, string scanCode)
+        {
+            StringBuilder builder = new StringBuilder();
+            builder.AppendFormat(
+                MemberSqls.UPDATE_SCAN_CODE,
+                memberId,
+                scanCode
+                );
+            string sql = builder.ToString();
+            return DatabaseOperationWeb.ExecuteDML(sql);
+        }
+
         private class MemberSqls
         {
             public const string SELECT_ORDER_LIST_BY_MEMBER_ID = ""
@@ -397,6 +409,9 @@ namespace ACBC.Dao
                 + "WHERE MEMBER_ID = {0} "
                 + "AND STORE_ID = {1} "
                 + "AND CURDATE() = DATE(CHANGE_TIME)";
+            public const string UPDATE_SCAN_CODE = ""
+                + "UPDATE T_BASE_MEMBER SET SCAN_CODE = '{1}' "
+                + "WHERE MEMBER_ID = {0}";
         }
     }
 }

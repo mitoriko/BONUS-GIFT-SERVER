@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using ACBC.Common;
@@ -214,6 +215,25 @@ namespace ACBC.Buss
                 throw new ApiException(CodeMessage.ExchangeHeartError, "ExchangeHeartError");
             }
             return "";
+        }
+
+        public object Do_ReloadScanCode(BaseApi baseApi)
+        {
+            MemberDao memberDao = new MemberDao();
+            string memberId = Utils.GetMemberID(baseApi.token);
+            string scanCode = "";
+            using (var md5 = MD5.Create())
+            {
+                var result = md5.ComputeHash(Encoding.UTF8.GetBytes(Guid.NewGuid().ToString()));
+                var strResult = BitConverter.ToString(result);
+                scanCode = strResult.Replace("-", "");
+            }
+            if(!memberDao.UpdateScanCode(memberId, scanCode))
+            {
+                throw new ApiException(CodeMessage.UpdateScanCodeError, "UpdateScanCodeError");
+            }
+
+            return scanCode;
         }
     }
 }
