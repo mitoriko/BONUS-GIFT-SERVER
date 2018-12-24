@@ -45,6 +45,7 @@ namespace ACBC.Common
         SetDefaultMemberStoreError = 10009,
         SmsCodeError = 10010,
         OverTheStoreLimit = 10011,
+        StorePhoneExist = 10012,
 
         HomeInitError = 10101,
         InvalidGoods = 10102,

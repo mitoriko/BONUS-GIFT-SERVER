@@ -120,7 +120,12 @@ namespace ACBC.Buss
             {
                 throw new ApiException(CodeMessage.StoreMemberExist, "StoreMemberExist");
             }
-            
+
+            if(!memberDao.CheckPhone(bindStoreParam.phone, bindStoreParam.storeId))
+            {
+                throw new ApiException(CodeMessage.StorePhoneExist, "StorePhoneExist");
+            }
+
             RemoteStoreMember remoteStoreMember = memberDao.GetRemoteStoreMember(bindStoreParam.storeId, bindStoreParam.phone);
             if (remoteStoreMember == null)
             {

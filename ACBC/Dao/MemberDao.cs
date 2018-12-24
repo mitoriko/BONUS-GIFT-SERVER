@@ -189,6 +189,20 @@ namespace ACBC.Dao
             return list;
         }
 
+        public bool CheckPhone(string phone, string storeId)
+        {
+            StringBuilder builder = new StringBuilder();
+            builder.AppendFormat(MemberSqls.SELECT_STORE_MEMBER_BY_PHONE_AND_STORE, phone, storeId);
+            string sql = builder.ToString();
+            DataTable dt = DatabaseOperationWeb.ExecuteSelectDS(sql, "T").Tables[0];
+            if (dt != null && dt.Rows.Count == 0)
+            {
+                return true;
+
+            }
+            return false;
+        }
+
         public bool BindMemberStore(string memberId, RemoteStoreMember remoteStoreMember, bool setDefault)
         {
             StringBuilder builder = new StringBuilder();
@@ -337,6 +351,11 @@ namespace ACBC.Dao
                 + "FROM T_REMOTE_STORE_MEMBER A, T_BASE_STORE B "
                 + "WHERE A.STORE_ID = B.STORE_ID "
                 + "AND STORE_MEMBER_ID = {0} ";
+            public const string SELECT_STORE_MEMBER_BY_PHONE_AND_STORE = ""
+                + "SELECT * "
+                + "FROM T_BUSS_MEMBER_STORE "
+                + "WHERE REG_PHONE = '{0}' "
+                + "AND STORE_ID = {1}";
             public const string INSERT_MEMBER_STORE = ""
                 + "INSERT INTO T_BUSS_MEMBER_STORE "
                 + "(STORE_ID,MEMBER_ID,REG_PHONE,CARD_CODE,IS_DEFAULT) "
