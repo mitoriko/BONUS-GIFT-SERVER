@@ -54,6 +54,7 @@ namespace ACBC.Buss
         public string checkCode;
         public string userType;
         public string memberId;
+        public string storeUserId;
     }
 
     public class SmsCodeRes
@@ -106,6 +107,18 @@ namespace ACBC.Buss
         public string language;
         public string nickName;
         public string province;
+    }
+
+    public class StoreUserRegParam
+    {
+        public string avatarUrl;
+        public string city;
+        public string country;
+        public string gender;
+        public string language;
+        public string nickName;
+        public string province;
+        public string storeCode;
     }
 
     public class GetShowDayGoodsListParam : BussParam
@@ -224,6 +237,17 @@ namespace ACBC.Buss
         public string memberPhone;
         public string memberSex;
         public string scanCode;
+    }
+
+    public class StoreUser
+    {
+        public string storeId;
+        public string storeUserName;
+        public string storeUserId;
+        public string openid;
+        public string storeUserImg;
+        public string storeUserPhone;
+        public string storeUserSex;
     }
 
     public class Home : BussCache

@@ -101,6 +101,30 @@ namespace ACBC.Common
             }
         }
 
+        /// <summary>
+        /// 小程序APPID
+        /// </summary>
+        public static string STOREAPPID
+        {
+            get
+            {
+                var appId = System.Environment.GetEnvironmentVariable("WxStoreAppId");
+                return appId;
+            }
+        }
+
+        /// <summary>
+        /// 小程序APPSECRET
+        /// </summary>
+        public static string STOREAPPSECRET
+        {
+            get
+            {
+                var appSecret = System.Environment.GetEnvironmentVariable("WxStoreAppSecret");
+                return appSecret;
+            }
+        }
+
 
         #endregion
 
