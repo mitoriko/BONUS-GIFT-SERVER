@@ -157,6 +157,8 @@ namespace ACBC.Dao
                     storeRate = Convert.ToInt32(dt.Rows[0]["STORE_RATE"]),
                     exchangeLimit = Convert.ToInt32(dt.Rows[0]["EXCHANGE_LIMIT"]),
                 };
+
+
             }
 
             return remoteStoreMember;
@@ -412,6 +414,11 @@ namespace ACBC.Dao
             public const string UPDATE_SCAN_CODE = ""
                 + "UPDATE T_BASE_MEMBER SET SCAN_CODE = '{1}' "
                 + "WHERE MEMBER_ID = {0}";
+            public const string SELECT_STORE_LIMIT_ADD = ""
+                + "SELECT * "
+                + "FROM T_BUSS_STORE_LIMIT_ADD "
+                + "WHERE MEMBER_ID = {0} "
+                + "AND STORE_ID = {1} ";
         }
     }
 }

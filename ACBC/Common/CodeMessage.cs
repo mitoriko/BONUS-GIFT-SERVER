@@ -68,5 +68,6 @@ namespace ACBC.Common
 
         StoreUserExist = 10301,
         StoreUserRegError = 10302,
+        InvalidStoreCode = 10303,
     }
 }
