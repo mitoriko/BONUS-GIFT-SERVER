@@ -86,7 +86,7 @@ namespace ACBC.Dao
         public string GetStoreId(string storeCode)
         {
             StringBuilder builder = new StringBuilder();
-            builder.AppendFormat(OpenSqls.UPDATE_STORE_CODE, storeCode);
+            builder.AppendFormat(OpenSqls.SELECT_STORE_CODE, storeCode);
             string sql = builder.ToString();
             DataTable dt = DatabaseOperationWeb.ExecuteSelectDS(sql, "T").Tables[0];
             if (dt != null && dt.Rows.Count == 1)
