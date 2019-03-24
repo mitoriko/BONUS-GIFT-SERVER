@@ -474,7 +474,8 @@ namespace ACBC.Dao
             public const string SELECT_GOODS_LIST_BY_GOODS_IDS = ""
                 + "SELECT * "
                 + "FROM T_BUSS_GOODS T "
-                + "WHERE T.GOODS_ID IN({0}) ";
+                + "WHERE T.IF_USE = 1 "
+                + "AND T.GOODS_ID IN({0}) ";
             public const string SELECT_STORE_BY_MEMBER_ID = ""
                 + "SELECT * "
                 + "FROM T_BASE_STORE T, T_BUSS_MEMBER_STORE A "

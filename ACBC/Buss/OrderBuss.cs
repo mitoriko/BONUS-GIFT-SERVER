@@ -162,6 +162,10 @@ namespace ACBC.Buss
                     (
                         item => item.goodsId.Equals(goods.goodsId)
                     );
+                if(preOrderParam == null)
+                {
+                    throw new ApiException(CodeMessage.InvalidGoods, "InvalidGoods");
+                }
                 if (preOrderParam.goodsNum <= goods.goodsStock)
                 {
                     total += goods.goodsPrice * preOrderParam.goodsNum;
@@ -264,7 +268,11 @@ namespace ACBC.Buss
                     (
                         item => item.goodsId.Equals(goods.goodsId)
                     );
-                if(Convert.ToInt32(orderGoods.goodsNum) > goods.goodsStock)
+                if (orderGoods == null)
+                {
+                    throw new ApiException(CodeMessage.InvalidGoods, "InvalidGoods");
+                }
+                if (Convert.ToInt32(orderGoods.goodsNum) > goods.goodsStock)
                 {
                     throw new ApiException(CodeMessage.NotEnoughGoods, "NotEnoughGoods");
                 }
