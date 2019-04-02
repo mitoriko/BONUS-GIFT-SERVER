@@ -480,5 +480,29 @@ namespace ACBC.Buss
         public string type;
         public int point;
     }
+
+    public class AsnGoods
+    {
+        public string goodsId;
+        public string goodsName;
+        public string goodsImg;
+        public string num;
+    }
+
+    public class StockGoods
+    {
+        public string goodsId;
+        public string goodsName;
+        public string goodsImg;
+        public string num;
+        public string lastUpdateTime;
+    }
+
+    public class StoreAccount
+    {
+        public string paymentDays;
+        public string heartNum;
+        public string state;
+    }
     #endregion
 }
