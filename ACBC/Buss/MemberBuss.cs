@@ -233,7 +233,7 @@ namespace ACBC.Buss
                 throw new ApiException(CodeMessage.UpdateScanCodeError, "UpdateScanCodeError");
             }
 
-            return scanCode;
+            return "ORDER_" + scanCode;
         }
     }
 }

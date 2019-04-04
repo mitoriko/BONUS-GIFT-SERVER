@@ -1,4 +1,7 @@
 ﻿using ACBC.Common;
+using ACBC.Dao;
+using Newtonsoft.Json;
+using Senparc.Weixin.WxOpen.Containers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,12 +13,28 @@ namespace ACBC.Buss
     {
         public ApiType GetApiType()
         {
-            return ApiType.OpenApi;
+            return ApiType.StoreApi;
         }
 
-        public object Do_GetAsn(BaseApi baseApi)
+        public object Do_GetAsnAndStock(BaseApi baseApi)
         {
-            return null;
+            OpenDao openDao = new OpenDao();
+            StoreUser storeUser = openDao.GetStoreUser(Utils.GetOpenID(baseApi.token));
+
+            StoreDao storeDao = new StoreDao();
+            List<StockGoods> listStock = storeDao.GetStockGoodsList(storeUser.storeId);
+            List<AsnGoods> listAsn = storeDao.GetAsnGoodsList(storeUser.storeId);
+
+            return new { listAsn, listStock };
+        }
+
+        public object Do_GetStoreAccount(BaseApi baseApi)
+        {
+            OpenDao openDao = new OpenDao();
+            StoreUser storeUser = openDao.GetStoreUser(Utils.GetOpenID(baseApi.token));
+
+            StoreDao storeDao = new StoreDao();
+            return storeDao.GetStoreAccount(storeUser.storeId);
         }
     }
 }
