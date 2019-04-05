@@ -290,5 +290,41 @@ namespace ACBC.Buss
 
             return "";
         }
+
+        public object Do_GetStoreGoodsCode(BaseApi baseApi)
+        {
+            GetStoreGoodsCodeParam getStoreGoodsCodeParam = JsonConvert.DeserializeObject<GetStoreGoodsCodeParam>(baseApi.param.ToString());
+            if (getStoreGoodsCodeParam == null)
+            {
+                throw new ApiException(CodeMessage.InvalidParam, "InvalidParam");
+            }
+
+            OrderDao orderDao = new OrderDao();
+            Order order = orderDao.GetOrderInfo(getStoreGoodsCodeParam.orderId);
+            if(order == null)
+            {
+                throw new ApiException(CodeMessage.InvalidOrderState, "InvalidOrderState");
+            }
+            if(order.state != "2")
+            {
+                throw new ApiException(CodeMessage.InvalidOrderState, "InvalidOrderState");
+            }
+            string code = "ORDER_" + Guid.NewGuid().ToString();
+            ScanOrderCodeParam scanOrderCodeParam = new ScanOrderCodeParam
+            {
+                code = code,
+            };
+
+            StoreGoodsCode storeGoodsCode = new StoreGoodsCode
+            {
+                code = code,
+                order = order,
+                Unique = scanOrderCodeParam.GetUnique(),
+            };
+
+            Utils.SetCache(storeGoodsCode, 1, 0, 10);
+
+            return code;
+        }
     }
 }

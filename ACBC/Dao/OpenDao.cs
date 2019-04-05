@@ -29,7 +29,7 @@ namespace ACBC.Dao
                     memberPhone = dt.Rows[0]["MEMBER_PHONE"].ToString(),
                     memberSex = dt.Rows[0]["MEMBER_SEX"].ToString(),
                     openid = dt.Rows[0]["OPENID"].ToString(),
-                    scanCode = dt.Rows[0]["SCAN_CODE"].ToString(),
+                    scanCode = "CHECK_" + dt.Rows[0]["SCAN_CODE"].ToString(),
                 };
             }
 

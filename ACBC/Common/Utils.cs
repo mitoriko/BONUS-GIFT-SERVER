@@ -116,6 +116,12 @@ namespace ACBC.Common
             }
         }
 
+        public static void DeleteCache<T>(BussParam bussParam) where T : BussCache
+        {
+            string key = typeof(T).FullName + bussParam.GetUnique();
+            DeleteCache(key);
+        }
+
         public static void ClearCache()
         {
             var types = AppDomain.CurrentDomain.GetAssemblies()

@@ -121,6 +121,17 @@ namespace ACBC.Dao
             builder.AppendFormat(MemberSqls.SELECT_REMOTE_STORE_MEMBER, storeId, phone);
             string sql = builder.ToString();
             DataTable dt = DatabaseOperationWeb.ExecuteSelectDS(sql, "T").Tables[0];
+            if (dt != null && dt.Rows.Count == 0)
+            {
+                builder.Clear();
+                builder.AppendFormat(MemberSqls.INSERT_REMOTE_STORE_MEMBER, storeId, phone);
+                sql = builder.ToString();
+                DatabaseOperationWeb.ExecuteDML(sql);
+            }
+            builder.Clear();
+            builder.AppendFormat(MemberSqls.SELECT_REMOTE_STORE_MEMBER, storeId, phone);
+            sql = builder.ToString();
+            dt = DatabaseOperationWeb.ExecuteSelectDS(sql, "T").Tables[0];
             if (dt != null && dt.Rows.Count == 1)
             {
                 remoteStoreMember = new RemoteStoreMember
@@ -360,6 +371,10 @@ namespace ACBC.Dao
                 + "FROM T_REMOTE_STORE_MEMBER "
                 + "WHERE STORE_ID = {0} "
                 + "AND PHONE = '{1}'";
+            public const string INSERT_REMOTE_STORE_MEMBER = ""
+                + "INSERT INTO T_REMOTE_STORE_MEMBER "
+                + "(STORE_ID,PHONE,REG_TIME,CARD_CODE,POINT) "
+                + "VALUES({0},'{1}',NOW(),'{1}',0) ";
             public const string SELECT_REMOTE_STORE_MEMBER_BY_ID = ""
                 + "SELECT * "
                 + "FROM T_REMOTE_STORE_MEMBER A, T_BASE_STORE B "

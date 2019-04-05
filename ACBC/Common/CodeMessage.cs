@@ -69,5 +69,8 @@ namespace ACBC.Common
         StoreUserExist = 10301,
         StoreUserRegError = 10302,
         InvalidStoreCode = 10303,
+        InvalidOrderCode = 10304,
+        PickupGoodsError = 10305,
+        NotStoreUserOrder = 10306,
     }
 }

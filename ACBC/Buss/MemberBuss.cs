@@ -132,7 +132,7 @@ namespace ACBC.Buss
             {
                 throw new ApiException(CodeMessage.RemoteStoreMemberNotExist, "RemoteStoreMemberNotExist");
             }
-            
+
             bool setDefault = memberStoreList.Count == 0;
             
             if (!memberDao.BindMemberStore(memberId, remoteStoreMember, setDefault))
@@ -233,7 +233,7 @@ namespace ACBC.Buss
                 throw new ApiException(CodeMessage.UpdateScanCodeError, "UpdateScanCodeError");
             }
 
-            return "ORDER_" + scanCode;
+            return "CHECK_" + scanCode;
         }
     }
 }

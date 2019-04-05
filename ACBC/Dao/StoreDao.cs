@@ -85,6 +85,28 @@ namespace ACBC.Dao
 
             return list;
         }
+
+        public bool UpdateOrderState(string orderId, string storeUserId)
+        {
+            StringBuilder builder = new StringBuilder();
+            builder.AppendFormat(StoreSqls.UPDATE_ORDER_STATE, orderId, storeUserId);
+            string sql = builder.ToString();
+            return DatabaseOperationWeb.ExecuteDML(sql);
+        }
+
+        public string GetStoreId(string storeCode)
+        {
+            StringBuilder builder = new StringBuilder();
+            builder.AppendFormat(StoreSqls.SELECT_STORE_ID_BY_STORE_CODE, storeCode);
+            string sql = builder.ToString();
+            DataTable dt = DatabaseOperationWeb.ExecuteSelectDS(sql, "T").Tables[0];
+            if (dt != null && dt.Rows.Count == 1)
+            {
+                return dt.Rows[0]["STORE_ID"].ToString();
+            }
+
+            return "";
+        }
     }
 
     public class StoreSqls
@@ -94,13 +116,21 @@ namespace ACBC.Dao
                 + "FROM T_BUSS_ORDER_GOODS T,T_BUSS_ORDER A,T_BASE_STORE B "
                 + "WHERE A.ORDER_CODE = T.ORDER_CODE "
                 + "AND B.STORE_CODE = A.STORE_CODE " 
-                + "AND T.STATE = {1} "
+                + "AND T.GOODS_STATE = {1} "
                 + "AND B.STORE_ID = {0} "
                 + "GROUP BY T.GOODS_ID,T.GOODS_NAME,T.GOODS_IMG ";
-
         public const string SELECT_STORE_ACCOUNT_BY_STORE_ID = ""
                 + "SELECT * FROM T_BUSS_STORE_ACCOUNT "
                 + "WHERE STORE_ID = {0} "
                 + "ORDER BY SORT DESC";
+        public const string UPDATE_ORDER_STATE = ""
+                + "UPDATE T_BUSS_ORDER "
+                + "SET STATE = 3, "
+                + "PICKUP_TIME = NOW(), "
+                + "PICKUP_STORE_USER = {1} "
+                + "WHERE ORDER_ID = {0} ";
+        public const string SELECT_STORE_ID_BY_STORE_CODE = ""
+                + "SELECT * FROM T_BASE_STORE "
+                + "WHERE STORE_CODE = '{0}' ";
     }
 }

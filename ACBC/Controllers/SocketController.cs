@@ -48,13 +48,17 @@ namespace ACBC.Controllers
         {
             while (this.socket.State == WebSocketState.Open)
             {
-                WsPayState state = Utils.GetCache<WsPayState>(scanCode);
+                WsPayStateParam wsPayStateParam = new WsPayStateParam
+                {
+                    scanCode = scanCode,
+                };
+                WsPayState state = Utils.GetCache<WsPayState>(wsPayStateParam);
                 if (state == null)
                 {
                     Thread.Sleep(500);
                     continue;
                 }
-                Utils.DeleteCache(scanCode);
+                Utils.DeleteCache<WsPayState>(wsPayStateParam);
                 string userMsg = "Success";
                 byte[] x = Encoding.UTF8.GetBytes(userMsg);
                 var outgoing = new ArraySegment<byte>(x);

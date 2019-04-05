@@ -10,6 +10,13 @@ namespace ACBC.Buss
 {
     #region Sys
 
+    public enum WsType
+    {
+        CHECK,
+        ORDER,
+        EXCHANGE,
+    }
+
     public class BussCache
     {
         private string unique = "";
@@ -63,9 +70,13 @@ namespace ACBC.Buss
         public string reason;
     }
 
-    public class WsPayState
+    public class WsPayState : BussCache
     {
-        public string userId;
+        public WsType wsType;
+    }
+
+    public class WsPayStateParam : BussParam
+    {
         public string scanCode;
     }
 
@@ -224,6 +235,22 @@ namespace ACBC.Buss
     {
         public string pointCommitId;
     }
+
+    public class GetStoreGoodsCodeParam
+    {
+        public string orderId;
+    }
+
+    public class ScanOrderCodeParam : BussParam
+    {
+        public string code;
+    }
+
+    public class PickupOrderGoods
+    {
+        public string orderId;
+        public string code;
+    }
     #endregion
 
     #region DaoObjs
@@ -315,6 +342,7 @@ namespace ACBC.Buss
         public string addr;
         public string orderId;
         public string orderCode;
+        public string storeCode;
         public string total;
         public string state;
         public string orderTime;
@@ -503,6 +531,13 @@ namespace ACBC.Buss
         public string paymentDays;
         public string heartNum;
         public string state;
+    }
+
+
+    public class StoreGoodsCode : BussCache
+    {
+        public string code;
+        public Order order;
     }
     #endregion
 }

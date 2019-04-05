@@ -36,5 +36,58 @@ namespace ACBC.Buss
             StoreDao storeDao = new StoreDao();
             return storeDao.GetStoreAccount(storeUser.storeId);
         }
+
+        public object Do_ScanOrderCode(BaseApi baseApi)
+        {
+            ScanOrderCodeParam scanOrderCodeParam = JsonConvert.DeserializeObject<ScanOrderCodeParam>(baseApi.param.ToString());
+            if (scanOrderCodeParam == null)
+            {
+                throw new ApiException(CodeMessage.InvalidParam, "InvalidParam");
+            }
+
+            StoreGoodsCode storeGoodsCode = Utils.GetCache<StoreGoodsCode>(scanOrderCodeParam);
+
+            if(storeGoodsCode == null)
+            {
+                throw new ApiException(CodeMessage.InvalidOrderCode, "InvalidOrderCode");
+            }
+            StoreDao storeDao = new StoreDao();
+            string storeId = storeDao.GetStoreId(storeGoodsCode.order.storeCode);
+            OpenDao openDao = new OpenDao();
+            StoreUser storeUser = openDao.GetStoreUser(Utils.GetOpenID(baseApi.token));
+            if(storeUser.storeId != storeId)
+            {
+                throw new ApiException(CodeMessage.NotStoreUserOrder, "NotStoreUserOrder");
+            }
+            Utils.DeleteCache<StoreGoodsCode>(scanOrderCodeParam);
+            return storeGoodsCode.order;
+        }
+
+        public object Do_PickupOrderGoods(BaseApi baseApi)
+        {
+            PickupOrderGoods pickupOrderGoods = JsonConvert.DeserializeObject<PickupOrderGoods>(baseApi.param.ToString());
+            if (pickupOrderGoods == null)
+            {
+                throw new ApiException(CodeMessage.InvalidParam, "InvalidParam");
+            }
+            OpenDao openDao = new OpenDao();
+            StoreUser storeUser = openDao.GetStoreUser(Utils.GetOpenID(baseApi.token));
+            StoreDao storeDao = new StoreDao();
+            if(!storeDao.UpdateOrderState(pickupOrderGoods.orderId, storeUser.storeUserId))
+            {
+                throw new ApiException(CodeMessage.PickupGoodsError, "PickupGoodsError");
+            }
+            WsPayStateParam wsPayStateParam = new WsPayStateParam
+            {
+                scanCode = pickupOrderGoods.code,
+            };
+            WsPayState wsPayState = new WsPayState
+            {
+                wsType = WsType.ORDER,
+                Unique = wsPayStateParam.GetUnique(),
+            };
+            Utils.SetCache(wsPayState, 0, 0, 10);
+            return "";
+        }
     }
 }

@@ -381,6 +381,7 @@ namespace ACBC.Dao
                 foreach (DataRow dr in dt.Rows)
                 {
                     order.addr = dr["ADDR"].ToString();
+                    order.storeCode = dr["STORE_CODE"].ToString();
                     order.orderId = orderId;
                     order.orderCode = dr["ORDER_CODE"].ToString();
                     order.orderTime = dr["ORDER_TIME"].ToString();
