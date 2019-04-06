@@ -246,7 +246,7 @@ namespace ACBC.Buss
         public string code;
     }
 
-    public class PickupOrderGoods
+    public class PickupOrderGoodsParam
     {
         public string orderId;
         public string code;
@@ -259,6 +259,22 @@ namespace ACBC.Buss
     }
 
     public class ScanExchangeCodeParam : BussParam
+    {
+        public string code;
+    }
+
+    public class CheckAsnGoodsParam
+    {
+        public string goodsId;
+    }
+
+    public class MemberCheckStoreParam
+    {
+        public string code;
+        public int consume;
+    }
+
+    public class MemberCheckStoreCodeParam : BussParam
     {
         public string code;
     }
@@ -552,6 +568,12 @@ namespace ACBC.Buss
     }
 
     public class ExchangeCode : BussCache
+    {
+        public string code;
+        public string memberId;
+    }
+
+    public class MemberCheckStoreCode : BussCache
     {
         public string code;
         public string memberId;

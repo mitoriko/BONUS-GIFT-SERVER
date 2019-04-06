@@ -129,6 +129,22 @@ namespace ACBC.Dao
             string sql = builder.ToString();
             return DatabaseOperationWeb.ExecuteDML(sql);
         }
+
+        public bool CheckAsnGoods(string storeId, string goodsId, string storeUserId)
+        {
+            StringBuilder builder = new StringBuilder();
+            builder.AppendFormat(StoreSqls.UPDATE_ASN_ORDER_GOODS_ID, storeId, goodsId, storeUserId);
+            string sql = builder.ToString();
+            return DatabaseOperationWeb.ExecuteDML(sql);
+        }
+
+        public bool InserMemberCheckStore(string storeId, string memberId, int consume, string storeUserId)
+        {
+            StringBuilder builder = new StringBuilder();
+            builder.AppendFormat(StoreSqls.INSERT_MEMBER_CHECK_STORE, storeId, memberId, consume, storeUserId);
+            string sql = builder.ToString();
+            return DatabaseOperationWeb.ExecuteDML(sql);
+        }
     }
 
     public class StoreSqls
@@ -165,5 +181,25 @@ namespace ACBC.Dao
         public const string INSERT_POINT_COMMIT = ""
                 + "INSERT INTO T_REMOTE_POINT_COMMIT(STORE_ID,PHONE,STATE,TYPE,POINT) "
                 + "VALUES({0},'{1}', 0, 0, {2}) ";
+        public const string UPDATE_ASN_ORDER_GOODS_ID = ""
+                + "UPDATE T_BUSS_ORDER_GOODS "
+                + "SET GOODS_STATE = 2, "
+                + "ASN_TIME = NOW(), "
+                + "STORE_USER_ID = {2} "
+                + "WHERE ORDER_GOODS_ID IN ( "
+                + "SELECT C.ORDER_GOODS_ID FROM ( "
+                + "SELECT T.ORDER_GOODS_ID "
+                + "FROM T_BUSS_ORDER_GOODS T, "
+                + "T_BUSS_ORDER A, "
+                + "T_BASE_STORE B "
+                + "WHERE T.ORDER_CODE = A.ORDER_CODE "
+                + "AND A.STORE_CODE = B.STORE_CODE "
+                + "AND B.STORE_ID = {0} "
+                + "AND T.GOODS_ID = {1} "
+                + "AND T.GOODS_STATE = 1 "
+                + "GROUP BY T.ORDER_GOODS_ID) C)";
+        public const string INSERT_MEMBER_CHECK_STORE = ""
+                + "INSERT INTO T_BUSS_MEMBER_CHECK_STORE(STORE_ID,MEMBER_ID,CHECK_TIME,CONSUME,STORE_USER_ID) "
+                + "VALUES({0},{1}, NOW(), {2}, {3}) ";
     }
 }

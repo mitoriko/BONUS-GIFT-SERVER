@@ -75,5 +75,8 @@ namespace ACBC.Common
         InvalidExchangeCode = 10307,
         NeedStoreMember = 10308,
         ExchangeError = 10309,
+        CheckAsnGoodsError = 10310,
+        InvalidMemberCkeckStoreCode = 10311,
+        MemberCkeckStoreError = 10312,
     }
 }

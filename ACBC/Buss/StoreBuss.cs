@@ -65,21 +65,21 @@ namespace ACBC.Buss
 
         public object Do_PickupOrderGoods(BaseApi baseApi)
         {
-            PickupOrderGoods pickupOrderGoods = JsonConvert.DeserializeObject<PickupOrderGoods>(baseApi.param.ToString());
-            if (pickupOrderGoods == null)
+            PickupOrderGoodsParam pickupOrderGoodsParam = JsonConvert.DeserializeObject<PickupOrderGoodsParam>(baseApi.param.ToString());
+            if (pickupOrderGoodsParam == null)
             {
                 throw new ApiException(CodeMessage.InvalidParam, "InvalidParam");
             }
             OpenDao openDao = new OpenDao();
             StoreUser storeUser = openDao.GetStoreUser(Utils.GetOpenID(baseApi.token));
             StoreDao storeDao = new StoreDao();
-            if(!storeDao.UpdateOrderState(pickupOrderGoods.orderId, storeUser.storeUserId))
+            if(!storeDao.UpdateOrderState(pickupOrderGoodsParam.orderId, storeUser.storeUserId))
             {
                 throw new ApiException(CodeMessage.PickupGoodsError, "PickupGoodsError");
             }
             WsPayStateParam wsPayStateParam = new WsPayStateParam
             {
-                scanCode = pickupOrderGoods.code,
+                scanCode = pickupOrderGoodsParam.code,
             };
             WsPayState wsPayState = new WsPayState
             {
@@ -126,6 +126,75 @@ namespace ACBC.Buss
             }
 
             Utils.DeleteCache<ExchangeCode>(scanExchangeCodeParam);
+            WsPayStateParam wsPayStateParam = new WsPayStateParam
+            {
+                scanCode = scanExchangeCodeParam.code,
+            };
+            WsPayState wsPayState = new WsPayState
+            {
+                wsType = WsType.EXCHANGE,
+                Unique = wsPayStateParam.GetUnique(),
+            };
+            Utils.SetCache(wsPayState, 0, 0, 10);
+            return "";
+        }
+
+        public object Do_CheckAsnGoods(BaseApi baseApi)
+        {
+            CheckAsnGoodsParam checkAsnGoodsParam = JsonConvert.DeserializeObject<CheckAsnGoodsParam>(baseApi.param.ToString());
+            if (checkAsnGoodsParam == null)
+            {
+                throw new ApiException(CodeMessage.InvalidParam, "InvalidParam");
+            }
+            OpenDao openDao = new OpenDao();
+            StoreUser storeUser = openDao.GetStoreUser(Utils.GetOpenID(baseApi.token));
+            StoreDao storeDao = new StoreDao();
+            if(!storeDao.CheckAsnGoods(storeUser.storeId, checkAsnGoodsParam.goodsId, storeUser.storeUserId))
+            {
+                throw new ApiException(CodeMessage.CheckAsnGoodsError, "CheckAsnGoodsError");
+            }
+
+            return "";
+        }
+
+        public object Do_MemberCheckStore(BaseApi baseApi)
+        {
+            MemberCheckStoreParam memberCheckStoreParam = JsonConvert.DeserializeObject<MemberCheckStoreParam>(baseApi.param.ToString());
+            if (memberCheckStoreParam == null)
+            {
+                throw new ApiException(CodeMessage.InvalidParam, "InvalidParam");
+            }
+            OpenDao openDao = new OpenDao();
+            StoreUser storeUser = openDao.GetStoreUser(Utils.GetOpenID(baseApi.token));
+
+            MemberCheckStoreCodeParam memberCheckStoreCodeParam = new MemberCheckStoreCodeParam
+            {
+                code = memberCheckStoreParam.code,
+            };
+
+            MemberCheckStoreCode memberCheckStoreCode = Utils.GetCache<MemberCheckStoreCode>(memberCheckStoreCodeParam);
+            if (memberCheckStoreCode == null)
+            {
+                throw new ApiException(CodeMessage.InvalidMemberCkeckStoreCode, "InvalidMemberCkeckStoreCode");
+            }
+
+            StoreDao storeDao = new StoreDao();
+            if (!storeDao.InserMemberCheckStore(storeUser.storeId, memberCheckStoreCode.memberId, memberCheckStoreParam.consume, storeUser.storeUserId))
+            {
+                throw new ApiException(CodeMessage.MemberCkeckStoreError, "MemberCkeckStoreError");
+            }
+
+            Utils.DeleteCache<MemberCheckStoreCode>(memberCheckStoreCodeParam);
+            WsPayStateParam wsPayStateParam = new WsPayStateParam
+            {
+                scanCode = memberCheckStoreCodeParam.code,
+            };
+            WsPayState wsPayState = new WsPayState
+            {
+                wsType = WsType.CHECK,
+                Unique = wsPayStateParam.GetUnique(),
+            };
+            Utils.SetCache(wsPayState, 0, 0, 10);
 
             return "";
         }

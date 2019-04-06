@@ -226,14 +226,28 @@ namespace ACBC.Buss
             {
                 var result = md5.ComputeHash(Encoding.UTF8.GetBytes(Guid.NewGuid().ToString()));
                 var strResult = BitConverter.ToString(result);
-                scanCode = strResult.Replace("-", "");
+                scanCode = "CHECK_" + strResult.Replace("-", "");
             }
             if(!memberDao.UpdateScanCode(memberId, scanCode))
             {
                 throw new ApiException(CodeMessage.UpdateScanCodeError, "UpdateScanCodeError");
             }
 
-            return "CHECK_" + scanCode;
+            MemberCheckStoreCodeParam memberCheckStoreCodeParam = new MemberCheckStoreCodeParam
+            {
+                code = scanCode,
+            };
+
+            MemberCheckStoreCode memberCheckStoreCode = new MemberCheckStoreCode
+            {
+                code = scanCode,
+                memberId = memberId,
+                Unique = memberCheckStoreCodeParam.GetUnique(),
+            };
+
+            Utils.SetCache(memberCheckStoreCode, 1, 0, 10);
+
+            return scanCode;
         }
 
         public object Do_GetExchangeScanCode(BaseApi baseApi)
@@ -259,7 +273,7 @@ namespace ACBC.Buss
                 Unique = scanExchangeCodeParam.GetUnique(),
             };
 
-            Utils.SetCache(exchangeCode, 1, 0, 10);
+            Utils.SetCache(exchangeCode, 0, 0, 10);
 
             return scanCode;
         }
