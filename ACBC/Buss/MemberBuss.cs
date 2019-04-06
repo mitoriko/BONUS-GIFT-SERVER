@@ -235,5 +235,33 @@ namespace ACBC.Buss
 
             return "CHECK_" + scanCode;
         }
+
+        public object Do_GetExchangeScanCode(BaseApi baseApi)
+        {
+            string memberId = Utils.GetMemberID(baseApi.token);
+            string scanCode = "";
+            using (var md5 = MD5.Create())
+            {
+                var result = md5.ComputeHash(Encoding.UTF8.GetBytes(Guid.NewGuid().ToString()));
+                var strResult = BitConverter.ToString(result);
+                scanCode = "EXCHANGE_" + strResult.Replace("-", "");
+            }
+
+            ScanExchangeCodeParam scanExchangeCodeParam = new ScanExchangeCodeParam
+            {
+                code = scanCode,
+            };
+
+            ExchangeCode exchangeCode = new ExchangeCode
+            {
+                code = scanCode,
+                memberId = memberId,
+                Unique = scanExchangeCodeParam.GetUnique(),
+            };
+
+            Utils.SetCache(exchangeCode, 1, 0, 10);
+
+            return scanCode;
+        }
     }
 }

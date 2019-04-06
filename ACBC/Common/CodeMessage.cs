@@ -72,5 +72,8 @@ namespace ACBC.Common
         InvalidOrderCode = 10304,
         PickupGoodsError = 10305,
         NotStoreUserOrder = 10306,
+        InvalidExchangeCode = 10307,
+        NeedStoreMember = 10308,
+        ExchangeError = 10309,
     }
 }

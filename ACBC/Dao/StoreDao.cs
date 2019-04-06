@@ -107,6 +107,28 @@ namespace ACBC.Dao
 
             return "";
         }
+
+        public string CheckStoreMember(string storeId, string memberId)
+        {
+            StringBuilder builder = new StringBuilder();
+            builder.AppendFormat(StoreSqls.SELECT_REMOTE_STORE_AND_STORE_MEMBER, storeId, memberId);
+            string sql = builder.ToString();
+            DataTable dt = DatabaseOperationWeb.ExecuteSelectDS(sql, "T").Tables[0];
+            if (dt != null && dt.Rows.Count == 1)
+            {
+                return dt.Rows[0]["PHONE"].ToString();
+            }
+
+            return "";
+        }
+
+        public bool InserRemoteCommit(string storeId, string phone, int score)
+        {
+            StringBuilder builder = new StringBuilder();
+            builder.AppendFormat(StoreSqls.INSERT_POINT_COMMIT, storeId, phone, score);
+            string sql = builder.ToString();
+            return DatabaseOperationWeb.ExecuteDML(sql);
+        }
     }
 
     public class StoreSqls
@@ -132,5 +154,16 @@ namespace ACBC.Dao
         public const string SELECT_STORE_ID_BY_STORE_CODE = ""
                 + "SELECT * FROM T_BASE_STORE "
                 + "WHERE STORE_CODE = '{0}' ";
+        public const string SELECT_REMOTE_STORE_AND_STORE_MEMBER = ""
+                + "SELECT * "
+                + "FROM T_REMOTE_STORE_MEMBER A, "
+                + "T_BUSS_MEMBER_STORE B "
+                + "WHERE A.PHONE = B.REG_PHONE "
+                + "AND A.STORE_ID = B.STORE_ID "
+                + "AND A.STORE_ID = {0} "
+                + "AND B.MEMBER_ID = {1}";
+        public const string INSERT_POINT_COMMIT = ""
+                + "INSERT INTO T_REMOTE_POINT_COMMIT(STORE_ID,PHONE,STATE,TYPE,POINT) "
+                + "VALUES({0},'{1}', 0, 0, {2}) ";
     }
 }

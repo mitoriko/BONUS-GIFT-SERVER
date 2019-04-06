@@ -89,5 +89,45 @@ namespace ACBC.Buss
             Utils.SetCache(wsPayState, 0, 0, 10);
             return "";
         }
+
+        public object Do_Exchange(BaseApi baseApi)
+        {
+            ExchangeParam exchangeParam = JsonConvert.DeserializeObject<ExchangeParam>(baseApi.param.ToString());
+            if (exchangeParam == null)
+            {
+                throw new ApiException(CodeMessage.InvalidParam, "InvalidParam");
+            }
+
+            ScanExchangeCodeParam scanExchangeCodeParam = new ScanExchangeCodeParam
+            {
+                code = exchangeParam.code
+            };
+
+            ExchangeCode exchangeCode = Utils.GetCache<ExchangeCode>(scanExchangeCodeParam);
+
+            if (exchangeCode == null)
+            {
+                throw new ApiException(CodeMessage.InvalidExchangeCode, "InvalidExchangeCode");
+            }
+
+            OpenDao openDao = new OpenDao();
+            StoreUser storeUser = openDao.GetStoreUser(Utils.GetOpenID(baseApi.token));
+
+            StoreDao storeDao = new StoreDao();
+            string phone = storeDao.CheckStoreMember(storeUser.storeId, exchangeCode.memberId);
+            if (phone == "")
+            {
+                throw new ApiException(CodeMessage.NeedStoreMember, "NeedStoreMember");
+            }
+
+            if (!storeDao.InserRemoteCommit(storeUser.storeId, phone, exchangeParam.score))
+            {
+                throw new ApiException(CodeMessage.ExchangeError, "ExchangeError");
+            }
+
+            Utils.DeleteCache<ExchangeCode>(scanExchangeCodeParam);
+
+            return "";
+        }
     }
 }

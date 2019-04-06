@@ -5,6 +5,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Security.Cryptography;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace ACBC.Buss
@@ -309,22 +311,28 @@ namespace ACBC.Buss
             {
                 throw new ApiException(CodeMessage.InvalidOrderState, "InvalidOrderState");
             }
-            string code = "ORDER_" + Guid.NewGuid().ToString();
+            string scanCode = "";
+            using (var md5 = MD5.Create())
+            {
+                var result = md5.ComputeHash(Encoding.UTF8.GetBytes(Guid.NewGuid().ToString()));
+                var strResult = BitConverter.ToString(result);
+                scanCode = "ORDER_" + strResult.Replace("-", "");
+            }
             ScanOrderCodeParam scanOrderCodeParam = new ScanOrderCodeParam
             {
-                code = code,
+                code = scanCode,
             };
 
             StoreGoodsCode storeGoodsCode = new StoreGoodsCode
             {
-                code = code,
+                code = scanCode,
                 order = order,
                 Unique = scanOrderCodeParam.GetUnique(),
             };
 
-            Utils.SetCache(storeGoodsCode, 1, 0, 10);
+            Utils.SetCache(storeGoodsCode, 0, 0, 10);
 
-            return code;
+            return scanCode;
         }
     }
 }

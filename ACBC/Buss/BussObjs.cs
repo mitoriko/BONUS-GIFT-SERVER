@@ -251,6 +251,17 @@ namespace ACBC.Buss
         public string orderId;
         public string code;
     }
+
+    public class ExchangeParam
+    {
+        public string code;
+        public int score;
+    }
+
+    public class ScanExchangeCodeParam : BussParam
+    {
+        public string code;
+    }
     #endregion
 
     #region DaoObjs
@@ -538,6 +549,12 @@ namespace ACBC.Buss
     {
         public string code;
         public Order order;
+    }
+
+    public class ExchangeCode : BussCache
+    {
+        public string code;
+        public string memberId;
     }
     #endregion
 }
