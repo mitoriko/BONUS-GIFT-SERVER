@@ -1,6 +1,7 @@
 ﻿using ACBC.Buss;
 using Com.ACBC.Framework.Database;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -88,10 +89,16 @@ namespace ACBC.Dao
 
         public bool UpdateOrderState(string orderId, string storeUserId)
         {
+            ArrayList list = new ArrayList();
             StringBuilder builder = new StringBuilder();
             builder.AppendFormat(StoreSqls.UPDATE_ORDER_STATE, orderId, storeUserId);
             string sql = builder.ToString();
-            return DatabaseOperationWeb.ExecuteDML(sql);
+            list.Add(sql);
+            builder.Clear();
+            builder.AppendFormat(StoreSqls.UPDATE_ORDER_GOODS_STATE, orderId);
+            sql = builder.ToString();
+            list.Add(sql);
+            return DatabaseOperationWeb.ExecuteDML(list);
         }
 
         public string GetStoreId(string storeCode)
@@ -167,6 +174,10 @@ namespace ACBC.Dao
                 + "PICKUP_TIME = NOW(), "
                 + "PICKUP_STORE_USER = {1} "
                 + "WHERE ORDER_ID = {0} ";
+        public const string UPDATE_ORDER_GOODS_STATE = ""
+                + "UPDATE T_BUSS_ORDER_GOODS "
+                + "SET GOODS_STATE = 3 "
+                + "WHERE ORDER_CODE = (SELECT ORDER_CODE FROM T_BUSS_ORDER WHERE ORDER_ID = {0}) ";
         public const string SELECT_STORE_ID_BY_STORE_CODE = ""
                 + "SELECT * FROM T_BASE_STORE "
                 + "WHERE STORE_CODE = '{0}' ";
