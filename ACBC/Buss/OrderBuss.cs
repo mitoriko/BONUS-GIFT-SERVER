@@ -330,7 +330,7 @@ namespace ACBC.Buss
                 Unique = scanOrderCodeParam.GetUnique(),
             };
 
-            Utils.SetCache(storeGoodsCode, 0, 0, 10);
+            Utils.SetCache(storeGoodsCode, 0, 0, 30);
 
             return scanCode;
         }

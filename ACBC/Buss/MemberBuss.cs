@@ -245,7 +245,7 @@ namespace ACBC.Buss
                 Unique = memberCheckStoreCodeParam.GetUnique(),
             };
 
-            Utils.SetCache(memberCheckStoreCode, 1, 0, 10);
+            Utils.SetCache(memberCheckStoreCode, 0, 0, 30);
 
             return scanCode;
         }
@@ -273,7 +273,7 @@ namespace ACBC.Buss
                 Unique = scanExchangeCodeParam.GetUnique(),
             };
 
-            Utils.SetCache(exchangeCode, 0, 0, 10);
+            Utils.SetCache(exchangeCode, 0, 0, 30);
 
             return scanCode;
         }
