@@ -502,7 +502,7 @@ namespace ACBC.Dao
                 + "WHERE GOODS_ID = {0} ";
             public const string UPDATE_ORDER_STATE_BY_ORDER_ID = ""
                 + "UPDATE T_BUSS_ORDER "
-                + "SET STATE = 1, PAY_TIME = NOW() "
+                + "SET STATE = 1, PAY_TIME = NOW(), TASK_STATE = 1 "
                 + "WHERE ORDER_ID = {0} ";
             public const string UPDATE_MEMBER_HEART_BY_MEMBER_ID = ""
                 + "UPDATE T_BASE_MEMBER "
