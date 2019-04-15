@@ -444,7 +444,7 @@ namespace ACBC.Dao
                 + "UPDATE T_BASE_MEMBER SET SCAN_CODE = '{1}' "
                 + "WHERE MEMBER_ID = {0}";
             public const string SELECT_STORE_LIMIT_ADD = ""
-                + "SELECT SUM(NUM) AS NUMS "
+                + "SELECT IFNULL(SUM(NUM), 0) AS NUMS "
                 + "FROM T_BUSS_STORE_LIMIT_ADD "
                 + "WHERE MEMBER_ID = {0} "
                 + "AND STORE_ID = {1} "
