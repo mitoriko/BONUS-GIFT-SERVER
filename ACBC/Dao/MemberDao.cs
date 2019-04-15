@@ -175,6 +175,20 @@ namespace ACBC.Dao
             return remoteStoreMember;
         }
 
+        public int GetLimitAdd(string storeId, string memberId)
+        {
+            StringBuilder builder = new StringBuilder();
+            builder.AppendFormat(MemberSqls.SELECT_STORE_LIMIT_ADD, memberId, storeId);
+            string sql = builder.ToString();
+            DataTable dt = DatabaseOperationWeb.ExecuteSelectDS(sql, "T").Tables[0];
+            if (dt != null && dt.Rows.Count == 1)
+            {
+                return Convert.ToInt32(dt.Rows[0][0]);
+            }
+
+            return 0;
+        }
+
         public List<RemotePointCommit> GetRemotePointCommitList(RemoteStoreMember remoteStoreMember)
         {
             List<RemotePointCommit> list = new List<RemotePointCommit>();
@@ -430,10 +444,11 @@ namespace ACBC.Dao
                 + "UPDATE T_BASE_MEMBER SET SCAN_CODE = '{1}' "
                 + "WHERE MEMBER_ID = {0}";
             public const string SELECT_STORE_LIMIT_ADD = ""
-                + "SELECT * "
+                + "SELECT SUM(NUM) AS NUMS "
                 + "FROM T_BUSS_STORE_LIMIT_ADD "
                 + "WHERE MEMBER_ID = {0} "
-                + "AND STORE_ID = {1} ";
+                + "AND STORE_ID = {1} "
+                + "AND DATE_FORMAT(NOW(), '%Y%m%d') = USE_DATE";
         }
     }
 }
