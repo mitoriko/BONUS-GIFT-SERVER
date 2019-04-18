@@ -93,11 +93,35 @@ namespace ACBC.Buss
         public List<string[]> list;
     }
 
-    public enum ScanCodeType
+    public class ConfigItem
     {
-        Shop,
-        User,
-        Null,
+        public string key;
+        public string value;
+    }
+
+    public class ConfigParam
+    {
+        public string env;
+        public string group;
+    }
+
+    public class RequestParam
+    {
+        public string method;
+        public object param;
+    }
+
+    public class ResponseObj
+    {
+        public bool success;
+        public ResponseMsg msg;
+        public List<ConfigItem> data;
+    }
+
+    public class ResponseMsg
+    {
+        public string code;
+        public string msg;
     }
 
     #endregion

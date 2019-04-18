@@ -30,7 +30,7 @@ namespace ACBC.Buss
             if (jsonResult.errcode == Senparc.Weixin.ReturnCode.请求成功)
             {
                 AccessTokenContainer.Register(Global.APPID, Global.APPSECRET);
-                var sessionBag = SessionContainer.UpdateSession(null, jsonResult.openid, jsonResult.session_key);
+                var sessionBag = SessionContainer.UpdateSession(null, jsonResult.openid, jsonResult.session_key, jsonResult.unionid);
 
                 OpenDao openDao = new OpenDao();
                 SessionUser sessionUser = new SessionUser();
@@ -40,7 +40,7 @@ namespace ACBC.Buss
                 {
                     sessionUser.userType = "GUEST";
                     sessionBag.Name = JsonConvert.SerializeObject(sessionUser);
-                    SessionContainer.Update(sessionBag.Key, sessionBag);
+                    SessionContainer.Update(sessionBag.Key, sessionBag, new TimeSpan(Global.SESSION_EXPIRY_H, Global.SESSION_EXPIRY_M, Global.SESSION_EXPIRY_S));
                     return new { token = sessionBag.Key, isReg = false };
                 }
                 else
@@ -49,7 +49,7 @@ namespace ACBC.Buss
                     sessionUser.openid = sessionBag.OpenId;
                     sessionUser.memberId = member.memberId;
                     sessionBag.Name = JsonConvert.SerializeObject(sessionUser);
-                    SessionContainer.Update(sessionBag.Key, sessionBag);
+                    SessionContainer.Update(sessionBag.Key, sessionBag, new TimeSpan(Global.SESSION_EXPIRY_H, Global.SESSION_EXPIRY_M, Global.SESSION_EXPIRY_S));
                     return new {
                         token = sessionBag.Key,
                         isReg = true,
@@ -101,7 +101,7 @@ namespace ACBC.Buss
             sessionUser.memberId = member.memberId;
             sessionUser.userType = "MEMBER";
             sessionBag.Name = JsonConvert.SerializeObject(sessionUser);
-            SessionContainer.Update(sessionBag.Key, sessionBag);
+            SessionContainer.Update(sessionBag.Key, sessionBag, new TimeSpan(Global.SESSION_EXPIRY_H, Global.SESSION_EXPIRY_M, Global.SESSION_EXPIRY_S));
 
             return "";
         }
@@ -118,7 +118,7 @@ namespace ACBC.Buss
             if (jsonResult.errcode == Senparc.Weixin.ReturnCode.请求成功)
             {
                 AccessTokenContainer.Register(Global.STOREAPPID, Global.STOREAPPSECRET);
-                var sessionBag = SessionContainer.UpdateSession(null, jsonResult.openid, jsonResult.session_key);
+                var sessionBag = SessionContainer.UpdateSession(null, jsonResult.openid, jsonResult.session_key, jsonResult.unionid);
 
                 OpenDao openDao = new OpenDao();
                 SessionUser sessionUser = new SessionUser();
@@ -128,7 +128,7 @@ namespace ACBC.Buss
                 {
                     sessionUser.userType = "UNKWON";
                     sessionBag.Name = JsonConvert.SerializeObject(sessionUser);
-                    SessionContainer.Update(sessionBag.Key, sessionBag);
+                    SessionContainer.Update(sessionBag.Key, sessionBag, new TimeSpan(Global.SESSION_EXPIRY_H, Global.SESSION_EXPIRY_M, Global.SESSION_EXPIRY_S));
                     return new { token = sessionBag.Key, isReg = false };
                 }
                 else
@@ -137,7 +137,7 @@ namespace ACBC.Buss
                     sessionUser.openid = sessionBag.OpenId;
                     sessionUser.storeUserId = storeUser.storeUserId;
                     sessionBag.Name = JsonConvert.SerializeObject(sessionUser);
-                    SessionContainer.Update(sessionBag.Key, sessionBag);
+                    SessionContainer.Update(sessionBag.Key, sessionBag, new TimeSpan(Global.SESSION_EXPIRY_H, Global.SESSION_EXPIRY_M, Global.SESSION_EXPIRY_S));
                     return new
                     {
                         token = sessionBag.Key,
@@ -196,7 +196,7 @@ namespace ACBC.Buss
             sessionUser.storeUserId = storeUser.storeUserId;
             sessionUser.userType = "STORE";
             sessionBag.Name = JsonConvert.SerializeObject(sessionUser);
-            SessionContainer.Update(sessionBag.Key, sessionBag);
+            SessionContainer.Update(sessionBag.Key, sessionBag, new TimeSpan(Global.SESSION_EXPIRY_H, Global.SESSION_EXPIRY_M, Global.SESSION_EXPIRY_S));
 
             return "";
         }

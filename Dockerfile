@@ -1,4 +1,4 @@
-FROM microsoft/dotnet:2.0-runtime
+FROM mcr.microsoft.com/dotnet/core/runtime:2.1
 WORKDIR /app
 EXPOSE 80
 ADD ACBC/obj/Docker/publish /app

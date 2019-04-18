@@ -11,6 +11,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Senparc.CO2NET;
+using Senparc.CO2NET.Cache;
+using Senparc.CO2NET.RegisterServices;
 using Senparc.Weixin;
 using Senparc.Weixin.Entities;
 using Senparc.Weixin.RegisterServices;
@@ -46,12 +49,13 @@ namespace ACBC
                                                 .AllowAnyMethod()
                                                 .WithExposedHeaders(new string[] { "code", "msg" })
                                                 .AllowCredentials()));
+            services.AddSenparcGlobalServices(Configuration).AddSenparcWeixinServices(Configuration);
 
             Global.StartUp();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, IOptions<SenparcSetting> senparcSetting, IOptions<SenparcWeixinSetting> senparcWeixinSetting)
         {
             if (env.IsDevelopment())
             {
@@ -60,6 +64,24 @@ namespace ACBC
             app.UseCors("AllowSameDomain");
             app.UseMvc();
             app.Map(Global.ROUTE_PX + "/ws", SocketController.Map);
+
+            //IRegisterService register = RegisterService.Start(env, senparcSetting.Value)
+            //                                           .UseSenparcGlobal(false, () => GetExCacheStrategies(senparcSetting.Value));
+
+            var redisConfigurationStr = senparcSetting.Value.Cache_Redis_Configuration;
+            var useRedis = !string.IsNullOrEmpty(redisConfigurationStr) && redisConfigurationStr != Global.REDIS;
+            IRegisterService register = RegisterService.Start(env, senparcSetting.Value).UseSenparcGlobal();
+            register.UseSenparcWeixin(senparcWeixinSetting.Value, senparcSetting.Value);
+
+
+            
         }
+
+        //private IList<IDomainExtensionCacheStrategy> GetExCacheStrategies(SenparcSetting senparcSetting)
+        //{
+        //    var exContainerCacheStrategies = new List<IDomainExtensionCacheStrategy>();
+        //    senparcSetting = senparcSetting ?? new SenparcSetting();
+        //    return exContainerCacheStrategies;
+        //}
     }
 }

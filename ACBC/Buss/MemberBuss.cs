@@ -70,7 +70,7 @@ namespace ACBC.Buss
             sessionUser.checkCode = code;
             sessionUser.checkPhone = checkCodeParam.phone;
             sessionBag.Name = JsonConvert.SerializeObject(sessionUser);
-            SessionContainer.Update(sessionBag.Key, sessionBag);
+            SessionContainer.Update(sessionBag.Key, sessionBag, new TimeSpan(1, 0, 0));
             StringBuilder builder = new StringBuilder();
             builder.AppendFormat(Global.SMS_CODE_URL, Global.SMS_CODE, Global.SMS_TPL, code, checkCodeParam.phone);
             string url = builder.ToString();
@@ -110,7 +110,7 @@ namespace ACBC.Buss
             sessionUser.checkCode = "";
             sessionUser.checkPhone = "";
             sessionBag.Name = JsonConvert.SerializeObject(sessionUser);
-            SessionContainer.Update(sessionBag.Key, sessionBag);
+            SessionContainer.Update(sessionBag.Key, sessionBag, new TimeSpan(Global.SESSION_EXPIRY_H, Global.SESSION_EXPIRY_M, Global.SESSION_EXPIRY_S));
 
             List<MemberStore> memberStoreList = memberDao.GetMemberStoreListByMemberId(memberId);
             MemberStore memberStore = memberStoreList.Find

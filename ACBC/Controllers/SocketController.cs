@@ -8,10 +8,7 @@ using System.Threading.Tasks;
 using ACBC.Buss;
 using ACBC.Common;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Senparc.Weixin.Cache.Redis;
 
 namespace ACBC.Controllers
 {

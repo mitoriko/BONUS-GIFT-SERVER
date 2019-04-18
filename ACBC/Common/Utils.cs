@@ -1,6 +1,6 @@
 ﻿using ACBC.Buss;
 using Newtonsoft.Json;
-using Senparc.Weixin.Cache.Redis;
+using Senparc.CO2NET.Cache.Redis;
 using Senparc.Weixin.WxOpen.Containers;
 using StackExchange.Redis;
 using System;
