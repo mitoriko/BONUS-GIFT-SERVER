@@ -70,6 +70,10 @@ namespace ACBC
 
             var redisConfigurationStr = senparcSetting.Value.Cache_Redis_Configuration;
             var useRedis = !string.IsNullOrEmpty(redisConfigurationStr) && redisConfigurationStr != Global.REDIS;
+            if(!useRedis)
+            {
+                senparcSetting.Value.Cache_Redis_Configuration = Global.REDIS;
+            }
             IRegisterService register = RegisterService.Start(env, senparcSetting.Value).UseSenparcGlobal();
             register.UseSenparcWeixin(senparcWeixinSetting.Value, senparcSetting.Value);
 
