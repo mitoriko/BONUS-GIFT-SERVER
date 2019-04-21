@@ -1,23 +1,24 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using ACBC.Common;
-using ACBC.Controllers;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc.Formatters;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using System.IO;
 using Senparc.CO2NET;
 using Senparc.CO2NET.Cache;
-using Senparc.CO2NET.Cache.Redis;
-using Senparc.CO2NET.RegisterServices;
-using Senparc.Weixin;
-using Senparc.Weixin.Entities;
 using Senparc.Weixin.RegisterServices;
+using Senparc.CO2NET.RegisterServices;
+using Senparc.Weixin.Entities;
+using Senparc.CO2NET.Cache.Redis;//DPBMARK Redis DPBMARK_END
+using Senparc.Weixin.WxOpen;//DPBMARK MiniProgram DPBMARK_END
+using Senparc.CO2NET.Utilities;
+using Microsoft.AspNetCore.Mvc.Formatters;
+using ACBC.Common;
+using ACBC.Controllers;
+using Senparc.Weixin;
+using System.Collections.Generic;
+using System;
 
 namespace ACBC
 {
@@ -50,8 +51,8 @@ namespace ACBC
                                                 .AllowAnyMethod()
                                                 .WithExposedHeaders(new string[] { "code", "msg" })
                                                 .AllowCredentials()));
-            services.AddSenparcGlobalServices(Configuration).AddSenparcWeixinServices(Configuration);
-
+            services.AddSenparcGlobalServices(Configuration)
+                    .AddSenparcWeixinServices(Configuration);
             Global.StartUp();
         }
 
@@ -66,28 +67,11 @@ namespace ACBC
             app.UseMvc();
             app.Map(Global.ROUTE_PX + "/ws", SocketController.Map);
 
-            //IRegisterService register = RegisterService.Start(env, senparcSetting.Value)
-            //                                           .UseSenparcGlobal(false, () => GetExCacheStrategies(senparcSetting.Value));
-            
-
-            var redisConfigurationStr = senparcSetting.Value.Cache_Redis_Configuration;
-            var useRedis = !string.IsNullOrEmpty(redisConfigurationStr) && redisConfigurationStr != Global.REDIS;
-            if(!useRedis)
-            {
-                senparcSetting.Value.Cache_Redis_Configuration = Global.REDIS;
-            }
-            IRegisterService register = RegisterService.Start(env, senparcSetting.Value).UseSenparcGlobal();
-            register.UseSenparcWeixin(senparcWeixinSetting.Value, senparcSetting.Value);
-
-            CacheStrategyFactory.RegisterObjectCacheStrategy(() => RedisObjectCacheStrategy.Instance);
-
+            Senparc.CO2NET.Cache.Redis.Register.SetConfigurationOption(Global.REDIS);
+            IRegisterService register = RegisterService.Start(env, senparcSetting.Value)
+                .UseSenparcGlobal().UseSenparcWeixin(senparcWeixinSetting.Value, senparcSetting.Value);
+            Senparc.CO2NET.Cache.Redis.Register.UseHashRedisNow();
         }
 
-        //private IList<IDomainExtensionCacheStrategy> GetExCacheStrategies(SenparcSetting senparcSetting)
-        //{
-        //    var exContainerCacheStrategies = new List<IDomainExtensionCacheStrategy>();
-        //    senparcSetting = senparcSetting ?? new SenparcSetting();
-        //    return exContainerCacheStrategies;
-        //}
     }
 }
