@@ -13,6 +13,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Senparc.CO2NET;
 using Senparc.CO2NET.Cache;
+using Senparc.CO2NET.Cache.Redis;
 using Senparc.CO2NET.RegisterServices;
 using Senparc.Weixin;
 using Senparc.Weixin.Entities;
@@ -67,6 +68,7 @@ namespace ACBC
 
             //IRegisterService register = RegisterService.Start(env, senparcSetting.Value)
             //                                           .UseSenparcGlobal(false, () => GetExCacheStrategies(senparcSetting.Value));
+            
 
             var redisConfigurationStr = senparcSetting.Value.Cache_Redis_Configuration;
             var useRedis = !string.IsNullOrEmpty(redisConfigurationStr) && redisConfigurationStr != Global.REDIS;
@@ -77,8 +79,8 @@ namespace ACBC
             IRegisterService register = RegisterService.Start(env, senparcSetting.Value).UseSenparcGlobal();
             register.UseSenparcWeixin(senparcWeixinSetting.Value, senparcSetting.Value);
 
+            CacheStrategyFactory.RegisterObjectCacheStrategy(() => RedisObjectCacheStrategy.Instance);
 
-            
         }
 
         //private IList<IDomainExtensionCacheStrategy> GetExCacheStrategies(SenparcSetting senparcSetting)
