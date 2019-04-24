@@ -10,7 +10,12 @@ namespace ACBC.Common
 {
     public class Global
     {
+
+#if DEBUG
+        public const string ENV = "DEV";
+#else
         public const string ENV = "PRO";
+#endif
         public const string GROUP = "Gift-Server";
 
         public const string CONFIG_TOPIC = "ConfigServerTopic";
