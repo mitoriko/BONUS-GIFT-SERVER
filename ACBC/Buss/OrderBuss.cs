@@ -56,6 +56,11 @@ namespace ACBC.Buss
             string memberId = Utils.GetMemberID(baseApi.token);
             Goods goods = mallDao.GetGoodsByGoodsId(inputCartParam.goodsId);
 
+            if (inputCartParam.goodsNum < 0)
+            {
+                throw new ApiException(CodeMessage.ErrorNum, "ErrorNum");
+            }
+
             if (goods == null)
             {
                 throw new ApiException(CodeMessage.InvalidGoods, "InvalidGoods");
@@ -96,6 +101,11 @@ namespace ACBC.Buss
             OrderDao orderDao = new OrderDao();
 
             Goods goods = orderDao.GetGoodsByCartId(updateCartParam.cartId);
+
+            if (updateCartParam.goodsNum < 0)
+            {
+                throw new ApiException(CodeMessage.ErrorNum, "ErrorNum");
+            }
 
             if (goods == null)
             {
@@ -167,6 +177,10 @@ namespace ACBC.Buss
                 if(preOrderParam == null)
                 {
                     throw new ApiException(CodeMessage.InvalidGoods, "InvalidGoods");
+                }
+                if (preOrderParam.goodsNum < 0)
+                {
+                    throw new ApiException(CodeMessage.ErrorNum, "ErrorNum");
                 }
                 if (preOrderParam.goodsNum <= goods.goodsStock)
                 {
@@ -270,6 +284,10 @@ namespace ACBC.Buss
                     (
                         item => item.goodsId.Equals(goods.goodsId)
                     );
+                if (Convert.ToInt32(orderGoods.goodsNum) < 0)
+                {
+                    throw new ApiException(CodeMessage.ErrorNum, "ErrorNum");
+                }
                 if (orderGoods == null)
                 {
                     throw new ApiException(CodeMessage.InvalidGoods, "InvalidGoods");
