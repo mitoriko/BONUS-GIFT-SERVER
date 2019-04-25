@@ -301,7 +301,8 @@ namespace ACBC.Dao
                 + "WHERE A.GOODS_ID = {0}";
             public const string SELECT_STORE = ""
                 + "SELECT * "
-                + "FROM T_BASE_STORE A ";
+                + "FROM T_BASE_STORE A "
+                + "ORDER BY SORT DESC";
             public const string SELECT_STORE_BY_STORE_ID = ""
                 + "SELECT * "
                 + "FROM T_BASE_STORE A "
