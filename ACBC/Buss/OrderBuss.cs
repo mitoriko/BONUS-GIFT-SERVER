@@ -227,7 +227,7 @@ namespace ACBC.Buss
             string orderCode = preOrder.storeCode + memberId.PadLeft(6, '0') + DateTime.Now.ToString("yyyyMMddHHmmss");
 
             OrderDao orderDao = new OrderDao();
-            if(orderDao.InsertOrder(memberId, orderCode, preOrder, payOrderParam.remark))
+            if(orderDao.InsertOrder(memberId, orderCode, preOrder, payOrderParam.remark, preOrder.addr, 0))
             {
                 Utils.DeleteCache(payOrderParam.preOrderId);
                 Order order = orderDao.GetOrderInfoByCode(orderCode);
@@ -327,8 +327,18 @@ namespace ACBC.Buss
             string memberId = Utils.GetMemberID(baseApi.token);
             string orderCode = preOrder.storeCode + memberId.PadLeft(6, '0') + DateTime.Now.ToString("yyyyMMddHHmmss");
 
+            MallDao mallDao = new MallDao();
             OrderDao orderDao = new OrderDao();
-            if (orderDao.InsertOrder(memberId, orderCode, preOrder, payOrderParamV2.remark))
+            Store store = mallDao.GetStoreListV2(memberId).Find
+                    (
+                        item => item.storeId.Equals(payOrderParamV2.storeBranchId)
+                    );
+            if(store == null)
+            {
+                throw new ApiException(CodeMessage.InvalidStore, "InvalidStore");
+            }
+            preOrder.total += store.expFee;
+            if (orderDao.InsertOrder(memberId, orderCode, preOrder, payOrderParamV2.remark, payOrderParamV2.expAddr, store.expFee))
             {
                 Utils.DeleteCache(payOrderParamV2.preOrderId);
                 Order order = orderDao.GetOrderInfoByCode(orderCode);
@@ -344,72 +354,6 @@ namespace ACBC.Buss
             }
 
 
-        }
-
-        public object Do_GetOrderInfoV2(BaseApi baseApi)
-        {
-            GetOrderInfoParam getOrderInfoParam = JsonConvert.DeserializeObject<GetOrderInfoParam>(baseApi.param.ToString());
-            if (getOrderInfoParam == null)
-            {
-                throw new ApiException(CodeMessage.InvalidParam, "InvalidParam");
-            }
-            OrderDao orderDao = new OrderDao();
-            return orderDao.GetOrderInfo(getOrderInfoParam.orderId);
-        }
-
-        public object Do_PayForOrderV2(BaseApi baseApi)
-        {
-            PayForOrderParam payForOrderParam = JsonConvert.DeserializeObject<PayForOrderParam>(baseApi.param.ToString());
-            if (payForOrderParam == null)
-            {
-                throw new ApiException(CodeMessage.InvalidParam, "InvalidParam");
-            }
-            OrderDao orderDao = new OrderDao();
-            MemberDao memberDao = new MemberDao();
-            string memberId = Utils.GetMemberID(baseApi.token);
-            Order order = orderDao.GetOrderInfo(payForOrderParam.orderId);
-            if (order.state != "0")
-            {
-                throw new ApiException(CodeMessage.InvalidOrderState, "InvalidOrderState");
-            }
-            int goodsNum = order.list.Count;
-            string[] goodsIds = new string[goodsNum];
-            for (int i = 0; i < goodsNum; i++)
-            {
-                goodsIds[i] = order.list[i].goodsId;
-            }
-            List<Goods> goodsList = orderDao.GetGoodsByGoodsIds(goodsIds);
-            foreach (Goods goods in goodsList)
-            {
-                var orderGoods = order.list.Find
-                    (
-                        item => item.goodsId.Equals(goods.goodsId)
-                    );
-                if (Convert.ToInt32(orderGoods.goodsNum) < 0)
-                {
-                    throw new ApiException(CodeMessage.ErrorNum, "ErrorNum");
-                }
-                if (orderGoods == null)
-                {
-                    throw new ApiException(CodeMessage.InvalidGoods, "InvalidGoods");
-                }
-                if (Convert.ToInt32(orderGoods.goodsNum) > goods.goodsStock)
-                {
-                    throw new ApiException(CodeMessage.NotEnoughGoods, "NotEnoughGoods");
-                }
-            }
-            MemberInfo memberInfo = memberDao.GetMemberInfo(memberId);
-            if (memberInfo.heart < Convert.ToInt32(order.total))
-            {
-                throw new ApiException(CodeMessage.NotEnoughHearts, "NotEnoughHearts");
-            }
-
-            if (!orderDao.PayForOrder(memberId, order, memberInfo.heart))
-            {
-                throw new ApiException(CodeMessage.PayForOrderError, "PayForOrderError");
-            }
-
-            return "";
         }
 
         public object Do_GetStoreGoodsCode(BaseApi baseApi)

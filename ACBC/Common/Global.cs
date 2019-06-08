@@ -78,9 +78,9 @@ namespace ACBC.Common
 
         static void GetConfig(bool isFirst)
         {
-            string url = "http://ConfigServer/api/config/Config/Open";
+            string url = "http://ConfigServer/api/config/Config/Pro";
 #if DEBUG
-            url = "http://" + ConfigServer + "/api/config/Config/Open";
+            url = "http://" + ConfigServer + "/api/config/Config/Dev";
 #endif
             ConfigParam configParam = new ConfigParam
             {

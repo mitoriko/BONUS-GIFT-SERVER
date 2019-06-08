@@ -203,6 +203,7 @@ namespace ACBC.Buss
         public string preOrderId;
         public string remark;
         public string storeBranchId;
+        public string expAddr;
     }
 
     public class GetOrderInfoParam
@@ -404,6 +405,7 @@ namespace ACBC.Buss
         public string total;
         public string state;
         public string orderTime;
+        public string expFee;
         public List<OrderGoods> list = new List<OrderGoods>();
     }
 
