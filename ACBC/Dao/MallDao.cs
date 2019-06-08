@@ -201,6 +201,42 @@ namespace ACBC.Dao
                         storeName = dr["STORE_NAME"].ToString(),
                         storeTel = dr["STORE_TEL"].ToString(),
                         storeRate = Convert.ToInt32(dr["STORE_RATE"]),
+                        openReg = Convert.ToInt32(dr["OPEN_REG"]),
+                    };
+                    list.Add(store);
+                }
+            }
+            return list;
+        }
+
+        public List<Store> GetStoreListV2(string memberId)
+        {
+            List<Store> list = new List<Store>();
+            StringBuilder builder = new StringBuilder();
+            builder.AppendFormat(MallSqls.SELECT_STORE_BRANCH, memberId);
+            string sql = builder.ToString();
+            DataTable dt = DatabaseOperationWeb.ExecuteSelectDS(sql, "T").Tables[0];
+            if (dt != null)
+            {
+                foreach (DataRow dr in dt.Rows)
+                {
+                    Store store = new Store
+                    {
+                        storeAddr = dr["STORE_BRANCH_ADDR"].ToString(),
+                        storeId = dr["STORE_ADDR_ID"].ToString(),
+                        storeCardImg = dr["STORE_CARD_IMG"].ToString(),
+                        storeCode = dr["STORE_CODE"].ToString(),
+                        storeDesc = dr["STORE_DESC"].ToString(),
+                        storeImg = dr["STORE_IMG"].ToString(),
+                        storeName = Convert.ToInt32(dr["CAN_EXP"]) == 0 ?
+                                    dr["STORE_NAME"].ToString() + "-" + dr["STORE_ADDR_ALISE"].ToString() : 
+                                    dr["STORE_NAME"].ToString() + "-" + dr["STORE_ADDR_ALISE"].ToString() 
+                                    + "  (邮费" + Convert.ToInt32(dr["EXP_FEE"]) + "❤)",
+                        storeTel = dr["STORE_TEL"].ToString(),
+                        storeRate = Convert.ToInt32(dr["STORE_RATE"]),
+                        openReg = Convert.ToInt32(dr["OPEN_REG"]),
+                        canExp = Convert.ToInt32(dr["CAN_EXP"]),
+                        expFee = Convert.ToInt32(dr["EXP_FEE"]),
                     };
                     list.Add(store);
                 }
@@ -315,6 +351,12 @@ namespace ACBC.Dao
                 + "SELECT * "
                 + "FROM T_BUSS_STORE_GOODS A "
                 + "WHERE STORE_ID = {0}";
+            public const string SELECT_STORE_BRANCH = ""
+                + "SELECT * "
+                + "FROM T_BASE_STORE A,T_BASE_STORE_ADDR B,T_BUSS_MEMBER_STORE C "
+                + "WHERE A.STORE_ID = B.STORE_ID "
+                + "AND C.STORE_ID = A.STORE_ID "
+                + "AND C.MEMBER_ID = {0}";
         }
     }
 }

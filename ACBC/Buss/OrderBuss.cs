@@ -311,6 +311,107 @@ namespace ACBC.Buss
             return "";
         }
 
+        public object Do_PayOrderV2(BaseApi baseApi)
+        {
+            PayOrderParamV2 payOrderParamV2 = JsonConvert.DeserializeObject<PayOrderParamV2>(baseApi.param.ToString());
+            if (payOrderParamV2 == null)
+            {
+                throw new ApiException(CodeMessage.InvalidParam, "InvalidParam");
+            }
+
+            PreOrder preOrder = Utils.GetCache<PreOrder>(payOrderParamV2.preOrderId);
+            if (preOrder == null)
+            {
+                throw new ApiException(CodeMessage.InvalidPreOrderId, "InvalidPreOrderId");
+            }
+            string memberId = Utils.GetMemberID(baseApi.token);
+            string orderCode = preOrder.storeCode + memberId.PadLeft(6, '0') + DateTime.Now.ToString("yyyyMMddHHmmss");
+
+            OrderDao orderDao = new OrderDao();
+            if (orderDao.InsertOrder(memberId, orderCode, preOrder, payOrderParamV2.remark))
+            {
+                Utils.DeleteCache(payOrderParamV2.preOrderId);
+                Order order = orderDao.GetOrderInfoByCode(orderCode);
+                if (order == null)
+                {
+                    throw new ApiException(CodeMessage.CreateOrderError, "CreateOrderError");
+                }
+                return order;
+            }
+            else
+            {
+                throw new ApiException(CodeMessage.CreateOrderError, "CreateOrderError");
+            }
+
+
+        }
+
+        public object Do_GetOrderInfoV2(BaseApi baseApi)
+        {
+            GetOrderInfoParam getOrderInfoParam = JsonConvert.DeserializeObject<GetOrderInfoParam>(baseApi.param.ToString());
+            if (getOrderInfoParam == null)
+            {
+                throw new ApiException(CodeMessage.InvalidParam, "InvalidParam");
+            }
+            OrderDao orderDao = new OrderDao();
+            return orderDao.GetOrderInfo(getOrderInfoParam.orderId);
+        }
+
+        public object Do_PayForOrderV2(BaseApi baseApi)
+        {
+            PayForOrderParam payForOrderParam = JsonConvert.DeserializeObject<PayForOrderParam>(baseApi.param.ToString());
+            if (payForOrderParam == null)
+            {
+                throw new ApiException(CodeMessage.InvalidParam, "InvalidParam");
+            }
+            OrderDao orderDao = new OrderDao();
+            MemberDao memberDao = new MemberDao();
+            string memberId = Utils.GetMemberID(baseApi.token);
+            Order order = orderDao.GetOrderInfo(payForOrderParam.orderId);
+            if (order.state != "0")
+            {
+                throw new ApiException(CodeMessage.InvalidOrderState, "InvalidOrderState");
+            }
+            int goodsNum = order.list.Count;
+            string[] goodsIds = new string[goodsNum];
+            for (int i = 0; i < goodsNum; i++)
+            {
+                goodsIds[i] = order.list[i].goodsId;
+            }
+            List<Goods> goodsList = orderDao.GetGoodsByGoodsIds(goodsIds);
+            foreach (Goods goods in goodsList)
+            {
+                var orderGoods = order.list.Find
+                    (
+                        item => item.goodsId.Equals(goods.goodsId)
+                    );
+                if (Convert.ToInt32(orderGoods.goodsNum) < 0)
+                {
+                    throw new ApiException(CodeMessage.ErrorNum, "ErrorNum");
+                }
+                if (orderGoods == null)
+                {
+                    throw new ApiException(CodeMessage.InvalidGoods, "InvalidGoods");
+                }
+                if (Convert.ToInt32(orderGoods.goodsNum) > goods.goodsStock)
+                {
+                    throw new ApiException(CodeMessage.NotEnoughGoods, "NotEnoughGoods");
+                }
+            }
+            MemberInfo memberInfo = memberDao.GetMemberInfo(memberId);
+            if (memberInfo.heart < Convert.ToInt32(order.total))
+            {
+                throw new ApiException(CodeMessage.NotEnoughHearts, "NotEnoughHearts");
+            }
+
+            if (!orderDao.PayForOrder(memberId, order, memberInfo.heart))
+            {
+                throw new ApiException(CodeMessage.PayForOrderError, "PayForOrderError");
+            }
+
+            return "";
+        }
+
         public object Do_GetStoreGoodsCode(BaseApi baseApi)
         {
             GetStoreGoodsCodeParam getStoreGoodsCodeParam = JsonConvert.DeserializeObject<GetStoreGoodsCodeParam>(baseApi.param.ToString());

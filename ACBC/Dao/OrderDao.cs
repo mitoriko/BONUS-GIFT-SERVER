@@ -300,6 +300,7 @@ namespace ACBC.Dao
                     storeImg = dt.Rows[0]["STORE_IMG"].ToString(),
                     storeName = dt.Rows[0]["STORE_NAME"].ToString(),
                     storeRate = Convert.ToInt32(dt.Rows[0]["STORE_RATE"]),
+                    openReg = Convert.ToInt32(dt.Rows[0]["OPEN_REG"]),
                 };
             }
             return store;

@@ -59,6 +59,13 @@ namespace ACBC.Buss
             {
                 throw new ApiException(CodeMessage.InvalidParam, "InvalidParam");
             }
+            string tSms = Utils.GetCache<string>(baseApi.token);
+            if(tSms != null)
+            {
+                throw new ApiException(CodeMessage.SmsCodeError, "SmsCodeError");
+            }
+
+            Utils.SetCache(baseApi.token, "sms", 0, 0, 30);
 
             string code = new Random().Next(999999).ToString().PadLeft(6, '0');
             SessionBag sessionBag = SessionContainer.GetSession(baseApi.token);
@@ -127,10 +134,19 @@ namespace ACBC.Buss
                 throw new ApiException(CodeMessage.StorePhoneExist, "StorePhoneExist");
             }
 
+            Store store = memberDao.GetStoreByStoreId(bindStoreParam.storeId);
+
             RemoteStoreMember remoteStoreMember = memberDao.GetRemoteStoreMember(bindStoreParam.storeId, bindStoreParam.phone);
             if (remoteStoreMember == null)
             {
-                throw new ApiException(CodeMessage.RemoteStoreMemberNotExist, "RemoteStoreMemberNotExist");
+                if (store != null && store.openReg == 1)
+                {
+                    remoteStoreMember = memberDao.GetNewRemoteStoreMember(bindStoreParam.storeId, bindStoreParam.phone);
+                }
+                if(remoteStoreMember == null)
+                {
+                    throw new ApiException(CodeMessage.RemoteStoreMemberNotExist, "RemoteStoreMemberNotExist");
+                }
             }
 
             bool setDefault = memberStoreList.Count == 0;

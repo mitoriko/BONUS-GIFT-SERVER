@@ -121,17 +121,17 @@ namespace ACBC.Dao
             builder.AppendFormat(MemberSqls.SELECT_REMOTE_STORE_MEMBER, storeId, phone);
             string sql = builder.ToString();
             DataTable dt = DatabaseOperationWeb.ExecuteSelectDS(sql, "T").Tables[0];
-            if (dt != null && dt.Rows.Count == 0)
-            {
-                builder.Clear();
-                builder.AppendFormat(MemberSqls.INSERT_REMOTE_STORE_MEMBER, storeId, phone);
-                sql = builder.ToString();
-                DatabaseOperationWeb.ExecuteDML(sql);
-            }
-            builder.Clear();
-            builder.AppendFormat(MemberSqls.SELECT_REMOTE_STORE_MEMBER, storeId, phone);
-            sql = builder.ToString();
-            dt = DatabaseOperationWeb.ExecuteSelectDS(sql, "T").Tables[0];
+            //if (dt != null && dt.Rows.Count == 0)
+            //{
+            //    builder.Clear();
+            //    builder.AppendFormat(MemberSqls.INSERT_REMOTE_STORE_MEMBER, storeId, phone);
+            //    sql = builder.ToString();
+            //    DatabaseOperationWeb.ExecuteDML(sql);
+            //}
+            //builder.Clear();
+            //builder.AppendFormat(MemberSqls.SELECT_REMOTE_STORE_MEMBER, storeId, phone);
+            //sql = builder.ToString();
+            //dt = DatabaseOperationWeb.ExecuteSelectDS(sql, "T").Tables[0];
             if (dt != null && dt.Rows.Count == 1)
             {
                 remoteStoreMember = new RemoteStoreMember
@@ -143,6 +143,35 @@ namespace ACBC.Dao
                     storeId = dt.Rows[0]["STORE_ID"].ToString(),
                     storeMemberId = dt.Rows[0]["STORE_MEMBER_ID"].ToString(),
                 };
+            }
+
+            return remoteStoreMember;
+        }
+
+        public RemoteStoreMember GetNewRemoteStoreMember(string storeId, string phone)
+        {
+            RemoteStoreMember remoteStoreMember = null;
+            StringBuilder builder = new StringBuilder();
+            builder.AppendFormat(MemberSqls.INSERT_REMOTE_STORE_MEMBER, storeId, phone);
+            string sql = builder.ToString();
+            if(DatabaseOperationWeb.ExecuteDML(sql))
+            {
+                builder.Clear();
+                builder.AppendFormat(MemberSqls.SELECT_REMOTE_STORE_MEMBER, storeId, phone);
+                sql = builder.ToString();
+                DataTable dt = DatabaseOperationWeb.ExecuteSelectDS(sql, "T").Tables[0];
+                if (dt != null && dt.Rows.Count == 1)
+                {
+                    remoteStoreMember = new RemoteStoreMember
+                    {
+                        cardCode = dt.Rows[0]["CARD_CODE"].ToString(),
+                        phone = dt.Rows[0]["PHONE"].ToString(),
+                        point = Convert.ToInt32(dt.Rows[0]["POINT"]),
+                        regTime = dt.Rows[0]["REG_TIME"].ToString(),
+                        storeId = dt.Rows[0]["STORE_ID"].ToString(),
+                        storeMemberId = dt.Rows[0]["STORE_MEMBER_ID"].ToString(),
+                    };
+                }
             }
 
             return remoteStoreMember;
@@ -349,6 +378,31 @@ namespace ACBC.Dao
             return DatabaseOperationWeb.ExecuteDML(sql);
         }
 
+        public Store GetStoreByStoreId(string storeId)
+        {
+            Store store = null;
+            StringBuilder builder = new StringBuilder();
+            builder.AppendFormat(MemberSqls.SELECT_STORE_BY_STORE_ID, storeId);
+            string sql = builder.ToString();
+            DataTable dt = DatabaseOperationWeb.ExecuteSelectDS(sql, "T").Tables[0];
+            if (dt != null && dt.Rows.Count == 1)
+            {
+                store = new Store
+                {
+                    storeAddr = dt.Rows[0]["STORE_ADDR"].ToString(),
+                    storeCode = dt.Rows[0]["STORE_CODE"].ToString(),
+                    storeDesc = dt.Rows[0]["STORE_DESC"].ToString(),
+                    storeId = dt.Rows[0]["STORE_ID"].ToString(),
+                    storeImg = dt.Rows[0]["STORE_IMG"].ToString(),
+                    storeName = dt.Rows[0]["STORE_NAME"].ToString(),
+                    storeRate = Convert.ToInt32(dt.Rows[0]["STORE_RATE"]),
+                    openReg = Convert.ToInt32(dt.Rows[0]["OPEN_REG"]),
+                    canExp = Convert.ToInt32(dt.Rows[0]["CAN_EXP"]),
+                };
+            }
+            return store;
+        }
+
         private class MemberSqls
         {
             public const string SELECT_ORDER_LIST_BY_MEMBER_ID = ""
@@ -449,6 +503,8 @@ namespace ACBC.Dao
                 + "WHERE MEMBER_ID = {0} "
                 + "AND STORE_ID = {1} "
                 + "AND DATE_FORMAT(NOW(), '%Y%m%d') = USE_DATE";
+            public const string SELECT_STORE_BY_STORE_ID = ""
+                + "SELECT * FROM T_BASE_STORE WHERE STORE_ID = {0}";
         }
     }
 }

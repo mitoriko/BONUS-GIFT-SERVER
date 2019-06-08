@@ -198,6 +198,13 @@ namespace ACBC.Buss
         public string remark;
     }
 
+    public class PayOrderParamV2
+    {
+        public string preOrderId;
+        public string remark;
+        public string storeBranchId;
+    }
+
     public class GetOrderInfoParam
     {
         public string orderId;
@@ -472,9 +479,17 @@ namespace ACBC.Buss
         public string storeTel;
         public string storeCardImg;
         public int storeRate;
+        public int openReg = 0;
+        public int canExp = 0;
+        public int expFee = 0;
     }
 
     public class StoreList : BussCache
+    {
+        public List<Store> storeList = new List<Store>();
+    }
+
+    public class StoreListV2 : BussCache
     {
         public List<Store> storeList = new List<Store>();
     }

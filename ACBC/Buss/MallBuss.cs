@@ -104,6 +104,17 @@ namespace ACBC.Buss
 
         }
 
+        public object Do_GetStoreListV2(BaseApi baseApi)
+        {
+            StoreListV2 storeListV2 = Utils.GetCache<StoreListV2>();
+            MallDao mallDao = new MallDao();
+            string memberId = Utils.GetMemberID(baseApi.token);
+            storeListV2 = new StoreListV2();
+            storeListV2.storeList = mallDao.GetStoreListV2(memberId);
+            return storeListV2;
+
+        }
+
         public object Do_GetStoreInfo(BaseApi baseApi)
         {
             GetStoreInfoParam getStoreInfoParam = JsonConvert.DeserializeObject<GetStoreInfoParam>(baseApi.param.ToString());
