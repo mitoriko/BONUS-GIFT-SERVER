@@ -397,7 +397,6 @@ namespace ACBC.Dao
                     storeName = dt.Rows[0]["STORE_NAME"].ToString(),
                     storeRate = Convert.ToInt32(dt.Rows[0]["STORE_RATE"]),
                     openReg = Convert.ToInt32(dt.Rows[0]["OPEN_REG"]),
-                    canExp = Convert.ToInt32(dt.Rows[0]["CAN_EXP"]),
                 };
             }
             return store;

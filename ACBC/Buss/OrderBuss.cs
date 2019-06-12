@@ -325,7 +325,7 @@ namespace ACBC.Buss
                 throw new ApiException(CodeMessage.InvalidPreOrderId, "InvalidPreOrderId");
             }
             string memberId = Utils.GetMemberID(baseApi.token);
-            string orderCode = preOrder.storeCode + memberId.PadLeft(6, '0') + DateTime.Now.ToString("yyyyMMddHHmmss");
+            
 
             MallDao mallDao = new MallDao();
             OrderDao orderDao = new OrderDao();
@@ -338,6 +338,9 @@ namespace ACBC.Buss
                 throw new ApiException(CodeMessage.InvalidStore, "InvalidStore");
             }
             preOrder.total += store.expFee;
+            preOrder.storeCode = store.storeCode;
+            string orderCode = preOrder.storeCode + memberId.PadLeft(6, '0') + DateTime.Now.ToString("yyyyMMddHHmmss");
+            
             if (orderDao.InsertOrder(memberId, orderCode, preOrder, payOrderParamV2.remark, payOrderParamV2.expAddr, store.expFee))
             {
                 Utils.DeleteCache(payOrderParamV2.preOrderId);
