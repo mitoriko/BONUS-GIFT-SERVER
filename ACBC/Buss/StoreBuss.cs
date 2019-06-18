@@ -178,10 +178,8 @@ namespace ACBC.Buss
                 throw new ApiException(CodeMessage.InvalidMemberCkeckStoreCode, "InvalidMemberCkeckStoreCode");
             }
 
-            string memberId = Utils.GetMemberID(baseApi.token);
-
             StoreDao storeDao = new StoreDao();
-            string phone = storeDao.CheckStoreMember(storeUser.storeId, memberId);
+            string phone = storeDao.CheckStoreMember(storeUser.storeId, memberCheckStoreCode.memberId);
             if (phone == "")
             {
                 throw new ApiException(CodeMessage.NeedStoreMember, "NeedStoreMember");
