@@ -79,5 +79,6 @@ namespace ACBC.Common
         CheckAsnGoodsError = 10310,
         InvalidMemberCkeckStoreCode = 10311,
         MemberCkeckStoreError = 10312,
+        AlreadyCheckThisStoreToday = 10313,
     }
 }

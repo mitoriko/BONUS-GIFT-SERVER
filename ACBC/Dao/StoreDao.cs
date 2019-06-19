@@ -152,6 +152,20 @@ namespace ACBC.Dao
             string sql = builder.ToString();
             return DatabaseOperationWeb.ExecuteDML(sql);
         }
+
+        public bool CheckMemberCheckStore(string storeId, string memberId)
+        {
+            StringBuilder builder = new StringBuilder();
+            builder.AppendFormat(StoreSqls.SELECT_MEMBER_CHECK_STORE_BY_MEMBER_ID_AND_STORE_ID_AND_DATE, storeId, memberId);
+            string sql = builder.ToString();
+            DataTable dt = DatabaseOperationWeb.ExecuteSelectDS(sql, "T").Tables[0];
+            if (dt == null || dt.Rows.Count > 0)
+            {
+                return false;
+            }
+
+            return true;
+        }
     }
 
     public class StoreSqls
@@ -212,5 +226,11 @@ namespace ACBC.Dao
         public const string INSERT_MEMBER_CHECK_STORE = ""
                 + "INSERT INTO T_BUSS_MEMBER_CHECK_STORE(STORE_ID,MEMBER_ID,CHECK_TIME,CONSUME,STORE_USER_ID) "
                 + "VALUES({0},{1}, NOW(), {2}, {3}) ";
+        public const string SELECT_MEMBER_CHECK_STORE_BY_MEMBER_ID_AND_STORE_ID_AND_DATE = ""
+                + "SELECT * "
+                + "FROM T_BUSS_MEMBER_CHECK_STORE "
+                + "WHERE MEMBER_ID = {0} "
+                + "AND STORE_ID = {1} "
+                + "AND TO_DAYS(NOW()) - TO_DAYS(CHECK_TIME) = 0";
     }
 }
