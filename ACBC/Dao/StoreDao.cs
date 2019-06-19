@@ -231,6 +231,7 @@ namespace ACBC.Dao
                 + "FROM T_BUSS_MEMBER_CHECK_STORE "
                 + "WHERE MEMBER_ID = {1} "
                 + "AND STORE_ID = {0} "
-                + "AND TO_DAYS(NOW()) - TO_DAYS(CHECK_TIME) = 0";
+                + "AND TO_DAYS(NOW()) - TO_DAYS(CHECK_TIME) = 0 "
+                + "AND CONSUME = 0";
     }
 }
