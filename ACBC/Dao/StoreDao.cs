@@ -229,8 +229,8 @@ namespace ACBC.Dao
         public const string SELECT_MEMBER_CHECK_STORE_BY_MEMBER_ID_AND_STORE_ID_AND_DATE = ""
                 + "SELECT * "
                 + "FROM T_BUSS_MEMBER_CHECK_STORE "
-                + "WHERE MEMBER_ID = {0} "
-                + "AND STORE_ID = {1} "
+                + "WHERE MEMBER_ID = {1} "
+                + "AND STORE_ID = {0} "
                 + "AND TO_DAYS(NOW()) - TO_DAYS(CHECK_TIME) = 0";
     }
 }
