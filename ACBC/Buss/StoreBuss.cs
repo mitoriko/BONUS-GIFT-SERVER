@@ -184,8 +184,8 @@ namespace ACBC.Buss
             {
                 throw new ApiException(CodeMessage.NeedStoreMember, "NeedStoreMember");
             }
-
-            if (!storeDao.CheckMemberCheckStore(storeUser.storeId, memberCheckStoreCode.memberId))
+            
+            if (memberCheckStoreParam.consume == 0 && !storeDao.CheckMemberCheckStore(storeUser.storeId, memberCheckStoreCode.memberId))
             {
                 throw new ApiException(CodeMessage.AlreadyCheckThisStoreToday, "AlreadyCheckThisStoreToday");
             }
