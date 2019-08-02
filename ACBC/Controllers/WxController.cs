@@ -57,5 +57,12 @@ namespace ACBC.Controllers
                 return Json(new ResultsJson(new Message(CodeMessage.PostNull, "PostNull"), null));
             return Json(Global.BUSS.BussResults(this, storeApi));
         }
+        [HttpPost]
+        public ActionResult Active([FromBody]ActiveApi activeApi)
+        {
+            if (activeApi == null)
+                return Json(new ResultsJson(new Message(CodeMessage.PostNull, "PostNull"), null));
+            return Json(Global.BUSS.BussResults(this, activeApi));
+        }
     }
 }

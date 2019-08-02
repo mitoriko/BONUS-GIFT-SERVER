@@ -310,6 +310,10 @@ namespace ACBC.Buss
     {
         public string code;
     }
+    public class QbuyParam
+    {
+        public string qbuyCode;
+    }
     #endregion
 
     #region DaoObjs
@@ -618,6 +622,26 @@ namespace ACBC.Buss
     {
         public string code;
         public string memberId;
+    }
+    public class Qbuy
+    {
+        public string qbuyId;
+        public string qbuyCode;
+        public string storeId;
+        public string storeName;
+        public string startTime;
+        public string endTime;
+        public string activeName;
+    }
+    public class QbuyGoods
+    {
+        public string qbuyGoodsId;
+        public string qbuyCode;
+        public string goodsId;
+        public string goodsName;
+        public string price;
+        public string num;
+        public string slt;
     }
     #endregion
 }
