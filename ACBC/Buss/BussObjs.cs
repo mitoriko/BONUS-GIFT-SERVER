@@ -310,9 +310,17 @@ namespace ACBC.Buss
     {
         public string code;
     }
+
     public class QbuyParam
     {
         public string qbuyCode;
+    }
+
+    public class StartQBuyGoodsParam
+    {
+        public string qBuyCode;
+        public string qBuyGoodsId;
+
     }
     #endregion
 
@@ -633,10 +641,10 @@ namespace ACBC.Buss
         public string endTime;
         public string activeName;
     }
-    public class QbuyGoods
+    public class QBuyGoods
     {
-        public string qbuyGoodsId;
-        public string qbuyCode;
+        public string qBuyGoodsId;
+        public string qBuyCode;
         public string goodsId;
         public string goodsName;
         public string price;
