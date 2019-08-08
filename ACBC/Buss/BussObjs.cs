@@ -643,5 +643,34 @@ namespace ACBC.Buss
         public string num;
         public string slt;
     }
+
+    public class HomePage
+    {
+        public HomePageTopBanner topBanner;
+        public HomePageMenu menu;
+        public HomePageBanner banner;
+        public List<HomePageGoods> goodsList;
+    }
+    public class HomePageTopBanner
+    {
+        public List<HomePageBanner> banner;
+    }
+    public class HomePageMenu
+    {
+        public string menuName;
+        public string menuImg;
+        public string menuUrl;
+    }
+    public class HomePageBanner
+    {
+        public string bannerImg;
+        public string bannerUrl;
+    }
+    public class HomePageGoods
+    {
+        public string goodsId;
+        public string goodsName;
+        public string goodsImg;
+    }
     #endregion
 }
