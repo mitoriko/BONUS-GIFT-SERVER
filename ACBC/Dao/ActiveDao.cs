@@ -52,6 +52,17 @@ namespace ACBC.Dao
             {
                 foreach (DataRow dr in dt.Rows)
                 {
+                    bool ifUse = false;
+                    if (dr["IF_USE"].ToString()=="1")
+                    {
+                        int stock = 0;
+                        int.TryParse(dr["GOODS_STOCK"].ToString(),out stock);
+                        if (stock>0)
+                        {
+                            ifUse = true;
+                        }
+                    }
+
                     QBuyGoods qBuyGoods = new QBuyGoods
                     {
                         qBuyGoodsId= dr["QBUY_GOODS_ID"].ToString(),
@@ -61,6 +72,7 @@ namespace ACBC.Dao
                         price = dr["Q_PRICE"].ToString(),
                         num = dr["Q_NUM"].ToString(),
                         slt = dr["GOODS_IMG"].ToString(),
+                        ifUse = ifUse,
                     };
                     list.Add(qBuyGoods);
                 }
@@ -78,7 +90,7 @@ namespace ACBC.Dao
             DataTable dt = DatabaseOperationWeb.ExecuteSelectDS(sql, "T").Tables[0];
             if (dt != null && dt.Rows.Count == 1)
             {
-                QBuyGoods qbuyGoods = new QBuyGoods
+                qBuyGoods = new QBuyGoods
                 {
                     qBuyGoodsId = dt.Rows[0]["QBUY_GOODS_ID"].ToString(),
                     qBuyCode = dt.Rows[0]["QBUY_CODE"].ToString(),
@@ -108,23 +120,25 @@ namespace ACBC.Dao
                 "FROM T_BUSS_QBUY BQ ,T_BUSS_ACTIVE BA,T_BASE_STORE S " +
                 "WHERE BQ.ACTIVE_ID = BA.ACTIVE_ID " +
                 "AND BQ.STORE_ID = S.STORE_ID " +
+                "AND BQ.STATE = 0 " +
                 "AND BQ.MEMBER_ID = '{0}' ";
 
             public const string SELECT_QBUYGOODS_BY_QBUY_CODE = ""
-                + "SELECT G.GOODS_IMG, G.GOODS_NAME,QG.* " +
+                + "SELECT G.GOODS_IMG, G.GOODS_NAME,QG.*,G.IF_USE,G.GOODS_STOCK " +
                 "FROM T_BUSS_GOODS G ,T_BUSS_QBUY_GOODS QG " +
                 "WHERE G.GOODS_ID = QG.GOODS_ID " +
                 "AND QG.QBUY_CODE = '{0}'";
 
             public const string SELECT_QBUYGOODS_BY_QBUY_CODE_AND_QBUY_GOODS_ID = ""
                 + "SELECT G.GOODS_IMG, G.GOODS_NAME,QG.* "
-                + "FROM T_BUSS_GOODS G ,T_BUSS_QBUY_GOODS QG "
+                + "FROM T_BUSS_GOODS G ,T_BUSS_QBUY_GOODS QG,T_BUSS_QBUY BQ "
                 + "WHERE G.GOODS_ID = QG.GOODS_ID "
-                + "AND G.STATE = 0 "
+                + "AND QG.QBUY_CODE = BQ.QBUY_CODE "
+                + "AND BQ.STATE = 0 "
                 + "AND QG.QBUY_CODE = '{0}' AND QG.QBUY_GOODS_ID = {1}";
 
             public const string UPDATE_QBUYGOODS_STATE = ""
-                + "UPDATE T_BUSS_GOODS SET STATE = 1,ORDER_CODE = '{1}' WHERE QBUY_CODE = '{0}' ";
+                + "UPDATE T_BUSS_QBUY SET STATE = 1,ORDER_CODE = '{1}' WHERE QBUY_CODE = '{0}' ";
         }
     }
 }

@@ -58,7 +58,7 @@ namespace ACBC.Buss
             preOrder.addr = store.storeAddr;
 
             string[] goodsIds = new string[1];
-            goodsIds[0] = startQBuyGoodsParam.qBuyGoodsId;
+            goodsIds[0] = qBuyGoods.goodsId;
 
             List<Goods> goodsList = orderDao.GetGoodsByGoodsIds(goodsIds);
 

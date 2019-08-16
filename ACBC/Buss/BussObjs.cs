@@ -322,6 +322,10 @@ namespace ACBC.Buss
         public string qBuyGoodsId;
 
     }
+    public class ActiveTypeParam
+    {
+        public string activeType;
+    }
     #endregion
 
     #region DaoObjs
@@ -650,18 +654,16 @@ namespace ACBC.Buss
         public string price;
         public string num;
         public string slt;
+        public bool ifUse;
     }
 
     public class HomePage
     {
-        public HomePageTopBanner topBanner;
-        public HomePageMenu menu;
+        public List<HomePageBanner> bannerList=new List<HomePageBanner>();
+        public List<HomePageMenu> menuList= new List<HomePageMenu>();
         public HomePageBanner banner;
-        public List<HomePageGoods> goodsList;
-    }
-    public class HomePageTopBanner
-    {
-        public List<HomePageBanner> banner;
+        public HomePageBanner advert;
+        public List<HomePageGoods> goodsList = new List<HomePageGoods>();
     }
     public class HomePageMenu
     {
@@ -673,12 +675,93 @@ namespace ACBC.Buss
     {
         public string bannerImg;
         public string bannerUrl;
+        public string urlType;
     }
     public class HomePageGoods
     {
         public string goodsId;
         public string goodsName;
+        public string goodsPrice;
         public string goodsImg;
+    }
+    public class HomePageData
+    {
+        public string pageId;
+        public string pageType;
+        public string pageName;
+        public string pageImg;
+        public string pageUrl;
+        public string urlType;
+        public string sort;
+        public string remark;
+        public string flag;
+    }
+    public class Explain
+    {
+        public string explainUrl;
+        public string explainImg;
+    }
+    public class Category
+    {
+        public List<string> parentList;
+        public Dictionary<string, List<CategoryData>> categoryList;
+    }
+    public class CategoryData
+    {
+        public string categoryId;
+        public string categoryName;
+        public string categoryImg;
+    }
+    public class ActiveCheckInfo
+    {
+        public string activeId;
+        public string activeStore;
+        public string remark;
+        public string activeState;
+        public string activeType;
+        public string activeTimeFrom;
+        public string activeTimeTo;
+        public string activeCheckId;
+        public string itemNums;
+        public string itemValue;
+        public string valueType;
+        public string storeName;
+        public string activeImg;
+    }
+    public class ActiveConsumeInfo
+    {
+        public string activeId;
+        public string activeStore;
+        public string remark;
+        public string activeState;
+        public string activeType;
+        public string activeTimeFrom;
+        public string activeTimeTo;
+        public string activeConsumeId;
+        public string consume;
+        public string itemNums;
+        public string itemValue;
+        public string valueType;
+        public string storeName;
+        public string activeImg;
+    }
+    public class QBuyInfo
+    {
+        public string activeId;
+        public string activeStore;
+        public string storeName;
+        public string remark;
+        public string activeState;
+        public string activeType;
+        public string activeTimeFrom;
+        public string activeTimeTo;
+        public string activeImg;
+        public string activeQBuyId;
+        public string beforeStart;
+        public string lastDays;
+        public string checkNum;
+        public string consumeNum;
+        public string minConsume;
     }
     #endregion
 }
