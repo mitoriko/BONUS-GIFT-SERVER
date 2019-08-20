@@ -397,6 +397,7 @@ namespace ACBC.Buss
         public string goodsId;
         public string goodsImg;
         public string goodsTitle;
+        public string goodsPrice;
     }
 
     public class ShowDayGoodsList : BussCache

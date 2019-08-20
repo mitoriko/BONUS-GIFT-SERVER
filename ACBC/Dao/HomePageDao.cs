@@ -216,11 +216,17 @@ namespace ACBC.Dao
                 showDayGoodsList.list = new List<ShowDayGoods>();
                 foreach (DataRow dr in dt.Rows)
                 {
+                    string goodsTitle = dr["GOODS_NAME"].ToString();
+                    if (goodsTitle.Length>22)
+                    {
+                        goodsTitle = dr["GOODS_NAME"].ToString().Substring(0, 20) + "...";
+                    }
                     ShowDayGoods showDayGoods = new ShowDayGoods
                     {
                         goodsId = dr["GOODS_ID"].ToString(),
                         goodsImg = dr["GOODS_IMG"].ToString(),
-                        goodsTitle = dr["GOODS_NAME"].ToString(),
+                        goodsTitle = goodsTitle,
+                        goodsPrice = dr["GOODS_PRICE"].ToString(),
                     };
                     showDayGoodsList.list.Add(showDayGoods);
                 }
