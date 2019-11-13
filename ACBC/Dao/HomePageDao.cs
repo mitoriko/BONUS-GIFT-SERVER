@@ -477,7 +477,7 @@ namespace ACBC.Dao
                 + "SELECT * "
                 + "FROM T_BUSS_GOODS "
                 + "WHERE CATEGORY2 = {0} "
-                + "AND IF_USE = 1";
+                + "AND IF_USE = 1 ORDER BY GOODS_ID DESC";
             public const string SELECT_ACTIVECHECKLIST_BY_ACTIVETYPE = ""
                 + "SELECT A.*,C.*,S.STORE_NAME " +
                 "FROM T_BUSS_ACTIVE A,T_BUSS_ACTIVE_CHECK C ,T_BASE_STORE S " +
