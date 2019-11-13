@@ -469,7 +469,7 @@ namespace ACBC.Dao
                 "ORDER BY SORT ASC";
             public const string SELECT_CATEGORYLIST = " " +
                 "SELECT T1.*,(SELECT NAME FROM T_BUSS_GOODS_CATEGORY T2 WHERE T2.ID =T1.PARENTID ) PARENTNAME ," +
-                "(SELECT COUNT(*) FROM T_BUSS_GOODS T3 WHERE T3.CATEGORY2 = T1.ID) GOODSCOUNT " +
+                "(SELECT COUNT(*) FROM T_BUSS_GOODS T3 WHERE T3.CATEGORY2 = T1.ID AND T3.IF_USE = 1) GOODSCOUNT " +
                 "FROM T_BUSS_GOODS_CATEGORY T1 " +
                 "WHERE LEVEL = 2 AND FLAG ='1' " +
                 "ORDER BY PARENTID,DISPLAYORDER";
