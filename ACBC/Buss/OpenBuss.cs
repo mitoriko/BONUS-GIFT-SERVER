@@ -34,7 +34,10 @@ namespace ACBC.Buss
 
                 OpenDao openDao = new OpenDao();
                 SessionUser sessionUser = new SessionUser();
-                
+                if (loginParam.tempOpenId != null)
+                {
+                    openDao.UpdateMemberOpenID(Utils.GetOpenID(sessionBag.Key), loginParam.tempOpenId);
+                }
                 Member member = openDao.GetMember(Utils.GetOpenID(sessionBag.Key));
                 if(member == null)
                 {

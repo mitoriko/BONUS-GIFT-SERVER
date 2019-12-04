@@ -131,6 +131,7 @@ namespace ACBC.Buss
     public class LoginParam
     {
         public string code;
+        public string tempOpenId;
     }
 
     public class MemberRegParam
@@ -325,6 +326,20 @@ namespace ACBC.Buss
     public class ActiveTypeParam
     {
         public string activeType;
+    }
+
+    public class CommitBy3rdUserParam
+    {
+        public string phone;
+        public string avatarUrl;
+        public string gender;
+        public string nickName;
+        public string preOrderId;
+        public string goodsId;
+        public int goodsNum;
+        public string state;
+        public string addr;
+        public string heartAdd;
     }
     #endregion
 

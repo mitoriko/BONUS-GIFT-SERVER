@@ -10,6 +10,14 @@ namespace ACBC.Dao
 {
     public class OpenDao
     {
+        public bool UpdateMemberOpenID(string tempOpenID, string openID)
+        {
+            StringBuilder builder = new StringBuilder();
+            builder.AppendFormat(OpenSqls.UPDATE_MEMBER_OPENID, tempOpenID, openID);
+            string sqlInsert = builder.ToString();
+
+            return DatabaseOperationWeb.ExecuteDML(sqlInsert);
+        }
 
         public Member GetMember(string openID)
         {
@@ -146,6 +154,10 @@ namespace ACBC.Dao
                 + "FROM T_BUSS_STORE_CODE "
                 + "WHERE STORE_CODE = '{0}' "
                 + "AND STATE > 0";
+            public const string UPDATE_MEMBER_OPENID = ""
+                + "UPDATE T_BASE_MEMBER "
+                + "SET OPENID = '{1}' "
+                + "WHERE OPENID = '{0}' ";
         }
     }
 }
