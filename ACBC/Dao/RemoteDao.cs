@@ -127,6 +127,19 @@ namespace ACBC.Dao
             return true;
         }
 
+        public bool GetOrderByOrderCode(string orderCode)
+        {
+            StringBuilder builder = new StringBuilder();
+            builder.AppendFormat(RemoteSqls.SELECT_ORDER_BY_ORDER_CODE, orderCode);
+            string sql = builder.ToString();
+            DataTable dt = DatabaseOperationWeb.ExecuteSelectDS(sql, "T").Tables[0];
+            if (dt == null)
+                return false;
+            if (dt.Rows.Count == 1)
+                return false;
+            return true;
+        }
+
         public bool MemberReg(MemberRegParam memberRegParam, string openID)
         {
             string scanCode = "";
@@ -273,6 +286,20 @@ namespace ACBC.Dao
             return goods;
         }
 
+        public bool AddHeart(string heartType, string heartFromId, string memberId, int heart)
+        {
+            StringBuilder builder = new StringBuilder();
+            builder.AppendFormat(
+                RemoteSqls.INSERT_HEART_COMMIT,
+                heartType,
+                heartFromId,
+                memberId,
+                heart
+                );
+            string sql = builder.ToString();
+            return DatabaseOperationWeb.ExecuteDML(sql);
+        }
+
         public class RemoteSqls
         {
             public const string SELECT_STORE_MEMBER_BY_CODE_AND_PHONE = ""
@@ -336,6 +363,14 @@ namespace ACBC.Dao
                 + "SELECT * "
                 + "FROM T_BUSS_GOODS  "
                 + "WHERE GOODS_ID = {0}";
+            public const string INSERT_HEART_COMMIT = ""
+                + "INSERT INTO T_REMOTE_HEART_COMMIT "
+                + "(HEART_TYPE,HEART_FROM_ID,MEMBER_ID,HEART) "
+                + "VALUES({0},'{1}',{2},{3})";
+            public const string SELECT_ORDER_BY_ORDER_CODE = ""
+                + "SELECT * "
+                + "FROM T_BUSS_ORDER  "
+                + "WHERE ORDER_CODE = '{0}'";
         }
     }
 }

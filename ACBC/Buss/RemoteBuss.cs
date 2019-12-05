@@ -84,7 +84,6 @@ namespace ACBC.Buss
             {
                 throw new ApiException(CodeMessage.InvalidParam, "InvalidParam");
             }
-            string returnStr = "";
             RemoteDao remoteDao = new RemoteDao();
             Store store = remoteDao.GetStoreByStoreId(baseApi.code);
             if (store == null)
@@ -98,6 +97,14 @@ namespace ACBC.Buss
 
             }
             Member member = null;
+            Goods goods = null;
+            
+            goods = remoteDao.GetGoodsByGoodsId(commitBy3rdUserParam.goodsId);
+            if (goods == null)
+            {
+                throw new ApiException(CodeMessage.InvalidGoods, "InvalidGoods");
+            }
+
             if (remoteDao.GetMemberStoreById(baseApi.code, commitBy3rdUserParam.phone))
             {
                 MemberRegParam memberRegParam = new MemberRegParam
@@ -113,8 +120,6 @@ namespace ACBC.Buss
                 {
                     throw new ApiException(CodeMessage.MemberRegError, "MemberRegError");
                 }
-                returnStr = openID;
-
                 RemoteStoreMember remoteStoreMember = new RemoteStoreMember
                 {
                     cardCode = commitBy3rdUserParam.phone,
@@ -134,13 +139,9 @@ namespace ACBC.Buss
             if (commitBy3rdUserParam.goodsId != null)
             {
                 commitBy3rdUserParam.preOrderId = "APP_" + store.storeCode + "_" + commitBy3rdUserParam.preOrderId;
-                
-                Goods goods = remoteDao.GetGoodsByGoodsId(commitBy3rdUserParam.goodsId);
-                if (goods == null)
+                if (remoteDao.GetOrderByOrderCode(commitBy3rdUserParam.preOrderId))
                 {
-                    throw new ApiException(CodeMessage.InvalidGoods, "InvalidGoods");
-                }
-                if (!remoteDao.CreateOrder(
+                    if (!remoteDao.CreateOrder(
                     commitBy3rdUserParam.preOrderId,
                     commitBy3rdUserParam.state,
                     member.memberId,
@@ -149,17 +150,25 @@ namespace ACBC.Buss
                     store,
                     goods
                     ))
-                {
-                    throw new ApiException(CodeMessage.CreateOrderError, "CreateOrderError");
+                    {
+                        throw new ApiException(CodeMessage.CreateOrderError, "CreateOrderError");
+                    }
                 }
             }
 
-            if (commitBy3rdUserParam.heartAdd != null)
+            if (commitBy3rdUserParam.heartAdd != 0)
             {
-                //add heart_change and add heart in member
+                if (!remoteDao.AddHeart(
+                    "1", 
+                    commitBy3rdUserParam.heartFromId, 
+                    member.memberId, 
+                    commitBy3rdUserParam.heartAdd))
+                {
+                    throw new ApiException(CodeMessage.UpdateHeartCommitError, "UpdateHeartCommitError");
+                }
             }
 
-            return returnStr;
+            return member.openid;
         }
     }
 }

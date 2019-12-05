@@ -336,10 +336,11 @@ namespace ACBC.Buss
         public string nickName;
         public string preOrderId;
         public string goodsId;
-        public int goodsNum;
+        public int goodsNum = 1;
         public string state;
         public string addr;
-        public string heartAdd;
+        public int heartAdd = 0;
+        public string heartFromId;
     }
     #endregion
 
@@ -354,6 +355,7 @@ namespace ACBC.Buss
         public string memberPhone;
         public string memberSex;
         public string scanCode;
+        public int heart;
     }
 
     public class StoreUser

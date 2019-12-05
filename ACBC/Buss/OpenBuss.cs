@@ -36,13 +36,27 @@ namespace ACBC.Buss
                 SessionUser sessionUser = new SessionUser();
                 if (loginParam.tempOpenId != null)
                 {
-                    openDao.UpdateMemberOpenID(Utils.GetOpenID(sessionBag.Key), loginParam.tempOpenId);
+                    Member member1 = openDao.GetMember(Utils.GetOpenID(sessionBag.Key));
+                    
+                    if (member1 == null)
+                    {
+                        openDao.UpdateMemberOpenID(Utils.GetOpenID(sessionBag.Key), loginParam.tempOpenId);
+                    }
+                    else
+                    {
+                        Member member2 = openDao.GetMember(loginParam.tempOpenId);
+                        if (member1.openid != member2.openid)
+                        {
+                            openDao.MoveMember(member1.memberId, member2.memberId, member2.heart);
+                        }
+                    }
                 }
                 Member member = openDao.GetMember(Utils.GetOpenID(sessionBag.Key));
                 if(member == null)
                 {
                     sessionUser.userType = "GUEST";
                     sessionBag.Name = JsonConvert.SerializeObject(sessionUser);
+ 
                     SessionContainer.Update(sessionBag.Key, sessionBag, new TimeSpan(Global.SESSION_EXPIRY_H, Global.SESSION_EXPIRY_M, Global.SESSION_EXPIRY_S));
                     return new { token = sessionBag.Key, isReg = false };
                 }

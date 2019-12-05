@@ -38,6 +38,7 @@ namespace ACBC.Dao
                     memberSex = dt.Rows[0]["MEMBER_SEX"].ToString(),
                     openid = dt.Rows[0]["OPENID"].ToString(),
                     scanCode = "CHECK_" + dt.Rows[0]["SCAN_CODE"].ToString(),
+                    heart = Convert.ToInt32(dt.Rows[0]["OPENID"])
                 };
             }
 
@@ -125,6 +126,41 @@ namespace ACBC.Dao
             return DatabaseOperationWeb.ExecuteDML(list);
         }
 
+        public bool MoveMember(
+           string memberId1,
+           string memberId2,
+           int changeHeart)
+        {
+            ArrayList list = new ArrayList();
+            StringBuilder builder = new StringBuilder();
+            builder.AppendFormat(
+                OpenSqls.UPDATE_HEART_COMMIT,
+                memberId1,
+                memberId2
+                );
+            string sql = builder.ToString();
+            list.Add(sql);
+            builder.Clear();
+            builder.AppendFormat(
+                OpenSqls.UPDATE_ORDER,
+                memberId1,
+                memberId2
+                );
+            sql = builder.ToString();
+            list.Add(sql);
+            builder.Clear();
+            builder.AppendFormat(
+                OpenSqls.INSERT_HEART_COMMIT,
+                2,
+                memberId2,
+                memberId1,
+                changeHeart
+                );
+            sql = builder.ToString();
+            list.Add(sql);
+            return DatabaseOperationWeb.ExecuteDML(list);
+        }
+
         private class OpenSqls
         {
             public const string SELECT_MEMBER_BY_OPENID = ""
@@ -158,6 +194,18 @@ namespace ACBC.Dao
                 + "UPDATE T_BASE_MEMBER "
                 + "SET OPENID = '{1}' "
                 + "WHERE OPENID = '{0}' ";
+            public const string UPDATE_HEART_COMMIT = ""
+                + "UPDATE T_REMOTE_HEART_COMMIT "
+                + "SET MEMBER_ID = {0} "
+                + "WHERE MEMBER_ID = {1} ";
+            public const string INSERT_HEART_COMMIT = ""
+                + "INSERT INTO T_REMOTE_HEART_COMMIT "
+                + "(HEART_TYPE,HEART_FROM_ID,MEMBER_ID,HEART) "
+                + "VALUES({0},'{1}',{2},{3})";
+            public const string UPDATE_ORDER = ""
+                + "UPDATE T_BUSS_ORDER "
+                + "SET MEMBER_ID = {0} "
+                + "WHERE MEMBER_ID = {1}";
         }
     }
 }
