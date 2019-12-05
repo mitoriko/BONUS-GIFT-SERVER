@@ -38,7 +38,7 @@ namespace ACBC.Dao
                     memberSex = dt.Rows[0]["MEMBER_SEX"].ToString(),
                     openid = dt.Rows[0]["OPENID"].ToString(),
                     scanCode = "CHECK_" + dt.Rows[0]["SCAN_CODE"].ToString(),
-                    heart = Convert.ToInt32(dt.Rows[0]["OPENID"])
+                    heart = Convert.ToInt32(dt.Rows[0]["HEART"])
                 };
             }
 
@@ -148,13 +148,65 @@ namespace ACBC.Dao
                 );
             sql = builder.ToString();
             list.Add(sql);
+            if(changeHeart > 0)
+            {
+                builder.Clear();
+                builder.AppendFormat(
+                    OpenSqls.UPDATE_MEMBER_HEART,
+                    memberId2,
+                    0
+                    );
+                sql = builder.ToString();
+                list.Add(sql);
+                builder.Clear();
+                builder.AppendFormat(
+                    OpenSqls.INSERT_HEART_COMMIT,
+                    2,
+                    memberId2,
+                    memberId1,
+                    changeHeart
+                    );
+                sql = builder.ToString();
+                list.Add(sql);
+            }
+            return DatabaseOperationWeb.ExecuteDML(list);
+        }
+
+        public bool AddMemberHeartCommit(Member member)
+        {
+            int totalHeart = 0;
+            StringBuilder builder = new StringBuilder();
+            builder.AppendFormat(OpenSqls.SELECT_HEART_COMMIT, member.memberId);
+            string sql = builder.ToString();
+            DataTable dt = DatabaseOperationWeb.ExecuteSelectDS(sql, "T").Tables[0];
+            if (dt != null && dt.Rows.Count == 1)
+            {
+                totalHeart = Convert.ToInt32(dt.Rows[0][0]);
+            }
+            if (totalHeart == 0)
+                return true;
+            ArrayList list = new ArrayList();
+            builder = new StringBuilder();
+            builder.AppendFormat(
+                OpenSqls.UPDATE_HEART_COMMIT_STATE_1,
+                member.memberId
+                );
+            sql = builder.ToString();
+            list.Add(sql);
             builder.Clear();
             builder.AppendFormat(
-                OpenSqls.INSERT_HEART_COMMIT,
-                2,
-                memberId2,
-                memberId1,
-                changeHeart
+                OpenSqls.INSERT_HEART_CHANGE,
+                member.memberId,
+                totalHeart,
+                member.heart
+                );
+            sql = builder.ToString();
+            list.Add(sql);
+            builder.Clear();
+            builder.AppendFormat(
+                OpenSqls.UPDATE_MEMBER_HEART,
+                member.memberId,
+                (member.heart + totalHeart)
                 );
             sql = builder.ToString();
             list.Add(sql);
@@ -206,6 +258,24 @@ namespace ACBC.Dao
                 + "UPDATE T_BUSS_ORDER "
                 + "SET MEMBER_ID = {0} "
                 + "WHERE MEMBER_ID = {1}";
+            public const string UPDATE_MEMBER_HEART = ""
+                + "UPDATE T_BASE_MEMBER "
+                + "SET HEART = {1} "
+                + "WHERE MEMBER_ID = {0}";
+            public const string SELECT_HEART_COMMIT = ""
+                + "SELECT IFNULL(SUM(HEART), 0) "
+                + "FROM T_REMOTE_HEART_COMMIT "
+                + "WHERE MEMBER_ID = {0} "
+                + "AND STATE = 0";
+            public const string UPDATE_HEART_COMMIT_STATE_1 = ""
+                + "UPDATE T_REMOTE_HEART_COMMIT "
+                + "SET STATE = 1 "
+                + "WHERE MEMBER_ID = {0} "
+                + "AND STATE = 0";
+            public const string INSERT_HEART_CHANGE = ""
+                + "INSERT INTO T_BUSS_HEART_CHANGE "
+                + "(CHANGE_TYPE,NUM,MEMBER_ID,BEFORE_MOD) "
+                + "VALUES(3,{1},{0},{2})";
         }
     }
 }

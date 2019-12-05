@@ -300,6 +300,19 @@ namespace ACBC.Dao
             return DatabaseOperationWeb.ExecuteDML(sql);
         }
 
+        public bool GetHeartCommitByFromId(string heartFromId)
+        {
+            StringBuilder builder = new StringBuilder();
+            builder.AppendFormat(RemoteSqls.SELECT_HEART_COMMIT, heartFromId);
+            string sql = builder.ToString();
+            DataTable dt = DatabaseOperationWeb.ExecuteSelectDS(sql, "T").Tables[0];
+            if (dt == null)
+                return false;
+            if (dt.Rows.Count == 1)
+                return false;
+            return true;
+        }
+
         public class RemoteSqls
         {
             public const string SELECT_STORE_MEMBER_BY_CODE_AND_PHONE = ""
@@ -371,6 +384,11 @@ namespace ACBC.Dao
                 + "SELECT * "
                 + "FROM T_BUSS_ORDER  "
                 + "WHERE ORDER_CODE = '{0}'";
+            public const string SELECT_HEART_COMMIT = ""
+                + "SELECT * "
+                + "FROM T_REMOTE_HEART_COMMIT "
+                + "WHERE HEART_FROM_ID = '{0}' "
+                + "AND HEART_TYPE = 1";
         }
     }
 }

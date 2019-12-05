@@ -113,7 +113,7 @@ namespace ACBC.Buss
                     gender = commitBy3rdUserParam.gender,
                     nickName = commitBy3rdUserParam.nickName
                 };
-                string openID = Guid.NewGuid().ToString();
+                string openID = "3rd-" + Guid.NewGuid().ToString();
                 remoteDao.MemberReg(memberRegParam, openID);
                 member = remoteDao.GetMember(openID);
                 if(member == null)
@@ -158,6 +158,11 @@ namespace ACBC.Buss
 
             if (commitBy3rdUserParam.heartAdd != 0)
             {
+                if (!remoteDao.GetHeartCommitByFromId(commitBy3rdUserParam.heartFromId))
+                {
+                    throw new ApiException(CodeMessage.UpdateHeartCommitError, "UpdateHeartCommitError");
+
+                }
                 if (!remoteDao.AddHeart(
                     "1", 
                     commitBy3rdUserParam.heartFromId, 
@@ -168,7 +173,7 @@ namespace ACBC.Buss
                 }
             }
 
-            return member.openid;
+            return member.openid.StartsWith("3rd-") ? member.openid : "";
         }
     }
 }

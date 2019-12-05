@@ -34,7 +34,7 @@ namespace ACBC.Buss
 
                 OpenDao openDao = new OpenDao();
                 SessionUser sessionUser = new SessionUser();
-                if (loginParam.tempOpenId != null)
+                if (loginParam.tempOpenId != null && loginParam.tempOpenId.StartsWith("3rd-"))
                 {
                     Member member1 = openDao.GetMember(Utils.GetOpenID(sessionBag.Key));
                     
@@ -67,6 +67,7 @@ namespace ACBC.Buss
                     sessionUser.memberId = member.memberId;
                     sessionBag.Name = JsonConvert.SerializeObject(sessionUser);
                     SessionContainer.Update(sessionBag.Key, sessionBag, new TimeSpan(Global.SESSION_EXPIRY_H, Global.SESSION_EXPIRY_M, Global.SESSION_EXPIRY_S));
+                    openDao.AddMemberHeartCommit(member);
                     return new {
                         token = sessionBag.Key,
                         isReg = true,
