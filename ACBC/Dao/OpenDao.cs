@@ -148,7 +148,15 @@ namespace ACBC.Dao
                 );
             sql = builder.ToString();
             list.Add(sql);
-            if(changeHeart > 0)
+            builder.Clear();
+            builder.AppendFormat(
+                OpenSqls.UPDATE_STORE_MEMBER,
+                memberId1,
+                memberId2
+                );
+            sql = builder.ToString();
+            list.Add(sql);
+            if (changeHeart > 0)
             {
                 builder.Clear();
                 builder.AppendFormat(
@@ -272,6 +280,10 @@ namespace ACBC.Dao
                 + "SET STATE = 1 "
                 + "WHERE MEMBER_ID = {0} "
                 + "AND STATE = 0";
+            public const string UPDATE_STORE_MEMBER = ""
+                + "UPDATE T_BUSS_MEMBER_STORE "
+                + "SET MEMBER_ID = {0} "
+                + "WHERE MEMBER_ID = {1} ";
             public const string INSERT_HEART_CHANGE = ""
                 + "INSERT INTO T_BUSS_HEART_CHANGE "
                 + "(CHANGE_TYPE,NUM,MEMBER_ID,BEFORE_MOD) "
