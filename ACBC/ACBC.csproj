@@ -16,7 +16,7 @@
   <ItemGroup>
     <PackageReference Include="aliyun.oss.sdk.core" Version="2.5.3" />
     <PackageReference Include="EPPlus.Core" Version="1.5.4" />
-    <PackageReference Include="Microsoft.AspNetCore.All" Version="2.1.0" />
+    <PackageReference Include="Microsoft.AspNetCore.All" Version="2.1.21" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.2.3" />
     <PackageReference Include="MySql.Data" Version="8.0.15" />
     <PackageReference Include="Senparc.CO2NET" Version="0.5.2" />
